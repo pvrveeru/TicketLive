@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ExploreScreen from '../screens/ExploreScreen';
 import FavoritiesScreen from '../screens/Favorities';
 import TicketsScreen from '../screens/TicketsScreen';
@@ -11,23 +12,32 @@ const Tab = createBottomTabNavigator();
 
 // Function to map icons to tab names
 const getTabBarIcon = (routeName: string, focused: boolean, color: string, size: number) => {
+    if (routeName === 'Tickets') {
+        // Use MaterialCommunityIcons for 'Tickets'
+        return (
+            <MaterialCommunityIcons
+                name={focused ? 'ticket-confirmation-outline' : 'ticket-confirmation-outline'}
+                size={size}
+                color={color}
+            />
+        );
+    }
+
+    // Default icons for other tabs using Ionicons
     let iconName = '';
 
     switch (routeName) {
         case 'Home':
-            iconName = focused ? 'home' : 'home-outline';
+            iconName = focused ? 'home' : 'home';
             break;
         case 'Explore':
-            iconName = focused ? 'compass' : 'compass-outline';
+            iconName = focused ? 'compass-outline' : 'compass-outline';
             break;
         case 'Favorities':
             iconName = focused ? 'heart-outline' : 'heart-outline';
             break;
-        case 'Tickets':
-            iconName = focused ? 'ticket' : 'ticket-outline';
-            break;
         case 'Profile':
-            iconName = focused ? 'person' : 'person-outline';
+            iconName = focused ? 'person-outline' : 'person-outline';
             break;
         default:
             break;
