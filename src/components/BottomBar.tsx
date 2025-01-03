@@ -52,8 +52,8 @@ const BottomBar = () => {
             screenOptions={({ route }) => ({
                 tabBarIcon: ({ focused, color, size }) =>
                     getTabBarIcon(route.name, focused, color, size),
-                tabBarActiveTintColor: 'tomato',
-                tabBarInactiveTintColor: 'gray',
+                tabBarActiveTintColor: '#EF412B',
+                tabBarInactiveTintColor: '#26276C',
                 headerShown: false,
             })}
         >
