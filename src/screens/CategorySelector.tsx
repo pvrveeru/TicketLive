@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { ScrollView, TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; // or any other icon set
 import { COLORS } from '../styles/globalstyles';
+import { useTheme } from '../Theme/ThemeContext';
 
 const categories = ['All', 'Music', 'Art', 'Workshops'];
 
 const CategorySelector = () => {
+  const { isDarkMode } = useTheme();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
   const handleCategoryPress = (category: string) => {
@@ -13,7 +15,7 @@ const CategorySelector = () => {
   };
 
   const renderIcon = (category: string) => {
-    const iconColor = selectedCategory === category ? 'white' : '#000'; // Change color based on selection
+    const iconColor = selectedCategory === category ? 'white' : isDarkMode ? '#fff' : '#000'; // Adjust icon color based on theme
 
     switch (category) {
       case 'All':
@@ -38,6 +40,10 @@ const CategorySelector = () => {
           style={[
             styles.categoryButton,
             selectedCategory === category && styles.categoryButtonSelected,
+            {
+              backgroundColor: selectedCategory === category ? COLORS.red : isDarkMode ? '#444' : '#fff',
+              borderColor: isDarkMode ? 'white' : COLORS.red,
+            },
           ]}
         >
           <View style={styles.iconContainer}>
@@ -47,6 +53,7 @@ const CategorySelector = () => {
             style={[
               styles.categoryText,
               selectedCategory === category && styles.categoryTextSelected,
+              { color: isDarkMode ? '#fff' : '#000' }, // Text color adjustment based on theme
             ]}
           >
             {category}
@@ -64,16 +71,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
     marginHorizontal: 10,
-    borderColor: COLORS.red,
     borderWidth: 1,
     borderRadius: 20,
   },
   categoryButtonSelected: {
-    backgroundColor: COLORS.red,
+    backgroundColor: COLORS.red, // Red background for the selected button
   },
   categoryText: {
     fontSize: 16,
-    color: '#000',
     marginLeft: 5,
   },
   categoryTextSelected: {

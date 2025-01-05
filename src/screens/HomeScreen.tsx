@@ -7,6 +7,8 @@ import { RootStackParamList } from '../navigation/AppNavigator';
 import sampleEvents from '../config/sample.json';
 import CategorySelector from './CategorySelector';
 import { COLORS } from '../styles/globalstyles';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useTheme } from '../Theme/ThemeContext';
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'BottomBar'>;
 
@@ -16,18 +18,17 @@ type Event = {
   date: string;
   location: string;
   category: string;
-  imageUrl: any;
+  imageUrl: string;
   isFavorite: boolean,
 };
 
-
 const HomeScreen: React.FC = () => {
-  // console.log('sampleEvents', sampleEvents);
+  const { isDarkMode } = useTheme();
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const profileImage = require('../../assests/images/icon.png');
-  // const eventImage = require('../../assests/images/ticketliv_logo.png');
 
   const [events, setEvents] = useState<Event[]>(sampleEvents);
+  const [searchQuery, setSearchQuery] = useState<string>(''); // State to hold the search query
 
   const toggleFavorite = (id: number) => {
     setEvents(events.map(event => (event.id === id ? { ...event, isFavorite: !event.isFavorite } : event)));
@@ -41,45 +42,58 @@ const HomeScreen: React.FC = () => {
     navigation.navigate('AllEvents');
   };
 
+  // Filter events based on the search query
+  const filteredEvents = events.filter(event =>
+    event.eventName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    event.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    event.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, isDarkMode ? styles.darkBackground : styles.lightBackground]}>
       <View style={styles.header}>
         <Image source={profileImage} style={styles.profileImage} />
         <View>
-          <Text style={styles.greeting}>Good Morning 👋</Text>
-          <Text style={styles.name}>Andrew Ainsley</Text>
+          <Text style={[styles.greeting, isDarkMode ? styles.darkText : styles.lightText]}>Good Morning 👋</Text>
+          <Text style={[styles.name, isDarkMode ? styles.darkText : styles.lightText]}>Andrew Ainsley</Text>
         </View>
         <TouchableOpacity style={styles.notificationIcon} onPress={handleNotificationPress}>
-          <Text style={styles.socialIcon}>🔔</Text>
+          <MaterialCommunityIcons name="bell-badge-outline" style={[styles.socialIcon, isDarkMode ? styles.darkIcon : styles.lightIcon]} />
         </TouchableOpacity>
       </View>
-      <SearchBar />
+      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <View style={styles.featuredSection}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Featured</Text>
+          <Text style={[styles.sectionTitle, isDarkMode ? styles.darkText : styles.lightText]}>Featured</Text>
           <TouchableOpacity onPress={handleSeeAll}>
-            <Text style={styles.seeAll}>See All</Text>
+            <Text style={[styles.seeAll, isDarkMode ? styles.darkText : styles.lightText]}>See All</Text>
           </TouchableOpacity>
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollview}>
-          {events.map(event => (
-            <TouchableOpacity key={event.id} style={styles.eventCard}>
-              <Image source={event.imageUrl} style={styles.eventImage} />
-              <Text style={styles.eventName}>{event.eventName}</Text>
-              <Text style={styles.eventDetails}>{event.date}</Text>
-              <Text style={styles.eventLocation}>{event.location}</Text>
-              <TouchableOpacity onPress={() => toggleFavorite(event.id)} style={styles.favoriteIcon}>
-                <Text>{event.isFavorite ? '❤️' : '🤍'}</Text>
+          {filteredEvents.length > 0 ? (
+            filteredEvents.map(event => (
+              <TouchableOpacity key={event.id} style={[styles.eventCard, isDarkMode ? styles.darkCard : styles.lightCard]}>
+                <Image source={{ uri: event.imageUrl }} style={styles.eventImage} />
+                <Text style={[styles.eventName, isDarkMode ? styles.darkText : styles.lightText]}>{event.eventName}</Text>
+                <Text style={[styles.eventDetails, isDarkMode ? styles.darkText : styles.lightText]}>{event.date}</Text>
+                <Text style={[styles.eventLocation, isDarkMode ? styles.darkText : styles.lightText]}>{event.location}</Text>
+                <TouchableOpacity onPress={() => toggleFavorite(event.id)} style={styles.favoriteIcon}>
+                  <Text>{event.isFavorite ? '❤️' : '🤍'}</Text>
+                </TouchableOpacity>
               </TouchableOpacity>
-            </TouchableOpacity>
-          ))}
+            ))
+          ) : (
+            <Text style={[styles.noResultsText, isDarkMode ? styles.darkText : styles.lightText]}>
+              No events found.
+            </Text>
+          )}
         </ScrollView>
       </View>
       <View style={styles.popularSection}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Popular Event 🔥</Text>
+          <Text style={[styles.sectionTitle, isDarkMode ? styles.darkText : styles.lightText]}>Popular Event 🔥</Text>
           <TouchableOpacity>
-            <Text style={styles.seeAll}>See All</Text>
+            <Text style={[styles.seeAll, isDarkMode ? styles.darkText : styles.lightText]}>See All</Text>
           </TouchableOpacity>
         </View>
         <CategorySelector />
@@ -92,6 +106,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+  },
+  darkBackground: {
+    backgroundColor: '#121212',
+  },
+  lightBackground: {
     backgroundColor: '#FFFFFF',
   },
   header: {
@@ -111,6 +130,12 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  darkText: {
+    color: '#FFFFFF',
+  },
+  lightText: {
+    color: '#000000',
   },
   featuredSection: {
     marginBottom: 20,
@@ -135,30 +160,20 @@ const styles = StyleSheet.create({
     width: 250,
     marginHorizontal: 10,
     padding: 10,
-    backgroundColor: '#f8f8f8',
     borderRadius: 10,
     elevation: 3,
   },
-  // eventCard: {
-  //   backgroundColor: '#fff',
-  //   borderRadius: 8,
-  //   // elevation: 3,
-  //   // shadowColor: '#000',
-  //   // shadowOffset: { width: 0, height: 2 },
-  //   // shadowOpacity: 0.2,
-  //   // shadowRadius: 4,
-  //   padding: 10,
-  //   marginRight: 10,
-  //   width: '20%',
-  //   borderWidth: 2,
-  //   borderColor: 'red',
-  // },
+  darkCard: {
+    backgroundColor: '#333333',
+  },
+  lightCard: {
+    backgroundColor: '#f8f8f8',
+  },
   eventImage: {
-    // width: '90%',
     height: 150,
     borderRadius: 8,
     marginBottom: 10,
-    resizeMode: 'contain',
+    resizeMode: 'cover',
     alignSelf: 'center',
   },
   eventName: {
@@ -177,30 +192,6 @@ const styles = StyleSheet.create({
     right: 10,
   },
   popularSection: {},
-  categoryButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    marginHorizontal: 10,
-  },
-  categoryButtonSelected: {
-    borderBottomWidth: 2,
-    borderBottomColor: 'blue',
-  },
-  categoryText: {
-    fontSize: 16,
-    color: '#000',
-    marginLeft: 5,
-  },
-  categoryTextSelected: {
-    fontWeight: 'bold',
-    color: 'blue',
-  },
-  iconContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   notificationIcon: {
     padding: 3,
     borderWidth: 1,
@@ -214,6 +205,17 @@ const styles = StyleSheet.create({
   },
   socialIcon: {
     fontSize: 20,
+  },
+  darkIcon: {
+    color: '#FFFFFF',
+  },
+  lightIcon: {
+    color: COLORS.red,
+  },
+  noResultsText: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginVertical: 20,
   },
 });
 
