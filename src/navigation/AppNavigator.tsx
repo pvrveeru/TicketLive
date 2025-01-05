@@ -21,16 +21,14 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const AppNavigator: React.FC = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen name="BottomBar" component={BottomBar} options={{ headerShown: false }} />
-        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Notification" component={Notifications} options={{ headerShown: false }} />
+      <Stack.Navigator initialRouteName="Login" screenOptions={{headerShown: false}}>
+        <Stack.Screen name="BottomBar" component={BottomBar} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Notification" component={Notifications}  />
         <Stack.Screen name="AllEvents" component={AllEventsScreen} />
-
         <Stack.Screen
           name="OtpVerification"
           component={OtpVerificationScreen}
-          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>

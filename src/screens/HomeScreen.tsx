@@ -5,12 +5,14 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import sampleEvents from '../config/sample.json';
+import CategorySelector from './CategorySelector';
+import { COLORS } from '../styles/globalstyles';
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'BottomBar'>;
 
 type Event = {
   id: number;
-  name: string;
+  eventName: string;
   date: string;
   location: string;
   category: string;
@@ -27,20 +29,12 @@ const HomeScreen: React.FC = () => {
 
   const [events, setEvents] = useState<Event[]>(sampleEvents);
 
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
-
-  const categories = ['All', '♫Music', 'Art', 'Workshops'];
-
   const toggleFavorite = (id: number) => {
     setEvents(events.map(event => (event.id === id ? { ...event, isFavorite: !event.isFavorite } : event)));
   };
 
-  const handleCategoryPress = (category: string) => {
-    setSelectedCategory(category);
-  };
-
   const handleNotificationPress = () => {
-    navigation.navigate('Notification'); // Navigate to the Notification screen
+    navigation.navigate('Notification');
   };
 
   const handleSeeAll = () => {
@@ -49,7 +43,6 @@ const HomeScreen: React.FC = () => {
 
   return (
     <ScrollView style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Image source={profileImage} style={styles.profileImage} />
         <View>
@@ -60,11 +53,7 @@ const HomeScreen: React.FC = () => {
           <Text style={styles.socialIcon}>🔔</Text>
         </TouchableOpacity>
       </View>
-
-      {/* Search Bar */}
       <SearchBar />
-
-      {/* Featured Section */}
       <View style={styles.featuredSection}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Featured</Text>
@@ -76,18 +65,16 @@ const HomeScreen: React.FC = () => {
           {events.map(event => (
             <TouchableOpacity key={event.id} style={styles.eventCard}>
               <Image source={event.imageUrl} style={styles.eventImage} />
-              <Text style={styles.eventName}>{event.name}</Text>
+              <Text style={styles.eventName}>{event.eventName}</Text>
               <Text style={styles.eventDetails}>{event.date}</Text>
               <Text style={styles.eventLocation}>{event.location}</Text>
               <TouchableOpacity onPress={() => toggleFavorite(event.id)} style={styles.favoriteIcon}>
-                <Text style={{fontSize: 20}}>{event.isFavorite ? '❤️' : '🤍'}</Text>
+                <Text>{event.isFavorite ? '❤️' : '🤍'}</Text>
               </TouchableOpacity>
             </TouchableOpacity>
           ))}
         </ScrollView>
       </View>
-
-      {/* Popular Section */}
       <View style={styles.popularSection}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Popular Event 🔥</Text>
@@ -95,27 +82,7 @@ const HomeScreen: React.FC = () => {
             <Text style={styles.seeAll}>See All</Text>
           </TouchableOpacity>
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {categories.map(category => (
-            <TouchableOpacity
-              key={category}
-              onPress={() => handleCategoryPress(category)}
-              style={[
-                styles.categoryButton,
-                selectedCategory === category && styles.categoryButtonSelected,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.categoryText,
-                  selectedCategory === category && styles.categoryTextSelected,
-                ]}
-              >
-                {category}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+        <CategorySelector />
       </View>
     </ScrollView>
   );
@@ -159,7 +126,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   seeAll: {
-    color: 'blue',
+    color: COLORS.red,
   },
   scrollview: {
     marginVertical: 10,
@@ -211,22 +178,28 @@ const styles = StyleSheet.create({
   },
   popularSection: {},
   categoryButton: {
-    borderWidth: 1,
-    borderColor: 'grey',
-    padding: 10,
-    borderRadius: 20,
-    marginRight: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    marginHorizontal: 10,
   },
   categoryButtonSelected: {
-    backgroundColor: 'red',
-    borderColor: 'transparent',
+    borderBottomWidth: 2,
+    borderBottomColor: 'blue',
   },
   categoryText: {
-    fontSize: 14,
-    color: 'grey',
+    fontSize: 16,
+    color: '#000',
+    marginLeft: 5,
   },
   categoryTextSelected: {
-    color: 'white',
+    fontWeight: 'bold',
+    color: 'blue',
+  },
+  iconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   notificationIcon: {
     padding: 3,
@@ -234,13 +207,13 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 30,
     marginLeft: 'auto',
-    justifyContent: 'center', // Center horizontally
-    alignItems: 'center', // Center vertically
-    width: 40, // Set a fixed width
-    height: 40, // Set a fixed height to make it a circle
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 40,
+    height: 40,
   },
   socialIcon: {
-    fontSize: 20, // Adjust the font size for the bell icon
+    fontSize: 20,
   },
 });
 
