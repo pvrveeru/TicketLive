@@ -1,24 +1,31 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
+import SearchBar from '../components/SearchBar';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/AppNavigator';
+import sampleEvents from '../config/sample.json';
 
-interface Event {
+type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'BottomBar'>;
+
+type Event = {
   id: number;
   name: string;
   date: string;
   location: string;
-  image: any;
-  isFavorite: boolean;
-}
+  category: string;
+  imageUrl: any;
+  isFavorite: boolean,
+};
+
 
 const HomeScreen: React.FC = () => {
+  // console.log('sampleEvents', sampleEvents);
+  const navigation = useNavigation<HomeScreenNavigationProp>();
   const profileImage = require('../../assests/images/icon.png');
-  const eventImage = require('../../assests/images/ticketliv_logo.png');
+  // const eventImage = require('../../assests/images/ticketliv_logo.png');
 
-  const [events, setEvents] = useState<Event[]>([
-    { id: 1, name: 'National Music Festival', date: 'Mon. Dec 24 18.00-23.00 PM', location: 'Grand Park, New York', image: eventImage, isFavorite: false },
-    { id: 2, name: 'Art Expo 2025', date: 'Tue. Jan 14 10.00-17.00 PM', location: 'Art Center, LA', image: eventImage, isFavorite: false },
-    { id: 3, name: 'Tech Workshop', date: 'Sat. Feb 10 09.00-18.00 PM', location: 'Tech Hub, SF', image: eventImage, isFavorite: false },
-  ]);
+  const [events, setEvents] = useState<Event[]>(sampleEvents);
 
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
@@ -32,6 +39,14 @@ const HomeScreen: React.FC = () => {
     setSelectedCategory(category);
   };
 
+  const handleNotificationPress = () => {
+    navigation.navigate('Notification'); // Navigate to the Notification screen
+  };
+
+  const handleSeeAll = () => {
+    navigation.navigate('AllEvents');
+  };
+
   return (
     <ScrollView style={styles.container}>
       {/* Header */}
@@ -41,33 +56,31 @@ const HomeScreen: React.FC = () => {
           <Text style={styles.greeting}>Good Morning 👋</Text>
           <Text style={styles.name}>Andrew Ainsley</Text>
         </View>
-        <TouchableOpacity style={styles.notificationIcon}>
-          <Text>🔔</Text>
+        <TouchableOpacity style={styles.notificationIcon} onPress={handleNotificationPress}>
+          <Text style={styles.socialIcon}>🔔</Text>
         </TouchableOpacity>
       </View>
 
       {/* Search Bar */}
-      <View style={styles.searchBar}>
-        <Text style={{ color: 'grey' }}>What event are you looking for</Text>
-      </View>
+      <SearchBar />
 
       {/* Featured Section */}
       <View style={styles.featuredSection}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Featured</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleSeeAll}>
             <Text style={styles.seeAll}>See All</Text>
           </TouchableOpacity>
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollview}>
           {events.map(event => (
             <TouchableOpacity key={event.id} style={styles.eventCard}>
-              <Image source={event.image} style={styles.eventImage} />
+              <Image source={event.imageUrl} style={styles.eventImage} />
               <Text style={styles.eventName}>{event.name}</Text>
               <Text style={styles.eventDetails}>{event.date}</Text>
               <Text style={styles.eventLocation}>{event.location}</Text>
               <TouchableOpacity onPress={() => toggleFavorite(event.id)} style={styles.favoriteIcon}>
-                <Text>{event.isFavorite ? '❤️' : '🤍'}</Text>
+                <Text style={{fontSize: 20}}>{event.isFavorite ? '❤️' : '🤍'}</Text>
               </TouchableOpacity>
             </TouchableOpacity>
           ))}
@@ -112,7 +125,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
   },
   header: {
     flexDirection: 'row',
@@ -132,12 +145,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  searchBar: {
-    backgroundColor: '#eee',
-    padding: 10,
-    borderRadius: 8,
-    marginBottom: 20,
-  },
   featuredSection: {
     marginBottom: 20,
   },
@@ -154,23 +161,38 @@ const styles = StyleSheet.create({
   seeAll: {
     color: 'blue',
   },
-  eventCard: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    padding: 10,
-    marginRight: 10,
-    width: 350,
+  scrollview: {
+    marginVertical: 10,
   },
+  eventCard: {
+    width: 250,
+    marginHorizontal: 10,
+    padding: 10,
+    backgroundColor: '#f8f8f8',
+    borderRadius: 10,
+    elevation: 3,
+  },
+  // eventCard: {
+  //   backgroundColor: '#fff',
+  //   borderRadius: 8,
+  //   // elevation: 3,
+  //   // shadowColor: '#000',
+  //   // shadowOffset: { width: 0, height: 2 },
+  //   // shadowOpacity: 0.2,
+  //   // shadowRadius: 4,
+  //   padding: 10,
+  //   marginRight: 10,
+  //   width: '20%',
+  //   borderWidth: 2,
+  //   borderColor: 'red',
+  // },
   eventImage: {
-    width: '100%',
+    // width: '90%',
     height: 150,
     borderRadius: 8,
     marginBottom: 10,
+    resizeMode: 'contain',
+    alignSelf: 'center',
   },
   eventName: {
     fontSize: 16,
@@ -207,8 +229,18 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   notificationIcon: {
+    padding: 3,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 30,
     marginLeft: 'auto',
-    fontSize: 20,
+    justifyContent: 'center', // Center horizontally
+    alignItems: 'center', // Center vertically
+    width: 40, // Set a fixed width
+    height: 40, // Set a fixed height to make it a circle
+  },
+  socialIcon: {
+    fontSize: 20, // Adjust the font size for the bell icon
   },
 });
 

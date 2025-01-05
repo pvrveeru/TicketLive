@@ -1,8 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   Image,
@@ -10,6 +9,7 @@ import {
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import OtpInput from './OtpInput';
 type RootStackParamList = {
   Login: undefined;
   OtpVerification: { phoneNumber: string };
@@ -22,7 +22,6 @@ const OtpVerificationScreen: React.FC<Props> = ({ route, navigation }) => {
   const Logo = require('../../assests/images/ticketliv_logo.png');
   const { phoneNumber } = route.params;
   const [otp, setOtp] = useState<string>('');
-  const hiddenInputRef = useRef<TextInput>(null);
 
   const handleVerify = () => {
     if (otp.length === 5) {
@@ -39,6 +38,11 @@ const OtpVerificationScreen: React.FC<Props> = ({ route, navigation }) => {
     }
   };
 
+
+  const handleOtpBlur = () => {
+    console.log('OTP input blurred');
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
@@ -50,28 +54,15 @@ const OtpVerificationScreen: React.FC<Props> = ({ route, navigation }) => {
       <Text style={styles.subtitle}>
         We have sent the OTP on {phoneNumber}. It will apply auto to the fields.
       </Text>
-
-      {/* Hidden TextInput for capturing OTP */}
-      <TextInput
-        ref={hiddenInputRef}
-        style={styles.hiddenInput}
-        keyboardType="number-pad"
+      <OtpInput
+        otpCode={otp}
+        onChange={handleOtpChange}
+        onBlur={handleOtpBlur}
+        // error={error}
         maxLength={5}
-        value={otp}
-        onChangeText={handleOtpChange}
-        autoFocus
+        size="large"
+        disabled={false}
       />
-
-      {/* Displaying OTP Boxes */}
-      <View style={styles.otpContainer} onTouchStart={() => hiddenInputRef.current?.focus()}>
-        {Array(5)
-          .fill(null)
-          .map((_, index) => (
-            <View key={index} style={styles.otpBox}>
-              <Text style={styles.otpText}>{otp[index] || ''}</Text>
-            </View>
-          ))}
-      </View>
 
       <Text style={styles.resendText}>
         If you didn't receive a code?{' '}

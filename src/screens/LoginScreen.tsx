@@ -7,6 +7,9 @@ import {
   StyleSheet,
   Image,
   Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -32,48 +35,57 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Image source={Logo} style={styles.logo} />
-      <Text style={styles.title}>Login to Your Account</Text>
-      <View style={styles.inputContainer}>
-        <Icon name="mobile-phone" size={30} color="#ccc" style={styles.phoneIcon} />
-        <TextInput
-          style={styles.input}
-          placeholder="Phone Number"
-          keyboardType="phone-pad"
-          maxLength={10}
-          value={phoneNumber}
-          onChangeText={setPhoneNumber}
-        />
-      </View>
-      <TouchableOpacity style={styles.button} onPress={handleOtpRequest}>
-        <Text style={styles.buttonText}>OTP Request</Text>
-      </TouchableOpacity>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.innerContainer}>
+          <Image source={Logo} style={styles.logo} />
+          <Text style={styles.title}>Login to Your Account</Text>
+          <View style={styles.inputContainer}>
+            <Icon name="mobile-phone" size={30} color="#ccc" style={styles.phoneIcon} />
+            <TextInput
+              style={styles.input}
+              placeholder="Phone Number"
+              keyboardType="phone-pad"
+              maxLength={10}
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
+            />
+          </View>
+          <TouchableOpacity style={styles.button} onPress={handleOtpRequest}>
+            <Text style={styles.buttonText}>OTP Request</Text>
+          </TouchableOpacity>
 
-      <View style={styles.orContainer}>
-        <View style={styles.line} />
-        <Text style={styles.orText}>or continue with</Text>
-        <View style={styles.line} />
-      </View>
+          <View style={styles.orContainer}>
+            <View style={styles.line} />
+            <Text style={styles.orText}>or continue with</Text>
+            <View style={styles.line} />
+          </View>
 
-      <View style={styles.socialIcons}>
-        <View style={styles.socialIconContainer}>
-          <Image source={Facebook} style={styles.socialIcon} />
+          <View style={styles.socialIcons}>
+            <View style={styles.socialIconContainer}>
+              <Image source={Facebook} style={styles.socialIcon} />
+            </View>
+            <View style={styles.socialIconContainer}>
+              <Image source={Google} style={styles.socialIcon} />
+            </View>
+          </View>
         </View>
-        <View style={styles.socialIconContainer}>
-          <Image source={Google} style={styles.socialIcon} />
-        </View>
-      </View>
-
-    </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     backgroundColor: '#fff',
+  },
+  innerContainer: {
+    flex: 1,
+    alignItems: 'center',
     paddingHorizontal: 20,
     paddingTop: 50,
   },
@@ -97,7 +109,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 10,
-    padding: 10,
+    padding: 5,
     marginBottom: '15%',
   },
   phoneIcon: {
@@ -150,7 +162,6 @@ const styles = StyleSheet.create({
     height: 30,
     resizeMode: 'contain',
   },
-
 });
 
 export default LoginScreen;
