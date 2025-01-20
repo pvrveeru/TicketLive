@@ -34,6 +34,15 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
     }
   };
 
+  const handleInputChange = (text: string): void => {
+    if (text.length <= 10) {
+      setPhoneNumber(text);
+    }
+    if (text.length === 10) {
+      Keyboard.dismiss();
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -51,7 +60,7 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               keyboardType="phone-pad"
               maxLength={10}
               value={phoneNumber}
-              onChangeText={setPhoneNumber}
+               onChangeText={handleInputChange}
             />
           </View>
           <TouchableOpacity style={styles.button} onPress={handleOtpRequest}>

@@ -6,10 +6,13 @@ import {
   StyleSheet,
   Image,
   Alert,
+  Keyboard,
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import OtpInput from './OtpInput';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 type RootStackParamList = {
   Login: undefined;
   OtpVerification: { phoneNumber: string };
@@ -23,10 +26,18 @@ const OtpVerificationScreen: React.FC<Props> = ({ route, navigation }) => {
   const { phoneNumber } = route.params;
   const [otp, setOtp] = useState<string>('');
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     if (otp.length === 5) {
-      // Navigate to BottomBar screen
-      navigation.navigate('BottomBar');
+      const userId = '1';
+      const userData = { phoneNumber, userId };
+
+      try {
+        await AsyncStorage.setItem('userData', JSON.stringify(userData));
+        navigation.navigate('BottomBar');
+      } catch (error) {
+        console.error('Error storing data in AsyncStorage:', error);
+        Alert.alert('Error', 'Failed to store data. Please try again.');
+      }
     } else {
       Alert.alert('Invalid OTP', 'Please enter a 5-digit OTP.');
     }
@@ -35,6 +46,9 @@ const OtpVerificationScreen: React.FC<Props> = ({ route, navigation }) => {
   const handleOtpChange = (text: string) => {
     if (text.length <= 5) {
       setOtp(text);
+    }
+    if (text.length === 5) {
+      Keyboard.dismiss();
     }
   };
 

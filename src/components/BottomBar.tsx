@@ -7,6 +7,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import ExploreScreen from '../screens/ExploreScreen';
 import FavoritiesScreen from '../screens/Favorities';
 import TicketsScreen from '../screens/TicketsScreen';
+import { useTheme } from '../Theme/ThemeContext'; // Import the useTheme hook
 
 const Tab = createBottomTabNavigator();
 
@@ -47,13 +48,18 @@ const getTabBarIcon = (routeName: string, focused: boolean, color: string, size:
 };
 
 const BottomBar = () => {
+    const { isDarkMode } = useTheme(); // Get the current theme from context
+
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
                 tabBarIcon: ({ focused, color, size }) =>
                     getTabBarIcon(route.name, focused, color, size),
-                tabBarActiveTintColor: '#EF412B',
-                tabBarInactiveTintColor: '#26276C',
+                tabBarActiveTintColor: isDarkMode ? '#EF412B' : '#EF412B', // Active icon color
+                tabBarInactiveTintColor: isDarkMode ? '#A6A6A6' : '#26276C', // Inactive icon color
+                tabBarStyle: {
+                    backgroundColor: isDarkMode ? '#333' : '#FFF', // Background color of the tab bar
+                },
                 headerShown: false,
             })}
         >

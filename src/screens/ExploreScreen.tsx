@@ -7,12 +7,15 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { COLORS } from '../styles/globalstyles';
+import { useTheme } from '../Theme/ThemeContext';
 
 type Product = {
   id: number;
@@ -31,26 +34,46 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'ExploreDeta
 const ExploreScreen: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState<string>('');
+  const [likedProducts, setLikedProducts] = useState<number[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const navigation = useNavigation<NavigationProp>();
+  const { isDarkMode } = useTheme();
 
   useEffect(() => {
-    // Fetch products
+    setLoading(true);
     axios
       .get<Product[]>('https://fakestoreapi.com/products')
-      .then((response) => setProducts(response.data))
-      .catch((error) => console.error(error));
+      .then((response) => {
+        setProducts(response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setLoading(false);
+      });
   }, []);
 
-  // Filter products based on search
+  const toggleLike = (productId: number) => {
+    setLikedProducts((prev) =>
+      prev.includes(productId)
+        ? prev.filter((id) => id !== productId)
+        : [...prev, productId]
+    );
+  };
+
   const filteredProducts = products.filter((product) =>
     product.title.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDarkMode ? styles.darkContainer : styles.lightContainer]}>
       <View style={styles.serach}>
-        <Text style={styles.head}>Search</Text>
-        <MaterialCommunityIcons name="dots-horizontal-circle-outline" color="#000" size={24} />
+        <Text style={[styles.head, isDarkMode ? styles.darkText : styles.lightText]}>Search</Text>
+        <MaterialCommunityIcons
+          name="dots-horizontal-circle-outline"
+          color={isDarkMode ? 'white' : 'black'}
+          size={24}
+        />
       </View>
       <View style={styles.searchContainer}>
         <Icon name="search" size={30} color="#888" style={styles.icon} />
@@ -61,38 +84,67 @@ const ExploreScreen: React.FC = () => {
           onChangeText={setSearch}
         />
       </View>
-      <Text style={styles.len}>{filteredProducts.length} found</Text>
 
-      <FlatList
-        data={filteredProducts}
-        renderItem={({ item }) => {
-          const currentDateTime = new Date().toLocaleString();
-          return (
-            <TouchableOpacity
-              style={styles.card}
-              onPress={() => navigation.navigate('ExploreDetails', { item })}
-            >
-              <View>
-                <Image source={{ uri: item.image }} style={styles.productImage} />
-                <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.dateTime}>{currentDateTime}</Text> {/* Add Date and Time */}
-              </View>
-            </TouchableOpacity>
-          );
-        }}
-        keyExtractor={(item) => item.id.toString()}
-        numColumns={2}
-        contentContainerStyle={styles.list}
-        showsVerticalScrollIndicator
-      />
+      {loading ? (
+        <ActivityIndicator size="large" color={COLORS.red} style={styles.loader} />
+      ) : (
+        <>
+          <Text style={[styles.len, isDarkMode ? styles.darkText : styles.lightText]}>
+            {filteredProducts.length} found
+          </Text>
+
+          <FlatList
+            data={filteredProducts}
+            renderItem={({ item }) => {
+              const isLiked = likedProducts.includes(item.id);
+              const currentDateTime = new Date().toLocaleString();
+              return (
+                <TouchableOpacity
+                  style={[styles.card, isDarkMode ? styles.darkCard : styles.lightCard]}
+                  onPress={() => navigation.navigate('ExploreDetails', { item })}
+                >
+                  <View>
+                    <Image source={{ uri: item.image }} style={styles.productImage} />
+                    <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>
+                      {item.title}
+                    </Text>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                      <Text style={styles.dateTime}>{currentDateTime}</Text>
+                      <TouchableOpacity
+                        // style={styles.heartIcon}
+                        onPress={() => toggleLike(item.id)}
+                      >
+                        <Icon
+                          name="heart"
+                          size={24}
+                          color={isLiked ? COLORS.red : '#fff'}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              );
+            }}
+            keyExtractor={(item) => item.id.toString()}
+            numColumns={2}
+            contentContainerStyle={styles.list}
+            showsVerticalScrollIndicator
+          />
+        </>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, // Ensures FlatList takes up remaining space
+    flex: 1,
     padding: 10,
+  },
+  darkContainer: {
+    backgroundColor: '#333',
+  },
+  lightContainer: {
     backgroundColor: '#fff',
   },
   searchContainer: {
@@ -118,10 +170,15 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 5,
     padding: 10,
-    backgroundColor: '#fff',
     borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  lightCard: {
+    backgroundColor: '#fff',
+  },
+  darkCard: {
+    backgroundColor: '#888',
   },
   title: {
     fontSize: 14,
@@ -148,17 +205,33 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
+  darkText: {
+    color: 'white',
+  },
+  lightText: {
+    color: 'black',
+  },
   serach: {
-    flexDirection: 'row', // Aligns items horizontally
-    alignItems: 'center', // Ensures vertical alignment
-    justifyContent: 'space-between', // Adjust spacing between items (if needed)
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingRight: 30,
-    marginBottom: 10, // Add margin to avoid overlapping with FlatList
+    marginBottom: 10,
   },
   dateTime: {
     fontSize: 12,
-    color: 'red',
+    color: COLORS.red,
     marginTop: 5,
+  },
+  loader: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  heartIcon: {
+    position: 'absolute',
+    bottom: 10,
+    right: 5,
   },
 });
 

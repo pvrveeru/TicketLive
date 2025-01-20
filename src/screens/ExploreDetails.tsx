@@ -1,6 +1,9 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
-import { RouteProp } from '@react-navigation/native';
+import { View, Text, Image, StyleSheet, Button } from 'react-native';
+import { RouteProp, useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useTheme } from '../Theme/ThemeContext';
+import { RootStackParamList } from '../navigation/AppNavigator';
 
 type Product = {
   id: number;
@@ -16,23 +19,35 @@ type ExploreDetailsProps = {
   route: ExploreDetailsRouteProp;
 };
 
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'ExploreDetails'>;
+
 const ExploreDetails: React.FC<ExploreDetailsProps> = ({ route }) => {
+  const { isDarkMode } = useTheme();
   const { item } = route.params;
+  const navigation = useNavigation<NavigationProp>();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: isDarkMode ? '#121212' : '#fff' }]}>
       <View style={styles.imageWrapper}>
         <Image source={{ uri: item.image }} style={styles.image} />
         <Text style={styles.title}>Hybrid Model</Text>
       </View>
 
       <View>
-        <Text style={styles.about}>About Event</Text>
-        <Text>{item.description}</Text>
+        <Text style={[styles.about, { color: isDarkMode ? '#fff' : '#000' }]}>About Event</Text>
+        <Text style={{ color: isDarkMode ? '#ccc' : '#000' }}>{item.description}</Text>
       </View>
 
       <View>
-        <Text style={styles.location}>Location</Text>
+        <Text style={[styles.location, { color: isDarkMode ? '#fff' : '#000' }]}>Location</Text>
+      </View>
+
+      <View style={styles.buttonWrapper}>
+        <Button
+          title="Book Event"
+          onPress={() => navigation.navigate('BookEventScreen', { item })}
+          color={isDarkMode ? '#6200ee' : '#007bff'}
+        />
       </View>
     </View>
   );
@@ -42,46 +57,43 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 50,
-    elevation: 7,
     paddingHorizontal: 16,
-    backgroundColor: '#fff',
   },
   imageWrapper: {
-    position: 'relative', // Enables positioning inside this container
+    position: 'relative',
   },
   image: {
-    width: 400,
+    width: '100%',
     height: 300,
-    alignSelf: 'center',
     marginBottom: 20,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    borderBottomLeftRadius: 30,
+    borderRadius: 30,
     backgroundColor: 'black',
   },
   title: {
-    position: 'absolute', // Allows the title to be positioned over the image
-    right: 10, // Position the title on the right side of the image
-    top: 230, // Adjust the vertical alignment of the title
+    position: 'absolute',
+    right: 10,
+    top: 230,
     fontSize: 18,
     fontWeight: 'bold',
     color: 'white',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Add a semi-transparent background for readability
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     padding: 10,
-    borderTopLeftRadius: 30,
-    borderBottomLeftRadius: 30,
+    borderRadius: 10,
   },
   about: {
     fontWeight: 'bold',
-    color: 'black',
     fontSize: 20,
     paddingTop: 20,
   },
   location: {
     fontWeight: 'bold',
-    color: 'black',
     fontSize: 20,
     paddingTop: 20,
+  },
+  buttonWrapper: {
+    marginTop: 20,
+    alignSelf: 'center',
+    width: '100%',
   },
 });
 
