@@ -1,139 +1,222 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
-import { COLORS } from '../styles/globalstyles';
-import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { getSeatingOptionsByEventId } from '../services/Apiservices';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { RootStackParamList } from '../navigation/AppNavigator';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from '../Theme/ThemeContext';
 
-type BookEventScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'EventBookingDetails'>;
-
-interface Zone {
-    name: string;
-    type: string;
-    color: string;
-    widthPercentage: number;
+interface RouteParams {
+    eventId: number;
 }
 
-const zones: Zone[] = [
-    { name: 'Stage', color: '#FFFFFF', widthPercentage: 40, type: '(Main Area)' },
-    { name: 'MIP ZONE', type: '(Sofa Seated)', color: '#FFFF00', widthPercentage: 50 },
-    { name: 'VIP ZONE', type: '(Chair Seated)', color: '#FF69B4', widthPercentage: 60 },
-    { name: 'PLATINUM ZONE', type: '(Chair Seated)', color: '#FFA07A', widthPercentage: 70 },
-    { name: 'GOLD ZONE', type: '(Standing Area)', color: '#FFD700', widthPercentage: 80 },
-    { name: 'SILVER ZONE', type: '(Standing Area)', color: '#D3D3D3', widthPercentage: 90 },
-];
+interface SeatingOption {
+    seatingId: number;
+    zoneName: string;
+    price: string;
+    capacity: number;
+}
 
 const BookEventScreen: React.FC = () => {
+    const route = useRoute();
     const { isDarkMode } = useTheme();
-    const navigation = useNavigation<BookEventScreenNavigationProp>();
-    const [numSeats, setNumSeats] = useState(1);
-    const [selectedZone, setSelectedZone] = useState<string | null>(null);
+    const navigation = useNavigation<any>();
+    const { eventId } = route.params as RouteParams;
 
-    const handleIncrement = () => {
-        if (numSeats < 5) {
-            setNumSeats(prev => prev + 1);
+    const [seatingOptions, setSeatingOptions] = useState<SeatingOption[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [quantity, setQuantity] = useState<{ [key: number]: number }>({}); // Track quantity per zone
+    const [selectedZones, setSelectedZones] = useState<SeatingOption[]>([]); // Track selected zones
+
+    useEffect(() => {
+        const fetchSeatingOptions = async () => {
+            try {
+                const options = await getSeatingOptionsByEventId(eventId);
+                if (Array.isArray(options)) {
+                    setSeatingOptions(options);
+                } else {
+                    console.error('API returned data in unexpected format:', options);
+                }
+            } catch (error) {
+                console.error('Error fetching seating options:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchSeatingOptions();
+    }, [eventId]);
+
+    const toggleZoneSelection = (zone: SeatingOption) => {
+        if (selectedZones.some((selectedZone) => selectedZone.seatingId === zone.seatingId)) {
+            // Deselect zone
+            setSelectedZones(selectedZones.filter((selectedZone) => selectedZone.seatingId !== zone.seatingId));
+            const newQuantity = { ...quantity };
+            delete newQuantity[zone.seatingId];
+            setQuantity(newQuantity);
+        } else {
+            // Select zone
+            setSelectedZones([...selectedZones, zone]);
+            setQuantity((prev) => ({ ...prev, [zone.seatingId]: 1 })); // Default to 1 ticket for the selected zone
         }
     };
 
-    const handleDecrement = () => {
-        if (numSeats > 1) {
-            setNumSeats(prev => prev - 1);
+    const incrementQuantity = (zoneId: number) => {
+        if (quantity[zoneId] < 5) {
+            setQuantity((prev) => ({ ...prev, [zoneId]: prev[zoneId] + 1 }));
         }
     };
 
-    const handleZonePress = (zoneName: string) => setSelectedZone(zoneName);
-
-    const totalPrice = numSeats * 500;
-
-    const handleContinuePress = () => {
-        if (selectedZone) {
-            navigation.navigate('EventBookingDetails', {
-                selectedZone,
-                numSeats,
-                totalPrice,
-            });
+    const decrementQuantity = (zoneId: number) => {
+        if (quantity[zoneId] > 1) {
+            setQuantity((prev) => ({ ...prev, [zoneId]: prev[zoneId] - 1 }));
         }
     };
 
+    // const handleContinue = () => {
+    //     selectedZones.forEach((zone) => {
+    //         const totalPrice = parseFloat(zone.price) * (quantity[zone.seatingId] || 1);
+    //         console.log(`Zone: ${zone.zoneName}, Tickets: ${quantity[zone.seatingId]}, Total Price: $${totalPrice.toFixed(2)}`);
+    //         console.log({
+    //             seatingId: zone.seatingId,
+    //             noOfTickets: `${quantity[zone.seatingId]}`,
+    //             zoneName: zone.zoneName,
+    //         });
+    //     });
+
+    //     // // Navigate with selected zones and quantities
+    //     // navigation.navigate('EventBookingDetails', {
+    //     //     selectedZones,
+    //     //     quantity,
+    //     // });
+    // };
+
+    const handleContinue = () => {
+        const selectedSeatingIds: number[] = [];
+        const selectedZoneNames: string[] = [];
+        const selectedClass: string[] = [];
+        const ticketCounts: number[] = [];
+        const prices: number[] = [];
+        let totalAmount = 0; // To store the total amount
+
+        selectedZones.forEach((zone) => {
+            const tickets = quantity[zone.seatingId] || 1;
+            selectedSeatingIds.push(zone.seatingId);
+            selectedZoneNames.push(zone.zoneName);
+            selectedClass.push(zone.zoneName.split(' ')[0]); // Assuming the class is the first word of the zone name
+            ticketCounts.push(tickets);
+            prices.push(parseFloat(zone.price));
+
+            const totalPriceForZone = parseFloat(zone.price) * tickets;
+            totalAmount += totalPriceForZone;
+
+            // console.log(`Zone: ${zone.zoneName}, Tickets: ${tickets}, Price per Ticket: ₹${zone.price}, Total Price: ₹${totalPriceForZone.toFixed(2)}`);
+        });
+        const eventBookingDetails = {
+            seatingIds: selectedSeatingIds,
+            noOfTickets: ticketCounts,
+            selectedClass: selectedClass,
+            zoneNames: selectedZoneNames,
+            prices: prices,
+            totalAmount: totalAmount.toFixed(2),
+        };
+        navigation.navigate('EventBookingDetails', {
+            eventBookingDetails,
+            eventId,
+        });
+    };
+
+
+    if (loading) {
+        return (
+            <View style={styles.loaderContainer}>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+        );
+    }
+
+    if (seatingOptions.length === 0) {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.message}>No seating options available for this event.</Text>
+            </View>
+        );
+    }
+
+    console.log('seatingOptions', seatingOptions);
     return (
-        <ScrollView contentContainerStyle={[styles.container, { backgroundColor: isDarkMode ? '#333' : '#fff' }]}>
+        <View style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Icon name="arrow-back" size={30} color={isDarkMode ? '#fff' : '#333'} />
                 </TouchableOpacity>
-                <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#fff' }]}>Book Event</Text>
+                <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Book Event</Text>
             </View>
+            <Text style={styles.subTitle}>Choose number of seats</Text>
 
-            <View style={styles.seatSelection}>
-                <Text style={[styles.choosetext, { color: isDarkMode ? '#fff' : '#fff' }]}>Choose number of seats</Text>
-                <View style={styles.seatCounter}>
-                    <TouchableOpacity
-                        style={[styles.counterButton, { borderColor: isDarkMode ? '#fff' : '#fff' }]}
-                        onPress={handleDecrement}
-                    >
-                        <Text style={[styles.counterButtonText, { color: isDarkMode ? '#fff' : '#fff' }]}>-</Text>
-                    </TouchableOpacity>
-                    <Text style={[styles.seatCount, { color: isDarkMode ? '#fff' : '#fff' }]}>{numSeats}</Text>
-                    <TouchableOpacity
-                        style={[styles.counterButton, { borderColor: isDarkMode ? '#fff' : '#fff' }]}
-                        onPress={handleIncrement}
-                        disabled={numSeats >= 5}
-                    >
-                        <Text style={[styles.counterButtonText, { color: isDarkMode ? '#fff' : '#fff' }]}>+</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-            <View style={styles.zonesContainer}>
-                {zones.map((zone) => (
-                    <TouchableOpacity
-                        key={zone.name}
-                        style={[
-                            styles.zoneButton,
-                            { backgroundColor: zone.color, width: `${zone.widthPercentage}%` },
-                            selectedZone === zone.name && styles.selectedZone,
-                        ]}
-                        onPress={() => handleZonePress(zone.name)}
-                    >
-                        {selectedZone === zone.name && (
-                            <Icon name="checkmark-circle" size={20} color="green" style={styles.checkIcon} />
+            <FlatList
+                data={seatingOptions}
+                keyExtractor={(item) => item.seatingId.toString()}
+                renderItem={({ item }) => (
+                    <View>
+                        <TouchableOpacity
+                            style={[styles.zoneCard, { backgroundColor: selectedZones.some((zone) => zone.seatingId === item.seatingId) ? '#d3f3f7' : '#fff' }]}
+                            onPress={() => toggleZoneSelection(item)}
+                        >
+                            <Text style={styles.zoneName}>{item.zoneName}</Text>
+                            <Text style={styles.zonePrice}>Price: ${item.price}</Text>
+                            <Text style={styles.zoneCapacity}>Capacity: {item.capacity}</Text>
+                            {selectedZones.some((zone) => zone.seatingId === item.seatingId) && (
+                                <Icon name="checkmark-circle" size={30} color="#4caf50" style={styles.checkIcon} />
+                            )}
+                        </TouchableOpacity>
+                        {selectedZones.some((zone) => zone.seatingId === item.seatingId) && (
+                            <View style={styles.quantityContainer}>
+                                <TouchableOpacity
+                                    style={[styles.button, quantity[item.seatingId] === 1 && styles.disabledButton]}
+                                    onPress={() => decrementQuantity(item.seatingId)}
+                                    disabled={quantity[item.seatingId] === 1}
+                                >
+                                    <Text style={styles.buttonText}>-</Text>
+                                </TouchableOpacity>
+                                <Text style={styles.quantityText}>{quantity[item.seatingId]}</Text>
+                                <TouchableOpacity
+                                    style={[styles.button, quantity[item.seatingId] === 5 && styles.disabledButton]}
+                                    onPress={() => incrementQuantity(item.seatingId)}
+                                    disabled={quantity[item.seatingId] === 5}
+                                >
+                                    <Text style={styles.buttonText}>+</Text>
+                                </TouchableOpacity>
+                            </View>
                         )}
-                        <Text style={styles.zoneName}>{zone.name}</Text>
-                        <Text style={styles.zoneType}>{zone.type}</Text>
-                    </TouchableOpacity>
-                ))}
-            </View>
+                    </View>
+                )}
+            />
 
             <TouchableOpacity
-                style={[styles.continueButton, !selectedZone && styles.disabledButton]}
-                disabled={!selectedZone}
-                onPress={handleContinuePress}
+                style={styles.continueButton}
+                onPress={handleContinue}
+                disabled={selectedZones.length === 0}
             >
-                <Text style={styles.continueButtonText}>Continue - {totalPrice}.00</Text>
+                <Text style={styles.continueButtonText}>
+                    Continue - $
+                    {selectedZones.reduce((total, zone) => total + parseFloat(zone.price) * (quantity[zone.seatingId] || 1), 0).toFixed(2)}
+                </Text>
             </TouchableOpacity>
-        </ScrollView>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
-    checkIcon: {
-        position: 'absolute',
-        top: 5,
-        right: 5,
-    },
     container: {
-        flexGrow: 1,
-        padding: 20,
-        backgroundColor: '#fff',
-        alignItems: 'center',
+        flex: 1,
+        padding: 16,
+        backgroundColor: '#f9f9f9',
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         width: '100%',
-        marginBottom: 20,
+        marginBottom: 10,
     },
     headerText: {
         fontSize: 24,
@@ -141,72 +224,85 @@ const styles = StyleSheet.create({
         flex: 1,
         textAlign: 'center',
     },
-    choosetext: {
-        fontSize: 20,
-    },
-    seatSelection: {
-        width: '100%',
-        marginBottom: 20,
+    loaderContainer: {
+        flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
     },
-    seatCounter: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 10,
-    },
-    counterButton: {
-        borderWidth: 1,
-        borderColor: COLORS.blue,
-        paddingHorizontal: 15,
-        paddingVertical: 5,
-        borderRadius: 10,
-        marginHorizontal: 5,
-    },
-    counterButtonText: {
-        fontSize: 20,
-    },
-    seatCount: {
+    subTitle: {
         fontSize: 18,
-        marginHorizontal: 10,
+        fontWeight: 'bold',
+        marginBottom: 16,
     },
-    zonesContainer: {
-        width: '100%',
-        marginBottom: 20,
-        alignItems: 'center',
-    },
-    zoneButton: {
-        padding: 15,
+    zoneCard: {
+        padding: 16,
         borderRadius: 8,
-        marginBottom: 10,
-        alignItems: 'center',
-        borderWidth: 2,
-        borderColor: 'black',
-    },
-    selectedZone: {
-        borderWidth: 2,
-        borderColor: 'black',
+        marginBottom: 12,
+        borderWidth: 1,
+        borderColor: '#ccc',
     },
     zoneName: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: 'bold',
+        color: '#000',
     },
-    zoneType: {
+    zonePrice: {
+        fontSize: 16,
+        color: '#333',
+        marginTop: 4,
+    },
+    zoneCapacity: {
         fontSize: 14,
+        color: '#666',
+        marginTop: 4,
     },
-    continueButton: {
-        backgroundColor: '#FF6347',
-        padding: 15,
-        borderRadius: 8,
-        width: '90%',
+    checkIcon: {
+        position: 'absolute',
+        top: 10,
+        right: 10,
+    },
+    quantityContainer: {
+        flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 10,
+    },
+    button: {
+        width: 40,
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#f0f0f0',
+        borderRadius: 8,
     },
     disabledButton: {
-        opacity: 0.5,
+        backgroundColor: '#ddd',
+    },
+    buttonText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#000',
+    },
+    quantityText: {
+        fontSize: 20,
+        marginHorizontal: 20,
+    },
+    continueButton: {
+        backgroundColor: '#ff6f61',
+        padding: 16,
+        alignItems: 'center',
+        borderRadius: 8,
+        marginTop: 20,
     },
     continueButtonText: {
-        color: 'white',
         fontSize: 16,
         fontWeight: 'bold',
+        color: '#fff',
+    },
+    message: {
+        fontSize: 16,
+        textAlign: 'center',
+        marginTop: 20,
     },
 });
 

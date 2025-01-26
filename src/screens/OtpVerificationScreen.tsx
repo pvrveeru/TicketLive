@@ -12,42 +12,56 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import OtpInput from './OtpInput';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../Redux/Store';
+import { validateOtp } from '../services/Apiservices';
+import { getUserData } from '../Redux/Actions';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type RootStackParamList = {
   Login: undefined;
-  OtpVerification: { phoneNumber: string };
+  OtpVerification: undefined;
   BottomBar: undefined;
 };
 
-type Props = NativeStackScreenProps<RootStackParamList, 'OtpVerification'>;
-
-const OtpVerificationScreen: React.FC<Props> = ({ route, navigation }) => {
+const OtpVerificationScreen: React.FC = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const dispatch = useDispatch();
   const Logo = require('../../assests/images/ticketliv_logo.png');
-  const { phoneNumber } = route.params;
-  const [otp, setOtp] = useState<string>('');
+  // const { phoneNumber } = route.params;
+  const mobileNumber = useSelector((state: RootState) => state.mobile);
+  const otpCode = useSelector((state: RootState) => state.otpCode);
+  const [otp, setOtp] = useState<string>(otpCode || '');
 
-  const handleVerify = async () => {
-    if (otp.length === 5) {
-      const userId = '1';
-      const userData = { phoneNumber, userId };
-
+  const handleVerifyOtp = async () => {
+    const phoneNumber = mobileNumber;
+    if (otp.length === 6) {
       try {
-        await AsyncStorage.setItem('userData', JSON.stringify(userData));
+        const userData = await validateOtp(phoneNumber, otp);
+        dispatch(getUserData(userData));
+        console.log('userData', userData.accessToken);
+        await AsyncStorage.setItem('isLoggedIn', 'true');
+        await AsyncStorage.setItem(
+          'userData',
+          JSON.stringify(userData),
+        );
+        await AsyncStorage.setItem('acessToken', userData.accessToken);
+        Alert.alert('Success', 'OTP verified successfully!');
         navigation.navigate('BottomBar');
       } catch (error) {
-        console.error('Error storing data in AsyncStorage:', error);
-        Alert.alert('Error', 'Failed to store data. Please try again.');
+        console.log('Error', error);
       }
     } else {
-      Alert.alert('Invalid OTP', 'Please enter a 5-digit OTP.');
+      Alert.alert('Error', 'Please enter a valid 6-digit OTP.');
     }
   };
 
   const handleOtpChange = (text: string) => {
-    if (text.length <= 5) {
+    if (text.length <= 6) {
       setOtp(text);
     }
-    if (text.length === 5) {
+    if (text.length === 6) {
       Keyboard.dismiss();
     }
   };
@@ -60,20 +74,19 @@ const OtpVerificationScreen: React.FC<Props> = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-        {/* <Text>{'< Back'}</Text> */}
         <AntDesign name="arrowleft" size={30} color="#000" />
       </TouchableOpacity>
       <Image source={Logo} style={styles.logo} />
       <Text style={styles.title}>Mobile verification has successfully done</Text>
       <Text style={styles.subtitle}>
-        We have sent the OTP on {phoneNumber}. It will apply auto to the fields.
+        We have sent the OTP on {mobileNumber}. It will apply auto to the fields.
       </Text>
       <OtpInput
         otpCode={otp}
         onChange={handleOtpChange}
         onBlur={handleOtpBlur}
         // error={error}
-        maxLength={5}
+        maxLength={6}
         size="large"
         disabled={false}
       />
@@ -84,7 +97,7 @@ const OtpVerificationScreen: React.FC<Props> = ({ route, navigation }) => {
           Resend
         </Text>
       </Text>
-      <TouchableOpacity style={styles.button} onPress={handleVerify}>
+      <TouchableOpacity style={styles.button} onPress={handleVerifyOtp}>
         <Text style={styles.buttonText}>Verify</Text>
       </TouchableOpacity>
     </View>

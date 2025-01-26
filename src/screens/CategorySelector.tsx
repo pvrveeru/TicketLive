@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   eventDate: {
-    width: '70%', // Fixed width for the event date
+    width: '70%',
     fontSize: 14,
     color: COLORS.red,
     fontWeight: 'bold',

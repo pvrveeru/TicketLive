@@ -1,130 +1,143 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { COLORS } from '../styles/globalstyles';
+import { getBookingsByUserId } from '../services/Apiservices';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { COLORS } from '../styles/globalstyles';
 import { useTheme } from '../Theme/ThemeContext';
+import moment from 'moment';
+import { useSelector } from 'react-redux';
 
-interface Ticket {
-  id: number;
+type RootStackParamList = {
+  TicketDetails: { bookingId: number };
+  Notification: undefined;
+};
+
+type Booking = {
+  bookingDate: string;
+  bookingId: number;
+  bookingStatus: string;
+  contactPersonAddress: string | null;
+  contactPersonCity: string | null;
+  contactPersonDOB: string | null;
+  contactPersonEmail: string;
+  contactPersonFirstName: string;
+  contactPersonGender: string;
+  contactPersonLastName: string;
+  contactPersonPhone: string;
+  contactPersonState: string | null;
+  createdAt: string;
+  event: Event;
+  eventId: number;
+  noOfTickets: number;
+  paymentStatus: string;
+  selectedClass: string | null;
+  totalPrice: string | null;
+  updatedAt: string;
+  user: User;
+  userId: number;
+  zoneName: string | null;
+};
+
+type Event = {
+  event_date: string;
+  event_id: number;
   title: string;
-  date: string;
-  location: string;
-  status: string;
-  image: any;
+};
+
+type User = {
+  user_id: number;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+};
+
+interface UserData {
+  userId: string;
+}
+interface RootState {
+  userData: UserData;
 }
 
-const TicketsScreen: React.FC = () => {
-  const [selectedTab, setSelectedTab] = useState<string>('Upcoming');
-  const navigation = useNavigation<any>();
+const TicketsScreen = () => {
   const { isDarkMode } = useTheme();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedTab, setSelectedTab] = useState<string>('Upcoming');
+  const userData = useSelector((state: RootState) => state.userData);
+  const userId = userData.userId;
+  const formatDate = (dateString: string) => {
+    return moment(dateString).format('MMMM DD, YYYY hh:mm A');
+  };
+
+  const fetchBookings = async () => {
+    setIsLoading(true);
+    try {
+      const data = await getBookingsByUserId(userId);
+      setBookings(data);
+    } catch (error) {
+      console.error('error fetching bookings', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBookings();
+  }, []);
+
+  const handleViewTicket = (bookingId: number) => {
+    navigation.navigate('TicketDetails', { bookingId });
+  };
+
+  const handleCancelBooking = (bookingId: number) => {
+    Alert.alert(`Cancel booking with ID: ${bookingId}`);
+  };
 
   const handleNotificationPress = () => {
     navigation.navigate('Notification');
   };
 
-  const ticketsData: Ticket[] = [
-    {
-      id: 1,
-      title: 'Ultrafest Music Events',
-      date: 'Med. Dec 08/2023',
-      location: 'Washington Ave.',
-      status: 'Upcoming',
-      image: require('../../assests/images/ticketliv_logo.png'),
-    },
-    {
-      id: 2,
-      title: 'Concert Westlife',
-      date: 'Med. Dec 06/2025',
-      location: 'Thornridge Cir.',
-      status: 'Completed',
-      image: require('../../assests/images/ticketliv_logo.png'),
-    },
-    {
-      id: 3,
-      title: 'Festival Parade',
-      date: 'Med. Nov 15/2023',
-      location: 'Baker St.',
-      status: 'Cancelled',
-      image: require('../../assests/images/ticketliv_logo.png'),
-    },
-    {
-      id: 4,
-      title: 'Jazz Night',
-      date: 'Med. Jan 12/2024',
-      location: '5th Avenue',
-      status: 'Upcoming',
-      image: require('../../assests/images/ticketliv_logo.png'),
-    },
-  ];
+  // console.log('bookings', bookings);
+  const renderBookingItem = ({ item }: { item: Booking }) => {
+    // Extracting required data from item
+    const { event, paymentStatus } = item;
+    const eventTitle = event?.title || 'No Title';
+    const eventDate = event?.event_date || 'No Date';
+    // const eventLocation = event?.location || 'No Location'; // Fallback if location is undefined
 
-  const filterTickets = (status: string) => {
-    return ticketsData.filter((ticket) => ticket.status === status);
-  };
-
-  const handleCancelBooking = (ticketId: number) => {
-    Alert.alert('Cancel Booking', 'Are you sure you want to cancel this booking?', [
-      { text: 'No' },
-      {
-        text: 'Yes',
-        onPress: () => {
-          Alert.alert('Booking Cancelled', `Your booking for ticket ID ${ticketId} has been cancelled.`);
-        },
-      },
-    ]);
-  };
-
-  const handleViewTicket = (ticket: Ticket) => {
-    navigation.navigate('TicketDetails', { ticket });
-  };
-
-  const renderTicketItem = ({ item }: { item: Ticket }) => (
-    <View style={[styles.ticketContainer, { backgroundColor: isDarkMode ? '#444' : '#fff' }]}>
-      {/* Row containing image and details */}
-      <View style={styles.rowContainer}>
-        <View style={styles.ticketImageContainer}>
-          <Image source={item.image} style={styles.ticketImage} resizeMode="cover" />
-        </View>
-        <View style={styles.ticketDetails}>
-          <Text style={[styles.ticketTitle, { color: isDarkMode ? '#fff' : '#333' }]}>{item.title}</Text>
-          <Text style={[styles.ticketInfo, { color: isDarkMode ? '#bbb' : '#666' }]}>{item.date}</Text>
-          <Text style={[styles.ticketInfo, { color: isDarkMode ? '#bbb' : '#666' }]}>{item.location}</Text>
-          <Text
-            style={[
-              styles.ticketStatus,
-              item.status === 'Paid' ? styles.statusPaid : styles.statusCancelled,
-              { color: isDarkMode ? '#fff' : item.status === 'Paid' ? 'green' : 'red' },
-            ]}
+    return (
+      <>
+        <View style={styles.bookingItem}>
+          <Text style={styles.title}>{eventTitle}</Text>
+          <Text style={styles.detail}>{formatDate(eventDate)}</Text>
+          {/* <Text style={styles.detail}>Location: {eventLocation}</Text> */}
+          <Text style={styles.detail}>{paymentStatus}</Text>
+          <View style={styles.buttons}>
+            {/* <TouchableOpacity
+            style={[styles.cancelButton, { borderColor: isDarkMode ? '#fff' : COLORS.blue }]}
+            onPress={() => handleCancelBooking(item.bookingId)}
           >
-            {item.status}
-          </Text>
+            <Text style={[styles.buttonText, { color: isDarkMode ? '#fff' : COLORS.blue }]}>
+              Cancel Booking
+            </Text>
+          </TouchableOpacity> */}
+            <TouchableOpacity
+              style={[styles.viewButton, { backgroundColor: isDarkMode ? '#EF412B' : COLORS.red }]}
+              onPress={() => handleViewTicket(item.bookingId)}
+            >
+              <Text style={styles.buttonText}>View Ticket</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-  
-      {/* Buttons Section below the row */}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={[styles.cancelButton, { borderColor: isDarkMode ? '#fff' : COLORS.blue }]}
-          onPress={() => handleCancelBooking(item.id)}
-          disabled={item.status !== 'Upcoming'}
-        >
-          <Text style={[styles.cancelButtonText, { color: isDarkMode ? '#fff' : COLORS.blue }]}>
-            Cancel Booking
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.viewButton, { backgroundColor: isDarkMode ? '#EF412B' : COLORS.red }]}
-          onPress={() => handleViewTicket(item)} // Pass ticket item to handleViewTicket
-        >
-          <Text style={styles.viewButtonText}>View Ticket</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-  
+      </>
+    );
+  };
 
   return (
-    <View style={[styles.container, { backgroundColor: isDarkMode ? '#333' : '#fff' }]}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <Text style={[styles.headerTitle, { color: isDarkMode ? '#fff' : '#000' }]}>My Tickets</Text>
         <TouchableOpacity style={styles.bellIconContainer} onPress={handleNotificationPress}>
@@ -132,7 +145,7 @@ const TicketsScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
       <View style={styles.tabBar}>
-        {['Upcoming', 'Completed', 'Cancelled'].map((tab) => (
+        {['Upcoming', 'Completed'].map((tab) => (
           <TouchableOpacity
             key={tab}
             style={[styles.tabItem, selectedTab === tab && styles.selectedTab]}
@@ -145,13 +158,15 @@ const TicketsScreen: React.FC = () => {
         ))}
       </View>
 
-      {/* Ticket List */}
-      <FlatList
-        data={filterTickets(selectedTab)}
-        renderItem={renderTicketItem}
-        keyExtractor={(item) => item.id.toString()}
-        ListEmptyComponent={<Text style={styles.noTicketsText}>No tickets available</Text>}
-      />
+      {isLoading ? (
+        <Text style={styles.loadingText}>Loading...</Text>
+      ) : (
+        <FlatList
+          data={bookings}
+          keyExtractor={(item, index) => item.bookingId?.toString() || index.toString()}
+          renderItem={renderBookingItem}
+        />
+      )}
     </View>
   );
 };
@@ -159,8 +174,72 @@ const TicketsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 16,
-    paddingTop: 20,
+    padding: 16,
+    backgroundColor: '#fff',
+  },
+  loadingText: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  card: {
+    flexDirection: 'row',
+    marginBottom: 16,
+    borderRadius: 8,
+    backgroundColor: '#f9f9f9',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  image: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+  },
+  details: {
+    flex: 1,
+    padding: 8,
+  },
+  eventName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  eventDate: {
+    fontSize: 14,
+    color: '#555',
+  },
+  location: {
+    fontSize: 14,
+    color: '#777',
+  },
+  paymentStatus: {
+    fontSize: 14,
+    color: '#4caf50', // Green for paid, customize based on status
+    fontWeight: 'bold',
+  },
+  buttons: {
+    flexDirection: 'row',
+    marginTop: 8,
+  },
+  cancelButton: {
+    flex: 1,
+    padding: 8,
+    backgroundColor: '#ff4d4d',
+    borderRadius: 4,
+    marginRight: 4,
+  },
+  viewButton: {
+    flex: 1,
+    padding: 8,
+    backgroundColor: '#ff8533',
+    borderRadius: 4,
+  },
+  buttonText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
   header: {
     flexDirection: 'row',
@@ -199,88 +278,26 @@ const styles = StyleSheet.create({
     color: '#EF412B',
     fontWeight: 'bold',
   },
-  ticketContainer: {
-    padding: 10,
-    marginVertical: 8,
+  bookingItem: {
+    padding: 16,
+    marginBottom: 16,
+    backgroundColor: '#fff',
     borderRadius: 8,
-    elevation: 2,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 3,
   },
-  rowContainer: {
-    flexDirection: 'row', // Arrange image and details in a row
-    alignItems: 'center',
-  },
-  ticketImageContainer: {
-    width: 80,
-    height: 80,
-    marginRight: 10,
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  ticketImage: {
-    width: '100%',
-    height: '100%',
-  },
-  ticketDetails: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  ticketTitle: {
+  title: {
     fontSize: 16,
     fontWeight: 'bold',
+    marginBottom: 8,
   },
-  ticketInfo: {
+  detail: {
     fontSize: 14,
-    marginVertical: 2,
-  },
-  ticketStatus: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginTop: 4,
-  },
-  statusPaid: {
-    color: 'green',
-  },
-  statusCancelled: {
-    color: 'red',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  cancelButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 20,
-    borderWidth: 2,
-    width: '49%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  cancelButtonText: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  viewButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 20,
-    width: '49%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  viewButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  noTicketsText: {
-    textAlign: 'center',
-    color: '#888',
-    marginTop: 20,
-    fontSize: 16,
+    marginBottom: 4,
+    color: '#555',
   },
 });
 

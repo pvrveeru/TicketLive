@@ -1,137 +1,428 @@
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  FlatList,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  ActivityIndicator,
-} from 'react-native';
-import axios from 'axios';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { COLORS } from '../styles/globalstyles';
-import { useTheme } from '../Theme/ThemeContext';
+// import React, { useEffect, useState } from 'react';
+// import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput } from 'react-native';
+// import { useSelector } from 'react-redux';
+// import { RootState } from '../Redux/Store';
+// import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+// import { COLORS } from '../styles/globalstyles';
+// import { useTheme } from '../Theme/ThemeContext';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import { markEventAsDeleteFavorite, markEventAsFavorite } from '../services/Apiservices';
+// import { useNavigation } from '@react-navigation/native';
+// import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-type Product = {
-  id: number;
-  title: string;
-  price: number;
-  description: string;
-  image: string;
+// interface Events {
+//   ageLimit: string;
+//   artistName: string;
+//   brief: string;
+//   city: string;
+//   createdAt: string;
+//   description: string;
+//   duration: string;
+//   endDate: string;
+//   eventDate: string;
+//   eventId: number;
+//   isFeatured: boolean;
+//   isManual: boolean;
+//   isPaid: boolean;
+//   isPopular: boolean;
+//   language: string;
+//   location: string;
+//   noOfTickets: number;
+//   startDate: string;
+//   state: string;
+//   status: string;
+//   thumbUrl: string | null;
+//   title: string;
+//   type: string;
+//   updatedAt: string;
+// }
+// type RootStackParamList = {
+//   EventDetails: { eventId: number };
+// };
+
+// const ExploreScreen: React.FC = () => {
+//   const events = useSelector((state: RootState) => state.eventsData);
+//   const { isDarkMode } = useTheme();
+//    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+//   const [searchTerm, setSearchTerm] = useState('');
+//   const [userId, setUserId] = useState<string | null>(null);
+//   const [favorites, setFavorites] = useState<{ [key: number]: boolean }>({});  // Track favorites
+
+//   console.log('userId', userId);
+
+//   useEffect(() => {
+//     const getUserId = async () => {
+//       try {
+//         const userData = await AsyncStorage.getItem('userData');
+//         if (userData) {
+//           const parsedData = JSON.parse(userData);
+//           setUserId(parsedData.userId); // Ensure your AsyncStorage data contains `userId`
+//         }
+//       } catch (error) {
+//         console.error('Error fetching user data from AsyncStorage:', error);
+//       }
+//     };
+
+//     getUserId();
+//   }, []);
+
+//   const handleEventPress = (eventId: number) => {
+//     // Handle event press (e.g., navigate to event details)
+//     navigation.navigate('EventDetails', { eventId });
+//   };
+
+//   const handleFavoritePress = async (eventId: number) => {
+//     if (userId) {
+//       try {
+//         if (favorites[eventId]) {
+//           // Delete favorite if it's already marked
+//           const response = await markEventAsDeleteFavorite(Number(userId), eventId);
+//           console.log('Deleted favorite:', response);
+//         } else {
+//           // Add to favorites if not already marked
+//           const data = {
+//             userId: Number(userId),
+//             eventId: eventId,
+//           };
+//           const response = await markEventAsFavorite(data);
+//           console.log('Added favorite:', response);
+//         }
+//         // Update local state
+//         setFavorites((prevFavorites) => ({
+//           ...prevFavorites,
+//           [eventId]: !prevFavorites[eventId],
+//         }));
+//       } catch (error) {
+//         console.error('Error toggling favorite status:', error);
+//       }
+//     } else {
+//       console.log('User is not logged in.');
+//     }
+//   };
+
+
+//   const formatEventDateTime = (date: string) => {
+//     const eventDate = new Date(date);
+//     return eventDate.toLocaleString();
+//   };
+
+//   const renderEventItem = (item: Events) => {
+//     const isFavorite = favorites[item.eventId] || item.isPopular;  // Check if event is a favorite
+
+//     return (
+//       <TouchableOpacity
+//         key={item.eventId}
+//         style={[styles.eventContainer, { backgroundColor: isDarkMode ? 'gray' : '#fff' }]}
+//         onPress={() => handleEventPress(item.eventId)}
+//       >
+//         <View style={styles.eventDetails}>
+//           {item.thumbUrl ? (
+//             <Image source={{ uri: item.thumbUrl }} style={styles.eventImage} />
+//           ) : (
+//             <Image source={require('../../assests/images/altimg.jpg')} style={styles.eventImage} />
+//           )}
+//           <Text style={[styles.eventTitle, { color: isDarkMode ? '#fff' : '#000' }]}>{item.title}</Text>
+//           <Text style={[styles.eventType, { color: isDarkMode ? '#fff' : '#000' }]}>
+//             {item.city} {item.state}
+//           </Text>
+//           <View style={styles.eventFooter}>
+//             <Text style={styles.eventDate}>
+//               {formatEventDateTime(item.eventDate)}
+//             </Text>
+//             <TouchableOpacity
+//               onPress={() => handleFavoritePress(item.eventId)}
+//               style={styles.favoriteIconContainer}
+//             >
+//               <Icon
+//                 name={isFavorite ? 'heart' : 'heart-outline'}
+//                 size={30}
+//                 color={isFavorite ? 'red' : '#000'}
+//               />
+//             </TouchableOpacity>
+//           </View>
+//         </View>
+//       </TouchableOpacity>
+//     );
+//   };
+
+//   const filteredEvents = events.filter((event) => {
+//     const searchText = searchTerm.toLowerCase();
+//     return (
+//       event.title.toLowerCase().includes(searchText) ||
+//       event.city.toLowerCase().includes(searchText) ||
+//       event.state.toLowerCase().includes(searchText) ||
+//       event.description.toLowerCase().includes(searchText)
+//     );
+//   });
+
+//   // Group filtered events into pairs for each row
+//   const groupedEvents: Events[][] = filteredEvents.reduce((acc: Events[][], event, index) => {
+//     if (index % 2 === 0) {
+//       acc.push([event]);  // Start a new row
+//     } else {
+//       acc[acc.length - 1].push(event);  // Add to the last row
+//     }
+//     return acc;
+//   }, []);
+
+//   return (
+//     <>
+//       <View style={[styles.main, isDarkMode ? styles.darkBackground : styles.lightBackground]}>
+//         <View style={styles.header}>
+//           <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Explore Events</Text>
+//         </View>
+//         <TextInput
+//           style={[styles.searchBar, { color: isDarkMode ? '#fff' : '#000' }]}
+//           placeholder="Search events..."
+//           value={searchTerm}
+//           onChangeText={setSearchTerm}
+//           placeholderTextColor={isDarkMode ? '#bbb' : '#555'}
+//         />
+//         <Text style={[styles.length, { color: isDarkMode ? '#fff' : '#000' }]}>Events: {filteredEvents.length ? filteredEvents.length : events.length}</Text>
+//         <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+//           {groupedEvents.map((row: Events[], index: number) => (
+//             <View key={index} style={styles.row}>
+//               {row.map((event: Events) => (
+//                 <View key={event.eventId} style={styles.columnItem}>
+//                   {renderEventItem(event)}
+//                 </View>
+//               ))}
+//             </View>
+//           ))}
+//         </ScrollView>
+//       </View>
+//     </>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   header: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     width: '100%',
+//   },
+//   headerText: {
+//     fontSize: 24,
+//     fontWeight: 'bold',
+//     flex: 1,
+//     textAlign: 'center',
+//   },
+//   darkBackground: {
+//     backgroundColor: '#121212',
+//   },
+//   lightBackground: {
+//     backgroundColor: '#FFFFFF',
+//   },
+//   length: {
+//     fontSize: 20,
+//     fontWeight: 'bold',
+//     marginBottom: 10,
+//   },
+//   noResultsText: {
+//     textAlign: 'center',
+//     fontSize: 18,
+//     color: 'gray',
+//   },
+//   main: {
+//     flex: 1,
+//     padding: 15,
+//   },
+//   searchBar: {
+//     height: 40,
+//     borderColor: '#ccc',
+//     borderWidth: 1,
+//     borderRadius: 5,
+//     paddingLeft: 10,
+//     marginBottom: 20,
+//     marginTop: 10,
+//   },
+//   container: {
+//     flexGrow: 1,
+//   },
+//   row: {
+//     flexDirection: 'row',
+//     justifyContent: 'space-between',
+//     marginBottom: 15,
+//   },
+//   columnItem: {
+//     width: '48%',  // Ensures two items per row
+//     marginHorizontal: '1%',  // Small margin between items
+//   },
+//   eventContainer: {
+//     backgroundColor: '#fff',
+//     borderRadius: 8,
+//     overflow: 'hidden',
+//     elevation: 3,
+//   },
+//   eventDetails: {
+//     padding: 10,
+//     borderRadius: 8,
+//   },
+//   eventImage: {
+//     width: '100%',
+//     height: 150,
+//     borderRadius: 10,
+//     marginBottom: 10,
+//   },
+//   eventTitle: {
+//     fontSize: 16,
+//     fontWeight: 'bold',
+//     marginTop: 10,
+//   },
+//   eventType: {
+//     color: 'gray',
+//     marginTop: 5,
+//   },
+//   eventFooter: {
+//     flexDirection: 'row',
+//     justifyContent: 'space-between',
+//     marginTop: 10,
+//   },
+//   eventDate: {
+//     width: '70%',
+//     fontSize: 14,
+//     color: COLORS.red,
+//     fontWeight: 'bold',
+//     flexWrap: 'wrap',
+//   },
+//   favoriteIconContainer: {
+//     padding: 5,
+//   },
+// });
+
+// export default ExploreScreen;
+import React, { useEffect, useState } from 'react';
+import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import { fetchFeaturedEvents, fetchManualEvents, fetchPopularEvents } from '../services/Apiservices';
+import EventCard from '../components/EventCard';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getAllEvents } from '../services/Apiservices'; // assuming you have a getAllEvents API
+
+type EventData = {
+  ageLimit?: string;
+  artistName?: string;
+  bannerImageUrl?: string;
+  brief?: string;
+  categoryId?: {
+    categoryId?: number;
+    name?: string;
+  };
+  city?: string;
+  createdAt?: string;
+  description?: string;
+  duration?: string;
+  endDate?: string;
+  eventDate?: string;
+  eventId?: number;
+  favoritesCount?: number;
+  galleryImages?: string[];
+  isFavorite?: boolean;
+  isFeatured?: boolean;
+  isManual?: boolean;
+  isPaid?: boolean;
+  isPopular?: boolean;
+  language?: string;
+  layoutImageUrl?: string;
+  layoutStatus?: string;
+  location?: string;
+  musicType?: string;
+  noOfTickets?: number;
+  startDate?: string;
+  state?: string;
+  status?: string;
+  thumbUrl?: string;
+  title?: string;
+  updatedAt?: string;
+  venueStatus?: string;
 };
 
-type RootStackParamList = {
-  ExploreDetails: { item: Product };
+type UserDataTypes = {
+  userId: number;
+  [key: string]: any;
 };
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'ExploreDetails'>;
 
 const ExploreScreen: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [search, setSearch] = useState<string>('');
-  const [likedProducts, setLikedProducts] = useState<number[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const navigation = useNavigation<NavigationProp>();
-  const { isDarkMode } = useTheme();
+  const route = useRoute();
+  const { type } = route.params as { type?: string }; // type can be undefined
+  const [events, setEvents] = useState<EventData[]>([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [favorites, setFavorites] = useState<{ [key: number]: boolean }>({});
+  const [userId, setUserId] = useState<number | null>(null);
 
-  useEffect(() => {
-    setLoading(true);
-    axios
-      .get<Product[]>('https://fakestoreapi.com/products')
-      .then((response) => {
-        setProducts(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error(error);
-        setLoading(false);
-      });
-  }, []);
-
-  const toggleLike = (productId: number) => {
-    setLikedProducts((prev) =>
-      prev.includes(productId)
-        ? prev.filter((id) => id !== productId)
-        : [...prev, productId]
-    );
+  const toggleFavorite = (eventId: number) => {
+    setFavorites((prevFavorites) => ({
+      ...prevFavorites,
+      [eventId]: !prevFavorites[eventId],
+    }));
   };
 
-  const filteredProducts = products.filter((product) =>
-    product.title.toLowerCase().includes(search.toLowerCase())
-  );
+  useEffect(() => {
+    const getUserId = async () => {
+      try {
+        const userData = await AsyncStorage.getItem('userData');
+        if (userData) {
+          const parsedData: UserDataTypes = JSON.parse(userData);
+          setUserId(parsedData.userId);
+        }
+      } catch (error) {
+        console.error('Error fetching user data from AsyncStorage:', error);
+      }
+    };
 
+    getUserId();
+  }, []);
+
+  useEffect(() => {
+    loadEvents();
+  }, [page]);
+
+  const loadEvents = async () => {
+    if (!userId) return; // Avoid fetching if userId is not set
+    setLoading(true);
+    try {
+      let data;
+      if (type) {
+        // Fetch based on the type passed from the screen
+        if (type === 'Featured') data = await fetchFeaturedEvents(userId, 10);
+        else if (type === 'Popular') data = await fetchPopularEvents(userId, 10);
+        else data = await fetchManualEvents(userId, 10);
+      } else {
+        // Fetch all events if no type is passed
+        data = await getAllEvents(); // Assuming it fetches all events
+      }
+
+      setEvents((prev) => [...prev, ...data]);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLoadMore = () => setPage((prev) => prev + 1);
+console.log('events', events);
   return (
-    <View style={[styles.container, isDarkMode ? styles.darkContainer : styles.lightContainer]}>
-      <View style={styles.serach}>
-        <Text style={[styles.head, isDarkMode ? styles.darkText : styles.lightText]}>Search</Text>
-        <MaterialCommunityIcons
-          name="dots-horizontal-circle-outline"
-          color={isDarkMode ? 'white' : 'black'}
-          size={24}
-        />
-      </View>
-      <View style={styles.searchContainer}>
-        <Icon name="search" size={30} color="#888" style={styles.icon} />
-        <TextInput
-          style={styles.searchBar}
-          placeholder="Search"
-          value={search}
-          onChangeText={setSearch}
-        />
-      </View>
-
-      {loading ? (
-        <ActivityIndicator size="large" color={COLORS.red} style={styles.loader} />
-      ) : (
-        <>
-          <Text style={[styles.len, isDarkMode ? styles.darkText : styles.lightText]}>
-            {filteredProducts.length} found
-          </Text>
-
-          <FlatList
-            data={filteredProducts}
-            renderItem={({ item }) => {
-              const isLiked = likedProducts.includes(item.id);
-              const currentDateTime = new Date().toLocaleString();
-              return (
-                <TouchableOpacity
-                  style={[styles.card, isDarkMode ? styles.darkCard : styles.lightCard]}
-                  onPress={() => navigation.navigate('ExploreDetails', { item })}
-                >
-                  <View>
-                    <Image source={{ uri: item.image }} style={styles.productImage} />
-                    <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>
-                      {item.title}
-                    </Text>
-                    <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                      <Text style={styles.dateTime}>{currentDateTime}</Text>
-                      <TouchableOpacity
-                        // style={styles.heartIcon}
-                        onPress={() => toggleLike(item.id)}
-                      >
-                        <Icon
-                          name="heart"
-                          size={24}
-                          color={isLiked ? COLORS.red : '#fff'}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              );
-            }}
-            keyExtractor={(item) => item.id.toString()}
-            numColumns={2}
-            contentContainerStyle={styles.list}
-            showsVerticalScrollIndicator
+    <View style={styles.container}>
+      <FlatList
+        data={events}
+        keyExtractor={(item) => item.eventId?.toString() ?? `${Math.random()}`}
+        renderItem={({ item }) => (
+          <EventCard
+            imageUrl={item.thumbUrl ?? ''}
+            title={item.title ?? 'Untitled Event'}
+            dateTime={item.eventDate ?? ''}
+            location={item.location ?? 'Unknown Location'}
+            isFavorite={favorites[item.eventId ?? 0] || false}
+            onPress={() => console.log(`Clicked on ${item.title}`)}
+            onFavoritePress={() => toggleFavorite(item.eventId ?? 0)}
           />
-        </>
-      )}
+        )}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={loading ? <ActivityIndicator size="large" /> : null}
+      />
     </View>
   );
 };
@@ -139,100 +430,8 @@ const ExploreScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-  },
-  darkContainer: {
-    backgroundColor: '#333',
-  },
-  lightContainer: {
-    backgroundColor: '#fff',
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    borderRadius: 10,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-    height: 40,
-  },
-  icon: {
-    marginRight: 8,
-  },
-  searchBar: {
-    flex: 1,
-    fontSize: 16,
-  },
-  list: {
-    paddingBottom: 50,
-  },
-  card: {
-    flex: 1,
-    margin: 5,
-    padding: 10,
-    borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  lightCard: {
-    backgroundColor: '#fff',
-  },
-  darkCard: {
-    backgroundColor: '#888',
-  },
-  title: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  productImage: {
-    width: 100,
-    height: 100,
-    marginBottom: 10,
-    borderRadius: 10,
-    justifyContent: 'center',
-    textAlign: 'center',
-  },
-  head: {
-    color: 'black',
-    fontWeight: 'bold',
-    fontSize: 30,
-    paddingLeft: 30,
-  },
-  len: {
-    paddingLeft: 30,
-    color: 'black',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  darkText: {
-    color: 'white',
-  },
-  lightText: {
-    color: 'black',
-  },
-  serach: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingRight: 30,
-    marginBottom: 10,
-  },
-  dateTime: {
-    fontSize: 12,
-    color: COLORS.red,
-    marginTop: 5,
-  },
-  loader: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  heartIcon: {
-    position: 'absolute',
-    bottom: 10,
-    right: 5,
   },
 });
 
 export default ExploreScreen;
+

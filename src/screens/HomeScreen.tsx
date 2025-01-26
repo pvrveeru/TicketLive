@@ -1,153 +1,222 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
-import SearchBar from '../components/SearchBar';
+import { View, Text, FlatList, Button, StyleSheet, ScrollView, Image, TouchableOpacity, RefreshControl } from 'react-native';
+import { fetchFeaturedEvents, fetchManualEvents, fetchPopularEvents } from '../services/Apiservices';
 import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../navigation/AppNavigator';
-import sampleEvents from '../config/sample.json';
-import CategorySelector from './CategorySelector';
-import { COLORS } from '../styles/globalstyles';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import EventCard from '../components/EventCard';
+import { useSelector } from 'react-redux';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from '../Theme/ThemeContext';
-import { getAllEvents } from '../services/Apiservices';
+import { COLORS } from '../styles/globalstyles';
 
-type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'BottomBar'>;
 
-type Event = {
-  id: number;
-  eventName: string;
-  date: string;
-  location: string;
-  category: string;
-  imageUrl: string;
-  isFavorite: boolean,
+type EventData = {
+  ageLimit?: string;
+  artistName?: string;
+  bannerImageUrl?: string;
+  brief?: string;
+  categoryId?: {
+    categoryId?: number;
+    name?: string;
+  };
+  city?: string;
+  createdAt?: string;
+  description?: string;
+  duration?: string;
+  endDate?: string;
+  eventDate?: string;
+  eventId?: number;
+  favoritesCount?: number;
+  galleryImages?: string[];
+  isFavorite?: boolean;
+  isFeatured?: boolean;
+  isManual?: boolean;
+  isPaid?: boolean;
+  isPopular?: boolean;
+  language?: string;
+  layoutImageUrl?: string;
+  layoutStatus?: string;
+  location?: string;
+  musicType?: string;
+  noOfTickets?: number;
+  startDate?: string;
+  state?: string;
+  status?: string;
+  thumbUrl?: string;
+  title?: string;
+  updatedAt?: string;
+  venueStatus?: string;
 };
 
-interface Events {
-  ageLimit: string;
-  artistName: string;
-  brief: string;
-  city: string;
+
+type RootStackParamList = {
+  BottomBar: { screen: string };
+  Notification: undefined;
+  Explore: { type: string };
+  EventDetails: { eventId: number };
+};
+
+type UserDataTypes = {
+  accessToken: string;
+  accountVerified: boolean;
+  country: string | null;
   createdAt: string;
-  description: string;
-  duration: string;
-  endDate: string;
-  eventDate: string;
-  eventId: number;
-  isFeatured: boolean;
-  isManual: boolean;
-  isPaid: boolean;
-  isPopular: boolean;
-  language: string;
-  location: string;
-  noOfTickets: number;
-  startDate: string;
-  state: string;
-  status: string;
-  thumbUrl: string | null;
-  title: string;
-  type: string;
+  darkModeEnabled: boolean;
+  dateOfBirth: string | null;
+  email: string | null;
+  firstName: string | null;
+  gender: string | null;
+  lastName: string | null;
+  notificationsEnabled: boolean;
+  phoneNumber: string;
+  phoneVerified: boolean;
+  profileImageUrl: string | null;
   updatedAt: string;
+  userId: number;
+  userName: string | null;
+};
+
+interface UserData {
+  userId: string;
+}
+interface RootState {
+  userData: UserData;
 }
 
 const HomeScreen: React.FC = () => {
   const { isDarkMode } = useTheme();
-  const navigation = useNavigation<HomeScreenNavigationProp>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const [featuredEvents, setFeaturedEvents] = useState<EventData[]>([]);
+  const [popularEvents, setPopularEvents] = useState<EventData[]>([]);
+  const [manualEvents, setManualEvents] = useState<EventData[]>([]);
+  const [userId, setUserId] = useState<UserDataTypes[]>([]);
   const profileImage = require('../../assests/images/icon.png');
 
-  const [events, setEvents] = useState<Event[]>(sampleEvents);
-  const [searchQuery, setSearchQuery] = useState<string>(''); // State to hold the search query
-  const [allevents, setAllEvents] = useState<Events[]>();
+  const userData = useSelector((state: RootState) => state.userData);
+  const UserId = userData.userId;
+  console.log('UserId', UserId);
+  // console.log('userData', userData);
+
+  const [favorites, setFavorites] = useState<{ [key: number]: boolean }>({});
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const toggleFavorite = (eventId: number) => {
+    console.log(`Toggled favorite for event ID: ${eventId}, User ID: ${userId}`);
+    setFavorites((prevFavorites) => ({
+      ...prevFavorites,
+      [eventId]: !prevFavorites[eventId],
+    }));
+  };
+
   useEffect(() => {
-    const fetchEvents = async () => {
+    const getUserId = async () => {
       try {
-        const data = await getAllEvents();
-        setAllEvents(data.data);
-        // console.log('all events data', data.data);
-      } catch (err) {
-        console.log('Error fetching events:', err);
+        const userData = await AsyncStorage.getItem('userData');
+        const token = await AsyncStorage.getItem('acessToken');
+        console.log('token', token);
+        if (userData) {
+          const parsedData = JSON.parse(userData);
+          setUserId(parsedData.userId);
+        }
+      } catch (error) {
+        console.error('Error fetching user data from AsyncStorage:', error);
       }
     };
 
-    fetchEvents(); // Call the fetch function
+    getUserId();
   }, []);
-  const uniqueEventTypes = Array.from(new Set(allevents?.map((event: Events) => event.type)));
-  // console.log('all events data47', allevents);
-  // console.log('all event types:', uniqueEventTypes);
-  //   const filteredPopularEvents = allevents?.filter((event: Events) => event.isPopular !== undefined);
-  // console.log('All events:', filteredPopularEvents);
-  const toggleFavorite = (id: number) => {
-    setEvents(events.map(event => (event.id === id ? { ...event, isFavorite: !event.isFavorite } : event)));
+
+  useEffect(() => {
+    // Fetch events on mount
+    fetchEventData(fetchFeaturedEvents, setFeaturedEvents);
+    fetchEventData(fetchPopularEvents, setPopularEvents);
+    fetchEventData(fetchManualEvents, setManualEvents);
+  }, []);
+
+  const fetchEventData = async (fetchFunction: Function, setEvents: Function) => {
+    try {
+      const data = await fetchFunction(userId, 10);
+      setEvents(data);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    }
+  };
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      await Promise.all([
+        fetchEventData(fetchFeaturedEvents, setFeaturedEvents),
+        fetchEventData(fetchPopularEvents, setPopularEvents),
+        fetchEventData(fetchManualEvents, setManualEvents),
+      ]);
+    } catch (error) {
+      console.error('Error refreshing events:', error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  const navigateToExplore = (type: string) => {
+    navigation.navigate('Explore', { type });
+  };
+
+  const handleProfilePress = () => {
+    navigation.navigate('BottomBar', { screen: 'Profile' });
   };
 
   const handleNotificationPress = () => {
     navigation.navigate('Notification');
   };
 
-  const handleSeeAll = () => {
-    navigation.navigate('AllEvents');
+  const handleEventPress = (eventId: number) => {
+    navigation.navigate('EventDetails', { eventId });
   };
 
-  // Filter events based on the search query
-  const filteredEvents = events.filter(event =>
-    event.eventName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    event.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    event.category.toLowerCase().includes(searchQuery.toLowerCase())
+
+  const renderEventSection = (title: string, events: any[], type: string) => (
+    <View style={styles.section}>
+      <View style={styles.headerRow}>
+        <Text style={styles.title}>{title}</Text>
+        <Button title="See All" onPress={() => navigateToExplore(type)} />
+      </View>
+      <FlatList
+        horizontal
+        data={events.slice(0, 3)}
+        keyExtractor={(item, index) => (item.id ? item.id.toString() : index.toString())}
+        renderItem={({ item }) => (
+          <EventCard
+            imageUrl={item.thumbUrl}
+            title={item.title}
+            dateTime={item.eventDate}
+            location={item.location}
+            isFavorite={favorites[item.id] || false}
+            onFavoritePress={() => toggleFavorite(item.eventId || 0)}
+            onPress={() => handleEventPress(item.eventId)}
+          />
+        )}
+
+      />
+    </View>
   );
 
   return (
-    <ScrollView style={[styles.container, isDarkMode ? styles.darkBackground : styles.lightBackground]}>
+    <ScrollView style={[styles.container, isDarkMode ? styles.darkBackground : styles.lightBackground]}
+      refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}>
       <View style={styles.header}>
-        <Image source={profileImage} style={styles.profileImage} />
-        <View>
-          <Text style={[styles.greeting, isDarkMode ? styles.darkText : styles.lightText]}>Good Morning 👋</Text>
+        <TouchableOpacity onPress={handleProfilePress} style={styles.profile}>
+          <Image source={profileImage} style={styles.profileImage} />
           <Text style={[styles.name, isDarkMode ? styles.darkText : styles.lightText]}>Andrew Ainsley</Text>
-        </View>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.notificationIcon} onPress={handleNotificationPress}>
           <MaterialCommunityIcons name="bell-badge-outline" style={[styles.socialIcon, isDarkMode ? styles.darkIcon : styles.lightIcon]} />
         </TouchableOpacity>
       </View>
-      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-      <View style={styles.featuredSection}>
-        <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, isDarkMode ? styles.darkText : styles.lightText]}>Featured</Text>
-          <TouchableOpacity onPress={handleSeeAll}>
-            <Text style={[styles.seeAll, isDarkMode ? styles.darkText : styles.lightText]}>See All</Text>
-          </TouchableOpacity>
-        </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollview}>
-          {filteredEvents.length > 0 ? (
-            filteredEvents.map(event => (
-              <TouchableOpacity key={event.id} style={[styles.eventCard, isDarkMode ? styles.darkCard : styles.lightCard]}>
-                <Image source={{ uri: event.imageUrl }} style={styles.eventImage} />
-                <Text style={[styles.eventName, isDarkMode ? styles.darkText : styles.lightText]}>{event.eventName}</Text>
-                <Text style={[styles.eventDetails, isDarkMode ? styles.darkText : styles.lightText]}>{event.date}</Text>
-                <Text style={[styles.eventLocation, isDarkMode ? styles.darkText : styles.lightText]}>{event.location}</Text>
-                <TouchableOpacity onPress={() => toggleFavorite(event.id)} style={styles.favoriteIcon}>
-                  {/* <Text>{event.isFavorite ? '❤️' : '🤍'}</Text> */}
-                  <MaterialCommunityIcons
-                    name={event.isFavorite ? 'heart' : 'heart-outline'}
-                    size={24}
-                    color={event.isFavorite ? COLORS.red : 'gray'}
-                  />
-                </TouchableOpacity>
-              </TouchableOpacity>
-            ))
-          ) : (
-            <Text style={[styles.noResultsText, isDarkMode ? styles.darkText : styles.lightText]}>
-              No events found.
-            </Text>
-          )}
-        </ScrollView>
-      </View>
-      <View style={styles.popularSection}>
-        <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, isDarkMode ? styles.darkText : styles.lightText]}>Popular Event 🔥</Text>
-          <TouchableOpacity>
-            <Text style={[styles.seeAll, isDarkMode ? styles.darkText : styles.lightText]}>See All</Text>
-          </TouchableOpacity>
-        </View>
-        <CategorySelector categories={uniqueEventTypes} cevents={allevents || []} />
+      <View>
+        {renderEventSection('Featured Events', featuredEvents, 'Featured')}
+        {renderEventSection('Popular Events', popularEvents, 'Popular')}
+        {renderEventSection('Manual Events', manualEvents, 'Manual')}
       </View>
     </ScrollView>
   );
@@ -163,6 +232,10 @@ const styles = StyleSheet.create({
   },
   lightBackground: {
     backgroundColor: '#FFFFFF',
+  },
+  profile: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   header: {
     flexDirection: 'row',
@@ -188,61 +261,6 @@ const styles = StyleSheet.create({
   lightText: {
     color: '#000000',
   },
-  featuredSection: {
-    marginBottom: 20,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  seeAll: {
-    color: COLORS.red,
-  },
-  scrollview: {
-    marginVertical: 10,
-  },
-  eventCard: {
-    width: 250,
-    marginHorizontal: 10,
-    padding: 10,
-    borderRadius: 10,
-    elevation: 3,
-  },
-  darkCard: {
-    backgroundColor: '#333333',
-  },
-  lightCard: {
-    backgroundColor: '#f8f8f8',
-  },
-  eventImage: {
-    height: 150,
-    borderRadius: 8,
-    marginBottom: 10,
-    resizeMode: 'cover',
-    alignSelf: 'center',
-  },
-  eventName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  eventDetails: {
-    color: 'gray',
-  },
-  eventLocation: {
-    color: 'gray',
-  },
-  favoriteIcon: {
-    position: 'absolute',
-    bottom: 10,
-    right: 10,
-  },
-  popularSection: {},
   notificationIcon: {
     padding: 3,
     borderWidth: 1,
@@ -263,10 +281,27 @@ const styles = StyleSheet.create({
   lightIcon: {
     color: COLORS.red,
   },
-  noResultsText: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginVertical: 20,
+  section: {
+    marginVertical: 10,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  card: {
+    width: 150,
+    height: 100,
+    marginRight: 8,
+    padding: 8,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 8,
   },
 });
 

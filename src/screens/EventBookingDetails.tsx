@@ -5,6 +5,8 @@ import { useRoute } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '../styles/globalstyles';
 import { useTheme } from '../Theme/ThemeContext';
+import { useSelector } from 'react-redux';
+import { createUserEvent } from '../services/Apiservices';
 
 interface FormData {
     firstName: string;
@@ -20,15 +22,22 @@ interface FormData {
 }
 
 interface RouteParams {
-    selectedZone: string;
-    numSeats: number;
-    totalPrice: number;
+    eventBookingDetails: any;
+    eventId: number;
 }
-
+interface UserData {
+    phoneNumber: string;
+}
+interface RootState {
+    userData: UserData;
+}
 const EventBookingDetails: React.FC = ({ navigation }: any) => {
     const { isDarkMode } = useTheme();
     const route = useRoute();
-    const { selectedZone, numSeats, totalPrice } = route.params as RouteParams;
+    const userData = useSelector((state: RootState) => state.userData);
+    const phoneNumber = userData.phoneNumber;
+
+    const { eventBookingDetails, eventId } = route.params as RouteParams;
 
     const [formData, setFormData] = useState<FormData>({
         firstName: '',
@@ -36,7 +45,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
         gender: 'Male',
         dob: null,
         email: '',
-        phone: '',
+        phone: phoneNumber ? phoneNumber : '',
         address: '',
         city: '',
         state: '',
@@ -82,25 +91,15 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
         }
     };
 
-    // const handleSubmit = () => {
-    //     if (!formData.termsAccepted) {
-    //         Alert.alert('Please accept the Terms of Service.');
-    //         return;
-    //     }
-    //     navigation.navigate('ReviewSummary', {
-    //         formData,
-    //         selectedZone,
-    //         numSeats,
-    //         totalPrice,
-    //     });
-    // };
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (validateFields()) {
             navigation.navigate('ReviewSummary', {
-                formData,
-                selectedZone,
-                numSeats,
-                totalPrice,
+                formData: {
+                    ...formData,
+                    dob: formData.dob ? formData.dob.toISOString() : '',
+                },
+                eventBookingDetails,
+                eventId,
             });
         }
     };
@@ -114,14 +113,14 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <Icon name="arrow-back" size={30} color={isDarkMode ? '#fff' : '#333'} />
                     </TouchableOpacity>
-                    <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#fff' }]}>Book Event</Text>
+                    <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Book Event</Text>
                 </View>
-                <Text style={[styles.Contact, { color: isDarkMode ? '#fff' : '#fff' }]}>Contact Information</Text>
+                <Text style={[styles.Contact, { color: isDarkMode ? '#fff' : '#000' }]}>Contact Information</Text>
 
                 <TextInput
                     style={[
                         styles.input,
-                        { color: isDarkMode ? '#fff' : '#000' } // Text color based on theme
+                        { color: isDarkMode ? '#fff' : '#000' }
                     ]}
                     placeholder="First Name"
                     value={formData.firstName}
@@ -132,7 +131,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                 <TextInput
                     style={[
                         styles.input,
-                        { color: isDarkMode ? '#fff' : '#000' } // Text color based on theme
+                        { color: isDarkMode ? '#fff' : '#000' }
                     ]}
                     placeholder="Last Name"
                     value={formData.lastName}
@@ -186,7 +185,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                 <TextInput
                     style={[
                         styles.input,
-                        { color: isDarkMode ? '#fff' : '#000' } // Text color based on theme
+                        { color: isDarkMode ? '#fff' : '#000' }
                     ]}
                     placeholder="Email"
                     value={formData.email}
@@ -199,20 +198,21 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                 <TextInput
                     style={[
                         styles.input,
-                        { color: isDarkMode ? '#fff' : '#000' } // Text color based on theme
+                        { color: isDarkMode ? '#fff' : '#000' }
                     ]}
                     placeholder="Phone"
                     value={formData.phone}
                     placeholderTextColor={isDarkMode ? '#bbb' : '#555'}
                     onChangeText={(text) => handleInputChange('phone', text)}
                     keyboardType="phone-pad"
+                    editable={!phoneNumber}
                 />
                 {errors.phone ? <Text style={styles.errorText}>{errors.phone}</Text> : null}
 
                 <TextInput
                     style={[
                         styles.input,
-                        { color: isDarkMode ? '#fff' : '#000' } // Text color based on theme
+                        { color: isDarkMode ? '#fff' : '#000' }
                     ]}
                     placeholder="Address"
                     value={formData.address}
@@ -224,7 +224,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                 <TextInput
                     style={[
                         styles.input,
-                        { color: isDarkMode ? '#fff' : '#000' } // Text color based on theme
+                        { color: isDarkMode ? '#fff' : '#000' }
                     ]}
                     placeholder="City"
                     value={formData.city}
@@ -236,7 +236,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                 <TextInput
                     style={[
                         styles.input,
-                        { color: isDarkMode ? '#fff' : '#000' } // Text color based on theme
+                        { color: isDarkMode ? '#fff' : '#000' }
                     ]}
                     placeholder="State"
                     value={formData.state}
@@ -249,7 +249,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                     <TouchableOpacity
                         onPress={() => setFormData({ ...formData, termsAccepted: !formData.termsAccepted })}
                     >
-                        <Text style={[styles.checkboxText, { color: isDarkMode ? '#fff' : '#fff' }]}>
+                        <Text style={[styles.checkboxText, { color: isDarkMode ? '#fff' : '#000' }]}>
                             {formData.termsAccepted ? '✓' : '☐'} I accept the Terms of Service
                         </Text>
                     </TouchableOpacity>

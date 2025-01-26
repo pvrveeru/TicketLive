@@ -1,158 +1,157 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from 'react-native';
-import { RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../navigation/AppNavigator';
-import { useTheme } from '../Theme/ThemeContext';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
-import { COLORS } from '../styles/globalstyles';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { RouteProp, useRoute } from '@react-navigation/native';
+import { getTicketsByBookingId } from '../services/Apiservices';
+
+type RootStackParamList = {
+  TicketDetails: { bookingId: number };
+};
 
 type TicketDetailsRouteProp = RouteProp<RootStackParamList, 'TicketDetails'>;
 
-type TicketDetailsProps = {
-  route: TicketDetailsRouteProp;
-};
+interface Ticket {
+  bookingdate?: string;
+  bookingid?: number;
+  bookingstatus?: string;
+  eventdate?: string;
+  eventdescription?: string;
+  eventid?: number;
+  eventlocation?: string;
+  qrcode?: string | null;
+  seatingid?: number;
+  seatnumber?: string | null;
+  ticketid?: number;
+  ticketurl?: string | null;
+  title?: string;
+  type?: string;
+  userid?: number;
+}
 
-const TicketDetails: React.FC<TicketDetailsProps> = ({ route }) => {
-  const { isDarkMode } = useTheme();
-  const { ticket } = route.params || {};
-  const navigation = useNavigation();
+const TicketDetails = () => {
+  const route = useRoute<TicketDetailsRouteProp>();
+  const { bookingId } = route.params;
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleDownload = () => {
-    Alert.alert('Download Ticket', 'This feature will download the ticket.');
-  };
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        setIsLoading(true);
+        const result = await getTicketsByBookingId(bookingId);
+        console.log('Fetched Tickets:', result);
+        setTickets(result);
+      } catch (err) {
+        setError('Failed to fetch tickets. Please try again.');
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTickets();
+  }, [bookingId]);
+
+  if (isLoading) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+      </View>
+    );
+  }
+
+  if (!tickets || tickets.length === 0) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>No ticket details available.</Text>
+      </View>
+    );
+  }
 
   return (
-    <ScrollView
-      contentContainerStyle={[
-        styles.container,
-        isDarkMode ? styles.darkContainer : styles.lightContainer,
-      ]}
-    >
-      {/* Header Section */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconContainer}>
-          <Ionicons name="arrow-back" size={24} color={isDarkMode ? 'white' : 'black'} />
-        </TouchableOpacity>
-        <Text style={[styles.headerTitle, isDarkMode ? styles.darkText : styles.lightText]}>
-          E-Ticket
-        </Text>
-        <TouchableOpacity
-          onPress={() => Alert.alert('Options', 'More options will be displayed here.')}
-          style={styles.iconContainer}
-        >
-          <Ionicons
-            name="ellipsis-horizontal-circle-outline"
-            size={24}
-            color={isDarkMode ? 'white' : 'black'}
-          />
-        </TouchableOpacity>
-      </View>
-
-      {/* Ticket Image */}
-      <View style={styles.imageContainer}>
-        <Image source={ticket.image} style={styles.image} resizeMode="contain" />
-      </View>
-
-      <Text style={[styles.label, isDarkMode ? styles.darkLabel : styles.lightLabel]}>Event</Text>
-      <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>
-        {ticket.title}
-      </Text>
-      <Text style={[styles.label, isDarkMode ? styles.darkLabel : styles.lightLabel]}>Date and Hour</Text>
-      <Text style={[styles.details, isDarkMode ? styles.darkText : styles.lightText]}>{ticket.date}</Text>
-
-      <Text style={[styles.label, isDarkMode ? styles.darkLabel : styles.lightLabel]}>Event Location</Text>
-      <Text style={[styles.details, isDarkMode ? styles.darkText : styles.lightText]}>
-        Location: {ticket.location}
-      </Text>
-
-      {/* Download Button at the Bottom */}
-      <TouchableOpacity style={styles.downloadButton} onPress={handleDownload}>
-        <Text style={styles.downloadButtonText}>Download Ticket</Text>
-      </TouchableOpacity>
+    <ScrollView style={styles.container}>
+      {tickets.map((ticket, index) => (
+        <View key={index} style={styles.ticketCard}>
+          <Text style={styles.title}>{ticket.title}</Text>
+          <Text style={styles.label}>Event Description:</Text>
+          <Text style={styles.value}>{ticket.eventdescription}</Text>
+          <Text style={styles.label}>Event Date:</Text>
+          <Text style={styles.value}>{ticket.eventdate}</Text>
+          <Text style={styles.label}>Event Location:</Text>
+          <Text style={styles.value}>{ticket.eventlocation}</Text>
+          <Text style={styles.label}>Booking Date:</Text>
+          <Text style={styles.value}>{ticket.bookingdate}</Text>
+          <Text style={styles.label}>Booking Status:</Text>
+          <Text style={styles.value}>{ticket.bookingstatus}</Text>
+          <Text style={styles.label}>Seat Number:</Text>
+          <Text style={styles.value}>{ticket.seatnumber || 'Not Assigned'}</Text>
+          <Text style={styles.label}>Ticket Type:</Text>
+          <Text style={styles.value}>{ticket.type}</Text>
+          <Text style={styles.label}>Ticket ID:</Text>
+          <Text style={styles.value}>{ticket.ticketid}</Text>
+          <Text style={styles.label}>Seating ID:</Text>
+          <Text style={styles.value}>{ticket.seatingid}</Text>
+          <Text style={styles.label}>QR Code:</Text>
+          <Text style={styles.value}>{ticket.qrcode || 'Not Available'}</Text>
+        </View>
+      ))}
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    padding: 16,
-    paddingBottom: 80, // Space for the download button
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    paddingHorizontal: 16,
   },
-  lightContainer: {
-    backgroundColor: '#fff',
-  },
-  darkContainer: {
-    backgroundColor: '#333',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 16,
-    paddingHorizontal: 2,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  lightText: {
-    color: '#000',
-  },
-  darkLabel: {
-    color: '#A6A6A6',
-  },
-  lightLabel: {
-    color: '#000',
-  },
-  darkText: {
-    color: '#fff',
-  },
-  iconContainer: {
-    padding: 0,
-  },
-  imageContainer: {
-    width: '100%',
-    height: 200,
-    marginVertical: 16,
+  loaderContainer: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden',
   },
-  image: {
-    width: '100%',
-    height: '100%',
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 16,
+  },
+  ticketCard: {
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 2,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 8,
   },
   label: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginVertical: 4,
+    color: '#555',
   },
-  details: {
+  value: {
     fontSize: 16,
-    marginVertical: 4,
-  },
-  downloadButton: {
-    backgroundColor: COLORS.red,
-    padding: 12,
-    borderRadius: 20,
-    alignItems: 'center',
-    marginTop: 16,
-    position: 'absolute',
-    bottom: 20,
-    alignSelf: 'center',
-    width: '90%',
-  },
-  downloadButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
   },
 });
 

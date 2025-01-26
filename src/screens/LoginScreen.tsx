@@ -10,27 +10,55 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
+  Alert,
 } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useDispatch } from 'react-redux';
+import { getOtpData, MobileNumber } from '../Redux/Actions';
+import { createUser } from '../services/Apiservices';
+import { useNavigation } from '@react-navigation/native';
 
 type RootStackParamList = {
   Login: undefined;
-  OtpVerification: { phoneNumber: string };
+  OtpVerification: undefined;
 };
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
-const LoginScreen: React.FC<Props> = ({ navigation }) => {
+const LoginScreen: React.FC = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const dispatch = useDispatch();
   const Logo = require('../../assests/images/ticketliv_logo.png');
   const Facebook = require('../../assests/images/facebook.png');
   const Google = require('../../assests/images/google.png');
   const [phoneNumber, setPhoneNumber] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleOtpRequest = () => {
+  const handleOtpRequest = async () => {
     if (phoneNumber.length === 10) {
+      const formattedPhoneNumber = `+91${phoneNumber}`;
+      dispatch(MobileNumber(formattedPhoneNumber));
       Keyboard.dismiss();
-      navigation.navigate('OtpVerification', { phoneNumber });
+      setLoading(true);
+
+      try {
+        const response = await createUser(formattedPhoneNumber);
+        console.log('response45', response);
+        dispatch(getOtpData({
+          otpCode: response.otpCode,
+          otpId: response.otpId,
+          phoneNumber: response.phoneNumber,
+          expiresAt: response.expiresAt,
+        }));
+        Alert.alert('Success', 'OTP request sent successfully!');
+        navigation.navigate('OtpVerification');
+      } catch (error) {
+        console.log('Error', error);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      Alert.alert('Error', 'Please enter a valid 10-digit phone number.');
     }
   };
 
@@ -60,12 +88,19 @@ const LoginScreen: React.FC<Props> = ({ navigation }) => {
               keyboardType="phone-pad"
               maxLength={10}
               value={phoneNumber}
-               onChangeText={handleInputChange}
+              onChangeText={handleInputChange}
             />
           </View>
-          <TouchableOpacity style={styles.button} onPress={handleOtpRequest}>
-            <Text style={styles.buttonText}>OTP Request</Text>
+          <TouchableOpacity
+            style={[styles.button, loading && styles.disabledButton]}
+            onPress={handleOtpRequest}
+            disabled={loading}
+          >
+            <Text style={styles.buttonText}>
+              {loading ? 'Loading...' : 'OTP Request'}
+            </Text>
           </TouchableOpacity>
+
 
           <View style={styles.orContainer}>
             <View style={styles.line} />
@@ -139,6 +174,10 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontSize: 16,
+    fontWeight: 'bold',
+  },
+  disabledButton: {
+    backgroundColor: '#cccccc', // Change color when disabled
   },
   orContainer: {
     flexDirection: 'row',

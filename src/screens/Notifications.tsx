@@ -1,16 +1,70 @@
-import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons'; // Or any other icon library
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
 import { useTheme } from '../Theme/ThemeContext';
+import { getNotificationsByUserId } from '../services/Apiservices';
+import { useSelector } from 'react-redux';
 
 interface NotificationItem {
     text: string;
 }
 
+interface Notification {
+    id: number;
+    title: string;
+    message: string;
+    createdAt: string;
+}
+
+interface UserData {
+    userId: string;
+}
+interface RootState {
+    userData: UserData;
+}
+
 const Notifications = () => {
     const { isDarkMode } = useTheme();
     const navigation = useNavigation(); // Initialize useNavigation hook
+    const userData = useSelector((state: RootState) => state.userData);
+    const userId = userData.userId;
+    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchNotifications = async () => {
+            try {
+                setIsLoading(true);
+                const data = await getNotificationsByUserId(userId);
+                setNotifications(data);
+            } catch (err: any) {
+                setError(err.message || 'Failed to fetch notifications.');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchNotifications();
+    }, [userId]);
+
+    if (isLoading) {
+        return (
+            <View style={styles.loaderContainer}>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+        );
+    }
+
+    if (error) {
+        return (
+            <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{error}</Text>
+            </View>
+        );
+    }
+    console.log('notifications', notifications);
 
     const notificationsData: NotificationItem[] = [
         { text: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.' },
@@ -94,6 +148,20 @@ const styles = StyleSheet.create({
     },
     list: {
         flex: 1,
+    },
+    loaderContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    errorContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 16,
     },
 });
 

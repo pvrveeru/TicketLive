@@ -8,58 +8,88 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
-import { RouteProp } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { getEventById } from '../services/Apiservices';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { COLORS } from '../styles/globalstyles';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { useTheme } from '../Theme/ThemeContext';
+import MapView, { Marker } from 'react-native-maps';
+import moment from 'moment';
 
 
-type EventDetailsRouteParams = {
-  EventDetails: {
-    eventId: number;
-  };
-};
+interface Category {
+  categoryId?: number;
+  categoryName?: string;
+}
 
-type EventDetailsProps = {
-  route: RouteProp<EventDetailsRouteParams, 'EventDetails'>;
-};
+interface SeatingDetail {
+  seatingId?: number;
+  zoneName?: string;
+  capacity?: number;
+  price?: string;
+}
 
 interface EventDetailsData {
-    id: number;
-    name: string;
-    date: string;
-    time: string;
-    location: string;
-    description: string;
-    organizer: string;
-    interestedCount: number;
-    imageUrl: string;
-    eventDate: string;
-    eventId: number;
-    brief: string;
-    duration: string;
-    startDate: string;
-    endDate: string;
-    city: string;
-    state: string;
-    type: string;
-    isFeatured: boolean;
-    isPopular: boolean;
-    isPaid: boolean;
-    language: string;
-    noOfTickets: number;
-    ageLimit: string;
-    status: string;
-    favoritesCount: number;
-    artistName: string;
-    thumbUrl: string | null;
-    updatedAt: string;
-    createdAt: string;
-  }
+  eventId?: number;
+  uniqueEventId?: string;
+  title?: string;
+  categoryId?: Category;
+  description?: string;
+  brief?: string;
+  eventDate?: string;
+  startDate?: string;
+  endDate?: string;
+  duration?: string;
+  maxTicketAllowed?: number;
+  ageLimit?: string;
+  location?: string;
+  latitude?: string;
+  longitude?: string;
+  city?: string;
+  state?: string;
+  artistName?: string;
+  language?: string;
+  isFeatured?: boolean;
+  isPopular?: boolean;
+  isManual?: boolean;
+  isPaid?: boolean;
+  status?: string;
+  stage?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+  thumbUrl?: string;
+  layoutImageUrl?: string;
+  venueType?: string;
+  musicType?: string;
+  venueStatus?: string;
+  layoutStatus?: string | null;
+  totalCapacity?: number;
+  partners?: string | null;
+  sponsors?: string | null;
+  favoritesCount?: number;
+  isFavorite?: boolean;
+  galleryImages?: string[];
+  seatingDetails?: SeatingDetail[];
+}
 
-const EventDetails: React.FC<EventDetailsProps> = ({ route }) => {
-  const { eventId } = route.params;
+
+type RootStackParamList = {
+  BookEventScreen: { eventId: number };
+};
+
+interface RouteParams {
+  eventId: number;
+}
+
+const EventDetails: React.FC = () => {
+  const { isDarkMode } = useTheme();
+  const route = useRoute();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { eventId } = route.params as RouteParams;
 
   const [eventDetails, setEventDetails] = useState<EventDetailsData | null>(
     null
@@ -83,7 +113,7 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route }) => {
   }, [eventId]);
 
   if (loading) {
-    return <ActivityIndicator style={styles.loader} size="large" />;
+    return <ActivityIndicator style={styles.loader} size="large" color={COLORS.red} />;
   }
 
   if (error) {
@@ -101,54 +131,144 @@ const EventDetails: React.FC<EventDetailsProps> = ({ route }) => {
       </View>
     );
   }
-// console.log('eventDetails', eventDetails);
+
+  const handleBookEvent = () => {
+    navigation.navigate('BookEventScreen', { eventId });
+  };
+
+  console.log('eventDetails', eventDetails);
   return (
-    <ScrollView style={styles.container}>
-      <Image source={{ uri: eventDetails.imageUrl }} style={styles.eventImage} />
-      <View style={styles.header}>
-        <Text style={styles.organizer}>By {eventDetails.artistName}</Text>
-        <Text style={styles.eventName}>{eventDetails.title}</Text>
-      </View>
-      <View style={styles.detailsContainer}>
-        <View style={styles.row}>
-          <FontAwesome name="clock-o" size={20} color="gray" />
-          <Text style={styles.text}>
-            {eventDetails.eventDate}
-          </Text>
-        </View>
-        <View style={styles.row}>
-          <Ionicons name="location-outline" size={20} color="gray" />
-          <Text style={styles.text}>{eventDetails.location}</Text>
-        </View>
-        <View style={styles.row}>
-          <MaterialIcons name="group" size={20} color="gray" />
-          <Text style={styles.text}>
-            {eventDetails.interestedCount} Interested
-          </Text>
-        </View>
-      </View>
-      <View style={styles.actionButtons}>
-        <TouchableOpacity style={styles.iconButton}>
-          <Ionicons name="heart-outline" size={24} color="pink" />
+    <>
+      <View style={[styles.header, isDarkMode ? styles.dark : styles.light]}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" size={30} color={isDarkMode ? '#fff' : '#333'} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <Ionicons name="call-outline" size={24} color="pink" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <Ionicons name="mail-outline" size={24} color="pink" />
-        </TouchableOpacity>
+        <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Book Event</Text>
       </View>
-      <Text style={styles.sectionTitle}>About Event</Text>
-      <Text style={styles.description}>{eventDetails.description}</Text>
-      <Text style={styles.sectionTitle}>Location</Text>
-      <View style={styles.mapPlaceholder}>
-        <Text>Map Placeholder</Text>
-      </View>
-    </ScrollView>
+      <ScrollView style={[styles.container, isDarkMode ? styles.dark : styles.light]}>
+        {/* <Image source={{ uri: eventDetails.layoutImageUrl }} style={styles.eventImage} /> */}
+        {eventDetails.layoutImageUrl ? (
+          <Image source={{ uri: eventDetails.layoutImageUrl }} style={styles.eventImage} />
+        ) : (
+          <Image source={require('../../assests/images/altimg.jpg')} style={styles.eventImage} />
+        )}
+        <View style={styles.header2}>
+          <Text style={styles.organizer}>By {eventDetails.artistName}</Text>
+          <Text style={styles.eventName}>{eventDetails.title}</Text>
+        </View>
+        <View style={styles.detailsContainer}>
+          <View style={[styles.row, styles.spaceBetween]}>
+            <View style={styles.row}>
+              <FontAwesome name="clock-o" size={20} color="gray" />
+              <Text style={styles.text}>
+                {moment(eventDetails.eventDate).format('HH:mm:ss')}
+              </Text>
+            </View>
+            <View style={styles.row}>
+              <Ionicons name="calendar-outline" size={20} color="gray" />
+              <Text style={styles.text}>
+                {moment(eventDetails.eventDate).format('DD/MM/YYYY')}
+              </Text>
+            </View>
+            <TouchableOpacity style={styles.iconButton}>
+              <Ionicons name="heart-outline" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.row}>
+            <Ionicons name="location-outline" size={20} color="gray" />
+            <Text style={styles.text}>{eventDetails.location}</Text>
+          </View>
+        </View>
+        <View style={styles.actionButtons}>
+
+          <View style={styles.row}>
+            <MaterialIcons name="group" size={20} color="gray" />
+            <Text style={styles.text}>
+              {eventDetails.favoritesCount} Interested
+            </Text>
+          </View>
+          <TouchableOpacity style={styles.iconButton}>
+            <Ionicons name="call-outline" size={24} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconButton}>
+            <Ionicons name="mail-outline" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.sectionTitle}>About Event</Text>
+        <Text style={styles.description}>{eventDetails.description}</Text>
+        <Text style={styles.sectionTitle}>Location</Text>
+        <MapView
+          style={styles.map}
+          initialRegion={{
+            latitude: parseFloat(eventDetails?.latitude ?? '0'), // Fallback to '0' if undefined or invalid
+            longitude: parseFloat(eventDetails?.longitude ?? '0'), // Fallback to '0' if undefined or invalid
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        >
+          <Marker
+            coordinate={{
+              latitude: parseFloat(eventDetails?.latitude ?? '0'), // Fallback to '0' if undefined or invalid
+              longitude: parseFloat(eventDetails?.longitude ?? '0'), // Fallback to '0' if undefined or invalid
+            }}
+            title={eventDetails.title}
+            description={eventDetails.location}
+          />
+        </MapView>
+
+        <TouchableOpacity style={styles.bookButton} onPress={handleBookEvent}>
+          <Text style={styles.bookButtonText}>Book Event</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
+  map: {
+    height: 150,
+    marginHorizontal: 20,
+    borderRadius: 20,
+  },
+  light: {
+    backgroundColor: '#fff',
+  },
+  dark: {
+    backgroundColor: '#000',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    paddingVertical: 15,
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    flex: 1,
+    textAlign: 'center',
+  },
+  header2: {
+    padding: 20,
+  },
+  spaceBetween: {
+    justifyContent: 'space-between',
+    marginVertical: 10,
+  },
+  bookButton: {
+    backgroundColor: COLORS.red,
+    padding: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    margin: 20,
+  },
+  bookButtonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -169,12 +289,8 @@ const styles = StyleSheet.create({
   },
   eventImage: {
     width: '100%',
-    height: 200,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-  },
-  header: {
-    padding: 20,
+    height: 300,
+    borderRadius: 20,
   },
   organizer: {
     fontSize: 14,
@@ -190,7 +306,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 5,
+    // marginVertical: 5,
   },
   text: {
     marginLeft: 10,
@@ -203,7 +319,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   iconButton: {
-    backgroundColor: '#f8f8f8',
+    backgroundColor: '#c11c84',
     padding: 10,
     borderRadius: 50,
     alignItems: 'center',
