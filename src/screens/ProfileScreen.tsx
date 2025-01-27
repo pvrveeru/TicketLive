@@ -59,6 +59,9 @@ const ProfileScreen = () => {
 
   const openModal = () => setIsModalVisible(true);
   const closeModal = () => setIsModalVisible(false);
+  const NotificationCancel = () => {
+    setIsNModalVisible(false);
+  };
 
   const handleCameraSelection = async () => {
     const response = await launchCamera({
@@ -235,7 +238,7 @@ const ProfileScreen = () => {
               <View style={styles.modalButtons}>
                 <TouchableOpacity
                   style={[styles.modalButton2, { backgroundColor: '#f44336' }]}
-                  onPress={closeModal}
+                  onPress={NotificationCancel}
                 >
                   <Text style={styles.modalButtonText2}>Cancel</Text>
                 </TouchableOpacity>
