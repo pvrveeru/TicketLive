@@ -84,6 +84,7 @@ android {
         applicationId "com.ticketliv"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+         manifestPlaceholders = [MAPS_API_KEY: MAPS_API_KEY]
         versionCode 1
         versionName "1.0"
     }
