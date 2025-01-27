@@ -217,6 +217,16 @@ export const getNotificationsByUserId = async (userId: string) => {
   }
 };
 
+export const fetchBannerImages = async () => {
+  try {
+    const response = await api.get(avdurl1 + 'uploads/bannerImages');
+    return response.data.images;
+  } catch (error) {
+    console.error('Error fetching banner images:', error);
+    return null;
+  }
+};
+
 export const markEventAsFavorite = async (body: any) => {
   try {
     const response = await api.post('/favorites', body);

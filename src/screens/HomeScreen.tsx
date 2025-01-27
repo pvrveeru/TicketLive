@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from '../Theme/ThemeContext';
 import { COLORS } from '../styles/globalstyles';
+import HomeCarousel from './HomeCarousel';
 
 
 type EventData = {
@@ -213,6 +214,7 @@ const HomeScreen: React.FC = () => {
           <MaterialCommunityIcons name="bell-badge-outline" style={[styles.socialIcon, isDarkMode ? styles.darkIcon : styles.lightIcon]} />
         </TouchableOpacity>
       </View>
+      <HomeCarousel />
       <View>
         {renderEventSection('Featured Events', featuredEvents, 'Featured')}
         {renderEventSection('Popular Events', popularEvents, 'Popular')}
