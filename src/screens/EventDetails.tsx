@@ -19,6 +19,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../Theme/ThemeContext';
 import MapView, { Marker } from 'react-native-maps';
 import moment from 'moment';
+import CustomCarousel from '../components/CustomCarousel';
 
 
 interface Category {
@@ -78,11 +79,12 @@ interface EventDetailsData {
 
 
 type RootStackParamList = {
-  BookEventScreen: { eventId: number };
+  BookEventScreen: { eventId: number, layoutImage: string };
 };
 
 interface RouteParams {
   eventId: number;
+  layoutImage: string;
 }
 
 const EventDetails: React.FC = () => {
@@ -133,7 +135,8 @@ const EventDetails: React.FC = () => {
   }
 
   const handleBookEvent = () => {
-    navigation.navigate('BookEventScreen', { eventId });
+    const layoutImage = eventDetails?.layoutImageUrl || '';
+    navigation.navigate('BookEventScreen', { eventId, layoutImage });
   };
 
   console.log('eventDetails', eventDetails);
@@ -147,8 +150,14 @@ const EventDetails: React.FC = () => {
       </View>
       <ScrollView style={[styles.container, isDarkMode ? styles.dark : styles.light]}>
         {/* <Image source={{ uri: eventDetails.layoutImageUrl }} style={styles.eventImage} /> */}
-        {eventDetails.layoutImageUrl ? (
-          <Image source={{ uri: eventDetails.layoutImageUrl }} style={styles.eventImage} />
+        {eventDetails.galleryImages && eventDetails.galleryImages.length > 0 ? (
+          <CustomCarousel
+            images={eventDetails.galleryImages}
+            interval={3000}
+            height={250}
+            containerStyle={{ marginBottom: 20 }}
+            imageStyle={{ borderRadius: 10 }}
+          />
         ) : (
           <Image source={require('../../assests/images/altimg.jpg')} style={styles.eventImage} />
         )}

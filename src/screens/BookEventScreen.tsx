@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, Image } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { getSeatingOptionsByEventId } from '../services/Apiservices';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -7,6 +7,7 @@ import { useTheme } from '../Theme/ThemeContext';
 
 interface RouteParams {
     eventId: number;
+    layoutImage: string;
 }
 
 interface SeatingOption {
@@ -20,12 +21,12 @@ const BookEventScreen: React.FC = () => {
     const route = useRoute();
     const { isDarkMode } = useTheme();
     const navigation = useNavigation<any>();
-    const { eventId } = route.params as RouteParams;
-
+    const { eventId, layoutImage } = route.params as RouteParams;
+    // console.log('layoutImage', layoutImage);
     const [seatingOptions, setSeatingOptions] = useState<SeatingOption[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-    const [quantity, setQuantity] = useState<{ [key: number]: number }>({}); // Track quantity per zone
-    const [selectedZones, setSelectedZones] = useState<SeatingOption[]>([]); // Track selected zones
+    const [quantity, setQuantity] = useState<{ [key: number]: number }>({});
+    const [selectedZones, setSelectedZones] = useState<SeatingOption[]>([]);
 
     useEffect(() => {
         const fetchSeatingOptions = async () => {
@@ -72,37 +73,19 @@ const BookEventScreen: React.FC = () => {
         }
     };
 
-    // const handleContinue = () => {
-    //     selectedZones.forEach((zone) => {
-    //         const totalPrice = parseFloat(zone.price) * (quantity[zone.seatingId] || 1);
-    //         console.log(`Zone: ${zone.zoneName}, Tickets: ${quantity[zone.seatingId]}, Total Price: $${totalPrice.toFixed(2)}`);
-    //         console.log({
-    //             seatingId: zone.seatingId,
-    //             noOfTickets: `${quantity[zone.seatingId]}`,
-    //             zoneName: zone.zoneName,
-    //         });
-    //     });
-
-    //     // // Navigate with selected zones and quantities
-    //     // navigation.navigate('EventBookingDetails', {
-    //     //     selectedZones,
-    //     //     quantity,
-    //     // });
-    // };
-
     const handleContinue = () => {
         const selectedSeatingIds: number[] = [];
         const selectedZoneNames: string[] = [];
         const selectedClass: string[] = [];
         const ticketCounts: number[] = [];
         const prices: number[] = [];
-        let totalAmount = 0; // To store the total amount
+        let totalAmount = 0;
 
         selectedZones.forEach((zone) => {
             const tickets = quantity[zone.seatingId] || 1;
             selectedSeatingIds.push(zone.seatingId);
             selectedZoneNames.push(zone.zoneName);
-            selectedClass.push(zone.zoneName.split(' ')[0]); // Assuming the class is the first word of the zone name
+            selectedClass.push(zone.zoneName.split(' ')[0]);
             ticketCounts.push(tickets);
             prices.push(parseFloat(zone.price));
 
@@ -142,20 +125,42 @@ const BookEventScreen: React.FC = () => {
         );
     }
 
-    console.log('seatingOptions', seatingOptions);
+    // console.log('seatingOptions', seatingOptions);
     return (
         <View style={styles.container}>
-            <View style={styles.header}>
+            {/* <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Icon name="arrow-back" size={30} color={isDarkMode ? '#fff' : '#333'} />
                 </TouchableOpacity>
                 <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Book Event</Text>
             </View>
-            <Text style={styles.subTitle}>Choose number of seats</Text>
+            <Image
+                source={{ uri: layoutImage }}
+                style={{ width: 300, height: 300, alignSelf: 'center' }}
+            />
+            <Text style={styles.subTitle}>Choose number of seats</Text> */}
 
             <FlatList
                 data={seatingOptions}
                 keyExtractor={(item) => item.seatingId.toString()}
+                ListHeaderComponent={
+                    <View style={styles.container}>
+                        <View style={styles.header}>
+                            <TouchableOpacity onPress={() => navigation.goBack()}>
+                                <Icon name="arrow-back" size={30} color={isDarkMode ? '#fff' : '#333'} />
+                            </TouchableOpacity>
+                            <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Book Event</Text>
+                        </View>
+
+                        <Text style={styles.subTitle}>Layout Of the Event</Text>
+                        <Image
+                            source={{ uri: layoutImage }}
+                            style={{ width: 300, height: 300, alignSelf: 'center', marginBottom: 20 }}
+                        />
+
+                        <Text style={styles.subTitle}>Choose number of seats</Text>
+                    </View>
+                }
                 renderItem={({ item }) => (
                     <View>
                         <TouchableOpacity
@@ -190,6 +195,7 @@ const BookEventScreen: React.FC = () => {
                         )}
                     </View>
                 )}
+                showsVerticalScrollIndicator={false}
             />
 
             <TouchableOpacity

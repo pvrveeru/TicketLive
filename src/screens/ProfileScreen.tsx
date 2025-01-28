@@ -35,6 +35,7 @@ const ProfileScreen = () => {
   const { isDarkMode, toggleDarkMode } = useTheme();
   const dispatch = useDispatch();
   const userData = useSelector((state: RootState) => state.userData);
+  // console.log(userData)
   const profileImageUrl = userData.profileImageUrl;
   const notificationState = userData.notificationsEnabled;
   const userId = userData.userId;
@@ -178,8 +179,8 @@ const ProfileScreen = () => {
           </View>
           <View style={styles.profileTop}>
             <View style={styles.profileImageContainer}>
-              {imageSource ? (
-                <Image source={{ uri: imageSource }} style={styles.profileImage} />
+              {profileImageUrl ? (
+                <Image source={{ uri: profileImageUrl }} style={styles.profileImage} />
               ) : (
                 <Icon name="person-circle-outline" size={80} color="#fff" />
               )}

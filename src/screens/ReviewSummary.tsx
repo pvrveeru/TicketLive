@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { COLORS } from '../styles/globalstyles';
 import SuccessModal from '../components/SuccessModal';
@@ -66,7 +66,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
       seatingId: id,
       noOfTickets: eventBookingDetails.noOfTickets[index]
     }));
-  
+
     const payload = {
       userId: userId,
       eventId: eventId,
@@ -81,7 +81,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
       contactPersonDOB: dob?.toISOString(),
       bookingDate: new Date().toISOString(),
     };
-  
+
     try {
       const result = await createBooking(payload);
       console.log('Booking result:', result);
@@ -91,7 +91,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
       Alert.alert('Failed to create booking. Please try again.');
     }
   };
-  
+
 
   const handleViewTicket = () => {
     setModalVisible(false);
@@ -106,79 +106,63 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
         </TouchableOpacity>
         <Text style={styles.headerText}>Review Summary</Text>
       </View>
-
-      <View style={styles.eventDetailsContainer}>
-        <Image source={{ uri: eventDetails?.thumbUrl }} style={styles.eventImage} />
-        <View>
-          <Text style={styles.eventTitle}>{eventDetails?.title}</Text>
-          <Text style={styles.eventDate}>{eventDetails?.eventDate}</Text>
-          <Text style={styles.eventLocation}>{eventDetails?.location}</Text>
-        </View>
-      </View>
-
-      <View style={styles.contactInfoContainer}>
-        <Text style={styles.infoTitle}>Contact Information</Text>
-        <View style={styles.contactRow}>
-          <Text style={styles.value}>Full Name:</Text>
-          <Text style={styles.label}>
-            {formData.firstName} {formData.lastName}
-          </Text>
-        </View>
-        <View style={styles.contactRow}>
-          <Text style={styles.value}>Phone:</Text>
-          <Text style={styles.label}>{formData.phone}</Text>
-        </View>
-        <View style={styles.contactRow}>
-          <Text style={styles.value}>Email:</Text>
-          <Text style={styles.label}>{formData.email}</Text>
-        </View>
-      </View>
-
-      {/* <View style={styles.ticketDetailsContainer}>
-        <Text style={styles.infoTitle}>Ticket Details</Text>
-        <View style={styles.ticketRow}>
-          <Text style={styles.value}>Zone:</Text>
-          <Text style={styles.label}>{zone}</Text>
-        </View>
-        <View style={styles.ticketRow}>
-          <Text style={styles.value}>Seats (Economy):</Text>
-          <Text style={styles.label}>{quantity}</Text>
-        </View>
-        <View style={styles.ticketRow}>
-          <Text style={styles.value}>Price:</Text>
-          <Text style={styles.label}>${totalPrice}</Text>
-        </View>
-      </View> */}
-      <View style={styles.ticketDetailsContainer}>
-        <Text style={styles.infoTitle}>Ticket Details</Text>
-        {eventBookingDetails.zoneNames.map((zone: string, index: number) => (
-          <View key={index} style={styles.ticketRow}>
-            <Text style={styles.value}>Zone:</Text>
-            <Text style={styles.label}>{zone}</Text>
+      <ScrollView>
+        <View style={styles.eventDetailsContainer}>
+          <Image source={{ uri: eventDetails?.thumbUrl }} style={styles.eventImage} />
+          <View>
+            <Text style={styles.eventTitle}>{eventDetails?.title}</Text>
+            <Text style={styles.eventDate}>{eventDetails?.eventDate}</Text>
+            <Text style={styles.eventLocation}>{eventDetails?.location}</Text>
           </View>
-        ))}
-
-        {eventBookingDetails.noOfTickets.map((ticket: number, index: number) => (
-          <View key={index} style={styles.ticketRow}>
-            <Text style={styles.value}>Seats ({eventBookingDetails.selectedClass[index]}):</Text>
-            <Text style={styles.label}>{ticket}</Text>
-          </View>
-        ))}
-
-        {eventBookingDetails.prices.map((price: number, index: number) => (
-          <View key={index} style={styles.ticketRow}>
-            <Text style={styles.value}>Price:</Text>
-            <Text style={styles.label}>${price.toFixed(2)}</Text>
-          </View>
-        ))}
-
-        <View style={styles.ticketRow}>
-          <Text style={styles.value}>Total Price:</Text>
-          <Text style={styles.label}>${eventBookingDetails.totalAmount}</Text>
         </View>
-      </View>
 
+        <View style={styles.contactInfoContainer}>
+          <Text style={styles.infoTitle}>Contact Information</Text>
+          <View style={styles.contactRow}>
+            <Text style={styles.value}>Full Name:</Text>
+            <Text style={styles.label}>
+              {formData.firstName} {formData.lastName}
+            </Text>
+          </View>
+          <View style={styles.contactRow}>
+            <Text style={styles.value}>Phone:</Text>
+            <Text style={styles.label}>{formData.phone}</Text>
+          </View>
+          <View style={styles.contactRow}>
+            <Text style={styles.value}>Email:</Text>
+            <Text style={styles.label}>{formData.email}</Text>
+          </View>
+        </View>
+        <View style={styles.ticketDetailsContainer}>
+          <Text style={styles.infoTitle}>Ticket Details</Text>
+          {eventBookingDetails.zoneNames.map((zone: string, index: number) => (
+            <View key={index} style={styles.ticketRow}>
+              <Text style={styles.value}>Zone:</Text>
+              <Text style={styles.label}>{zone}</Text>
+            </View>
+          ))}
 
+          {eventBookingDetails.noOfTickets.map((ticket: number, index: number) => (
+            <View key={index} style={styles.ticketRow}>
+              <Text style={styles.value}>Seats ({eventBookingDetails.selectedClass[index]}):</Text>
+              <Text style={styles.label}>{ticket}</Text>
+            </View>
+          ))}
+
+          {eventBookingDetails.prices.map((price: number, index: number) => (
+            <View key={index} style={styles.ticketRow}>
+              <Text style={styles.value}>Price:</Text>
+              <Text style={styles.label}>${price.toFixed(2)}</Text>
+            </View>
+          ))}
+
+          <View style={styles.ticketRow}>
+            <Text style={styles.value}>Total Price:</Text>
+            <Text style={styles.label}>${eventBookingDetails.totalAmount}</Text>
+          </View>
+        </View>
+
+      </ScrollView>
       <View style={styles.bottomButtonContainer}>
         <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
           <Text style={styles.continueText}>Continue</Text>

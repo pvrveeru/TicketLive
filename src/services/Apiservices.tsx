@@ -14,7 +14,7 @@ const api = axios.create({
 async function getBearerToken() {
     try {
       const token = await AsyncStorage.getItem('acessToken');
-      console.log('token in api service file', token);
+      // console.log('token in api service file', token);
       return token;
     } catch (err) {
       console.log('Async storage function error', err);
@@ -81,7 +81,7 @@ export const createBooking = async (bookingData: any) => {
     console.log('Booking created:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error creating booking:', error);
+    console.log('Error creating booking:', error);
     throw error;
   }
 };
@@ -93,6 +93,19 @@ export const getAllEvents = async () => {
     return response.data;
   } catch (error) {
     console.error('Error fetching events:', error);
+    throw error;
+  }
+};
+
+// Function to fetch all events
+export const fetchEvents = async (params = {}) => {
+  console.log('params', params)
+  try {
+    const response = await api.get('events', { params });
+
+    return response.data.data;
+  } catch (error) {
+    console.log("Error fetching events:", error);
     throw error;
   }
 };
@@ -224,6 +237,16 @@ export const fetchBannerImages = async () => {
   } catch (error) {
     console.error('Error fetching banner images:', error);
     return null;
+  }
+};
+
+export const fetchUserById = async (id: number) => {
+  try {
+    const response = await api.get(`/users/${id}`);
+    return response.data.data;
+  } catch (error) {
+    console.error('Error fetching user by ID:', error);
+    throw error;
   }
 };
 

@@ -78,25 +78,29 @@ type EventCardProps = {
 };
 
 const EventCard: React.FC<EventCardProps> = ({ onPress, imageUrl, title, dateTime, location, isFavorite, onFavoritePress }) => {
+  // console.log('isFavorite', isFavorite);
   const AltImg = require('../../assests/images/altimg.jpg');
   return (
     <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
-      {/* <Image source={{ uri: imageUrl || AltImg }} style={styles.image} /> */}
       {imageUrl ? (
         <Image source={{ uri: imageUrl }} style={styles.image} />
       ) : (
-        <Image source={AltImg} style={styles.image}/>
+        <Image source={AltImg} style={styles.image} />
       )}
       <View style={styles.content}>
         <Text style={styles.title} numberOfLines={1}>{title}</Text>
         <Text style={styles.dateTime}>{dateTime}</Text>
         <View style={styles.rowContainer}>
           <View style={styles.locationContainer}>
-            <Ionicons name="location-sharp" size={16} color="#555" />
-            <Text style={styles.location} numberOfLines={1}>{location}</Text>
+            <Ionicons name="location-sharp" size={25} color="#555" />
+            <Text style={styles.location}>{location}</Text>
           </View>
           <TouchableOpacity onPress={onFavoritePress}>
-            <Ionicons name={isFavorite ? "heart" : "heart-outline"} size={20} color={isFavorite ? "red" : "#888"} />
+            <Ionicons
+              name={isFavorite ? "heart" : "heart-outline"}
+              size={30}
+              color={isFavorite ? "red" : "#888"} // Make sure the color changes based on isFavorite
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -104,9 +108,10 @@ const EventCard: React.FC<EventCardProps> = ({ onPress, imageUrl, title, dateTim
   );
 };
 
+
 const styles = StyleSheet.create({
   cardContainer: {
-    width: 200,
+    width: 300,
     borderRadius: 10,
     overflow: 'hidden',
     backgroundColor: '#fff',
@@ -119,23 +124,25 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 120,
+    height: 150,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
+    resizeMode: 'cover',
   },
   content: {
     padding: 10,
   },
   title: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 5,
   },
   dateTime: {
-    fontSize: 12,
+    fontSize: 16,
     color: COLORS.red,
     marginBottom: 5,
+    fontWeight: 'bold',
   },
   rowContainer: {
     flexDirection: 'row',
@@ -148,9 +155,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   location: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#555',
     marginLeft: 5,
+    width: '80%',
+    flexWrap: 'wrap',
   },
 });
 
