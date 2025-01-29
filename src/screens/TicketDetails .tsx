@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Image, Alert } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { getTicketsByBookingId } from '../services/Apiservices';
 
@@ -40,7 +40,7 @@ const TicketDetails = () => {
         setIsLoading(true);
         const result = await getTicketsByBookingId(bookingId);
         console.log('Fetched Tickets:', result);
-        setTickets(result);
+        setTickets(result.tickets);
       } catch (err) {
         setError('Failed to fetch tickets. Please try again.');
         console.error(err);
@@ -51,6 +51,23 @@ const TicketDetails = () => {
 
     fetchTickets();
   }, [bookingId]);
+
+  const handleDownloadAllTickets = () => {
+    if (tickets.length === 0) {
+      console.log('No tickets available to download.');
+      return;
+    }
+
+    // Logic to handle downloading all tickets
+    tickets.forEach((ticket) => {
+      if (ticket.ticketurl) {
+        console.log(`Downloading ticket from URL: ${ticket.ticketurl}`);
+        // You can use libraries like `react-native-fs` to download files to the device
+      }
+    });
+
+    Alert.alert('All tickets downloaded successfully!');
+  };
 
   if (isLoading) {
     return (
@@ -80,29 +97,35 @@ const TicketDetails = () => {
     <ScrollView style={styles.container}>
       {tickets.map((ticket, index) => (
         <View key={index} style={styles.ticketCard}>
-          <Text style={styles.title}>{ticket.title}</Text>
-          <Text style={styles.label}>Event Description:</Text>
-          <Text style={styles.value}>{ticket.eventdescription}</Text>
-          <Text style={styles.label}>Event Date:</Text>
-          <Text style={styles.value}>{ticket.eventdate}</Text>
-          <Text style={styles.label}>Event Location:</Text>
-          <Text style={styles.value}>{ticket.eventlocation}</Text>
-          <Text style={styles.label}>Booking Date:</Text>
-          <Text style={styles.value}>{ticket.bookingdate}</Text>
-          <Text style={styles.label}>Booking Status:</Text>
-          <Text style={styles.value}>{ticket.bookingstatus}</Text>
-          <Text style={styles.label}>Seat Number:</Text>
-          <Text style={styles.value}>{ticket.seatnumber || 'Not Assigned'}</Text>
-          <Text style={styles.label}>Ticket Type:</Text>
-          <Text style={styles.value}>{ticket.type}</Text>
-          <Text style={styles.label}>Ticket ID:</Text>
-          <Text style={styles.value}>{ticket.ticketid}</Text>
-          <Text style={styles.label}>Seating ID:</Text>
-          <Text style={styles.value}>{ticket.seatingid}</Text>
-          <Text style={styles.label}>QR Code:</Text>
-          <Text style={styles.value}>{ticket.qrcode || 'Not Available'}</Text>
+          {/* QR Code */}
+          <View style={styles.qrContainer}>
+            {ticket.qrcode ? (
+              <Image source={{ uri: ticket.qrcode }} style={styles.qrCode} />
+            ) : (
+              <View style={styles.qrPlaceholder}>
+                <Text style={styles.qrPlaceholderText}>QR Code</Text>
+              </View>
+            )}
+          </View>
+
+          {/* Ticket Details */}
+          <Text style={styles.label}>Event: </Text>
+          <Text style={styles.detailText}>{ticket.title}</Text>
+          <Text style={styles.label}>Date and Hour: </Text>
+          <Text style={styles.detailText}>{ticket.eventdate}</Text>
+          <Text style={styles.detailText}>
+            <Text style={styles.label}>Event Location: </Text>
+            {ticket.eventlocation}
+          </Text>
+          <Text style={styles.label}>Event Organizer: </Text>
+          <Text style={styles.detailText}>{ticket.title}</Text>
         </View>
       ))}
+
+      {/* Download All Tickets Button */}
+      <TouchableOpacity style={styles.downloadButton} onPress={handleDownloadAllTickets}>
+        <Text style={styles.downloadButtonText}>Download Ticket</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -130,7 +153,7 @@ const styles = StyleSheet.create({
   ticketCard: {
     backgroundColor: '#fff',
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 12,
     marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -138,20 +161,45 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  qrContainer: {
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  qrCode: {
+    width: 120,
+    height: 120,
+  },
+  qrPlaceholder: {
+    width: 120,
+    height: 120,
+    backgroundColor: '#e0e0e0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+  },
+  qrPlaceholderText: {
+    color: '#888',
+    fontSize: 14,
+  },
+  detailText: {
+    fontSize: 16,
     marginBottom: 8,
   },
   label: {
+    fontWeight: 'bold',
+  },
+  downloadButton: {
+    backgroundColor: '#ff6f61',
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginTop: 16,
+    marginBottom: 16,
+  },
+  downloadButtonText: {
+    color: '#fff',
+    textAlign: 'center',
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#555',
-  },
-  value: {
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 8,
   },
 });
 

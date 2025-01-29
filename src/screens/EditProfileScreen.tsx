@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, ScrollView, Button, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TextInput, ScrollView, Button, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchUserById } from '../services/Apiservices';
+import { fetchUserById, updateUserProfile } from '../services/Apiservices'; // Import the update function
+import { useNavigation } from '@react-navigation/native'; // Import navigation hook
+import { getUserData } from '../Redux/Actions';
 
 interface UserData {
   userId: number;
@@ -9,9 +11,12 @@ interface UserData {
 interface RootState {
   userData: UserData;
 }
+
 const EditProfileScreen: React.FC = () => {
   const dispatch = useDispatch();
   const userData = useSelector((state: RootState) => state.userData);
+  const navigation = useNavigation(); // For navigating back
+
   const [loading, setLoading] = useState(true);
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
@@ -28,6 +33,8 @@ const EditProfileScreen: React.FC = () => {
       try {
         setLoading(true);
         const response = await fetchUserById(userData.userId);
+        dispatch(getUserData(response));
+        console.log('response', response);
         const user = response;
         setFirstName(user.firstName || '');
         setLastName(user.lastName || '');
@@ -48,6 +55,38 @@ const EditProfileScreen: React.FC = () => {
     fetchData();
   }, [userData.userId]);
 
+  const handleSaveChanges = async () => {
+    if (!firstName || !lastName || !emailId || !phoneNumber || !dateOfBirth || !gender || !city || !state || !country) {
+      Alert.alert('All fields are required!');
+      return;
+    }
+
+    const userDetails = {
+      firstName,
+      lastName,
+      emailId,
+      phoneNumber,
+      dateOfBirth,
+      gender,
+      city,
+      state,
+      country,
+    };
+
+    try {
+      setLoading(true);
+      const response = await updateUserProfile(userData.userId, userDetails);
+      dispatch(getUserData(response));
+      console.log('response', response);
+      Alert.alert('Profile updated successfully');
+      navigation.goBack(); // Navigate back to the previous screen after successful update
+    } catch (error) {
+      console.log('Error updating profile: ', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <View style={styles.loader}>
@@ -58,66 +97,27 @@ const EditProfileScreen: React.FC = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.header}>Edit Profile</Text>
+      {/* Header with Left Arrow */}
+      <View style={styles.headerContainer}>
+        {/* <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text style={styles.leftArrow}>←</Text>
+        </TouchableOpacity> */}
+        <Text style={styles.header}>Edit Profile</Text>
+      </View>
 
-      <TextInput
-        style={styles.input}
-        value={firstName}
-        onChangeText={setFirstName}
-        placeholder="First Name"
-      />
-      <TextInput
-        style={styles.input}
-        value={lastName}
-        onChangeText={setLastName}
-        placeholder="Last Name"
-      />
-      <TextInput
-        style={styles.input}
-        value={emailId || ''}
-        onChangeText={setEmailId}
-        placeholder="Email ID"
-        keyboardType="email-address"
-      />
-      <TextInput
-        style={styles.input}
-        value={phoneNumber}
-        onChangeText={setPhoneNumber}
-        placeholder="Phone Number"
-        keyboardType="phone-pad"
-      />
-      <TextInput
-        style={styles.input}
-        value={dateOfBirth}
-        onChangeText={setDateOfBirth}
-        placeholder="Date of Birth (YYYY-MM-DD)"
-      />
-      <TextInput
-        style={styles.input}
-        value={gender}
-        onChangeText={setGender}
-        placeholder="Gender"
-      />
-      <TextInput
-        style={styles.input}
-        value={city || ''}
-        onChangeText={setCity}
-        placeholder="City"
-      />
-      <TextInput
-        style={styles.input}
-        value={state || ''}
-        onChangeText={setState}
-        placeholder="State"
-      />
-      <TextInput
-        style={styles.input}
-        value={country || ''}
-        onChangeText={setCountry}
-        placeholder="Country"
-      />
+      {/* Input Fields */}
+      <TextInput style={styles.input} value={firstName} onChangeText={setFirstName} placeholder="First Name" />
+      <TextInput style={styles.input} value={lastName} onChangeText={setLastName} placeholder="Last Name" />
+      <TextInput style={styles.input} value={emailId || ''} onChangeText={setEmailId} placeholder="Email ID" keyboardType="email-address" />
+      <TextInput style={styles.input} value={phoneNumber} onChangeText={setPhoneNumber} placeholder="Phone Number" keyboardType="phone-pad" />
+      <TextInput style={styles.input} value={dateOfBirth} onChangeText={setDateOfBirth} placeholder="Date of Birth (YYYY-MM-DD)" />
+      <TextInput style={styles.input} value={gender} onChangeText={setGender} placeholder="Gender" />
+      <TextInput style={styles.input} value={city || ''} onChangeText={setCity} placeholder="Address" />
+      <TextInput style={styles.input} value={country || ''} onChangeText={setCountry} placeholder="City" />
+      <TextInput style={styles.input} value={state || ''} onChangeText={setState} placeholder="State" />
 
-      <Button title="Save Changes" onPress={() => console.log('Save functionality')} />
+      {/* Save Changes Button */}
+      <Button title="Save Changes" onPress={handleSaveChanges} />
     </ScrollView>
   );
 };
@@ -128,10 +128,19 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#fff',
   },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  leftArrow: {
+    fontSize: 24,
+    marginRight: 8,
+    color: '#000',
+  },
   header: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 16,
     textAlign: 'center',
   },
   input: {

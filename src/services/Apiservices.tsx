@@ -12,14 +12,14 @@ const api = axios.create({
 });
 
 async function getBearerToken() {
-    try {
-      const token = await AsyncStorage.getItem('acessToken');
-      // console.log('token in api service file', token);
-      return token;
-    } catch (err) {
-      console.log('Async storage function error', err);
-    }
+  try {
+    const token = await AsyncStorage.getItem('acessToken');
+    console.log('token in api service file', token);
+    return token;
+  } catch (err) {
+    console.log('Async storage function error', err);
   }
+}
 
 api.interceptors.request.use(
   async config => {
@@ -68,7 +68,7 @@ export const createUserEvent = async (userPayload: any) => {
 
 export const validateOtp = async (phoneNumber: string, otpCode: string) => {
   try {
-    const response = await axios.post(avdurl1 + '/otp/validate',{ phoneNumber, otpCode });
+    const response = await axios.post(avdurl1 + '/otp/validate', { phoneNumber, otpCode });
     return response.data.data;
   } catch (error: any) {
     throw error.response?.data || 'An error occurred';
@@ -250,6 +250,18 @@ export const fetchUserById = async (id: number) => {
   }
 };
 
+export const getChargesByEventId = async (
+  eventId: number
+) => {
+  try {
+    const response = await api.get(`charges/event/${eventId}`);
+    return response.data.data;
+  } catch (error) {
+    console.log('Error fetching user by ID:', error);
+    throw error;
+  }
+};
+
 export const markEventAsFavorite = async (body: any) => {
   try {
     const response = await api.post('/favorites', body);
@@ -272,10 +284,20 @@ export const markEventAsDeleteFavorite = async (userId: number, eventId: number)
 
 export const updateUserNotifications = async (userId: string, notificationsEnabled: boolean) => {
   try {
-    const response = await api.put(avdurl1 + `users/${userId}`,{ notificationsEnabled });
+    const response = await api.put(avdurl1 + `users/${userId}`, { notificationsEnabled });
     return response.data.data;
   } catch (error) {
     console.error('Error updating notifications:', error);
+    throw error;
+  }
+};
+
+export const updateUserProfile = async (userId: any, userDetails: any) => {
+  try {
+    const response = await api.put(`/users/${userId}`,userDetails);
+    return response.data.data; // Return the updated user data
+  } catch (error) {
+    console.error('Error updating userdetails:', error);
     throw error;
   }
 };

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } fr
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { COLORS } from '../styles/globalstyles';
 import SuccessModal from '../components/SuccessModal';
-import { createBooking, getEventById } from '../services/Apiservices';
+import { createBooking, getChargesByEventId, getEventById } from '../services/Apiservices';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../Theme/ThemeContext';
 import { useSelector } from 'react-redux';
@@ -35,6 +35,11 @@ interface RootState {
   userData: UserData;
 }
 
+interface ChargesData {
+  convenienceFee: number;
+  gstPercentage: number;
+}
+
 const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
   const { isDarkMode } = useTheme();
   const userData = useSelector((state: RootState) => state.userData);
@@ -44,6 +49,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [charges, setCharges] = useState<ChargesData | null>(null);
   const [eventDetails, setEventDetails] = useState<EventDetailsData | null>(null);
 
   useEffect(() => {
@@ -61,6 +67,28 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
     fetchEventDetails();
   }, [eventId]);
 
+  useEffect(() => {
+    const fetchCharges = async () => {
+      setLoading(true);
+      try {
+        const data = await getChargesByEventId(eventId);
+        setCharges(data);
+      } catch (err: any) {
+        console.log('error for fetching charges', err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCharges();
+  }, [eventId]);
+
+  const totalAmount = Number(eventBookingDetails.totalAmount);
+  const gstPercentage = Number(charges?.gstPercentage || 0);
+  const convenienceFee = Number(charges?.convenienceFee || 0);
+  const gstAmount = (totalAmount * (gstPercentage / 100));
+  const totalAmountWithCharges = (totalAmount + gstAmount + convenienceFee).toFixed(2);
+
   const handleContinue = async () => {
     const seatingDetails = eventBookingDetails.seatingIds.map((id: any, index: number) => ({
       seatingId: id,
@@ -71,17 +99,19 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
       userId: userId,
       eventId: eventId,
       seatingDetails: seatingDetails,
-      totalAmount: eventBookingDetails.totalAmount,
+      totalAmount: totalAmountWithCharges,
       contactPersonFirstName: formData.firstName,
       contactPersonLastName: formData.lastName,
       contactPersonGender: formData.gender,
       contactPersonEmail: formData.email,
       contactPersonPhone: formData.phone,
-      contactPersonCountry: formData.country,
+      contactPersonCountry: formData.state,
+      contactPersonCity: formData.city,
+      contactPersonAddress: formData.address,
       contactPersonDOB: dob?.toISOString(),
       bookingDate: new Date().toISOString(),
     };
-
+    console.log('Booking result payload:', payload);
     try {
       const result = await createBooking(payload);
       console.log('Booking result:', result);
@@ -97,7 +127,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
     setModalVisible(false);
     navigation.navigate('BottomBar', { screen: 'Tickets' });
   };
-
+  console.log('charges in review screen', charges);
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -155,10 +185,24 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
               <Text style={styles.label}>${price.toFixed(2)}</Text>
             </View>
           ))}
-
+          <View style={styles.horizontalLine} />
+          <View style={styles.ticketRow}>
+            <Text style={styles.value}>Base Price:</Text>
+            <Text style={styles.label}>${eventBookingDetails.totalAmount}</Text>
+          </View>
+          <View style={styles.horizontalLine} />
+          <View style={styles.ticketRow}>
+            <Text style={styles.value}>Convenience Fee:</Text>
+            <Text style={styles.label}>${charges?.convenienceFee.toFixed(2) || '0.00'}</Text>
+          </View>
+          <View style={styles.ticketRow}>
+            <Text style={styles.value}>GST ({charges?.gstPercentage || 0}%):</Text>
+            <Text style={styles.label}>${gstAmount.toFixed(2)}</Text>
+          </View>
+          <View style={styles.horizontalLine} />
           <View style={styles.ticketRow}>
             <Text style={styles.value}>Total Price:</Text>
-            <Text style={styles.label}>${eventBookingDetails.totalAmount}</Text>
+            <Text style={styles.label}>${totalAmountWithCharges}</Text>
           </View>
         </View>
 
@@ -194,6 +238,12 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  horizontalLine: {
+    height: 2,
+    backgroundColor: '#ccc',
+    marginVertical: 10,
+    width: '100%',
   },
   eventDetailsContainer: {
     alignItems: 'center',
@@ -256,7 +306,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   ticketDetailsContainer: {
-    marginBottom: 30,
+    marginBottom: 80,
     backgroundColor: '#fff', // Added card style
     padding: 15,
     borderRadius: 10,

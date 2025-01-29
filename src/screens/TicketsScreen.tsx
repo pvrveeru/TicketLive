@@ -41,7 +41,7 @@ type Booking = {
 };
 
 type Event = {
-  event_date: string;
+  eventDate: string;
   event_id: number;
   title: string;
 };
@@ -69,14 +69,14 @@ const TicketsScreen = () => {
   const userData = useSelector((state: RootState) => state.userData);
   const userId = userData.userId;
   const formatDate = (dateString: string) => {
-    return moment(dateString).format('MMMM DD, YYYY hh:mm A');
+    return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
   };
 
   const fetchBookings = async () => {
     setIsLoading(true);
     try {
       const data = await getBookingsByUserId(userId);
-      setBookings(data);
+      setBookings(data.bookings);
     } catch (error) {
       console.error('error fetching bookings', error);
     } finally {
@@ -100,30 +100,26 @@ const TicketsScreen = () => {
     navigation.navigate('Notification');
   };
 
-  // console.log('bookings', bookings);
+  // Function to categorize bookings
+  const categorizeBookings = () => {
+    const today = moment();
+    const upcomingBookings = bookings.filter((item) => moment(item.event.eventDate).isAfter(today));
+    const completedBookings = bookings.filter((item) => moment(item.event.eventDate).isBefore(today));
+    return { upcomingBookings, completedBookings };
+  };
+
   const renderBookingItem = ({ item }: { item: Booking }) => {
-    // Extracting required data from item
     const { event, paymentStatus } = item;
     const eventTitle = event?.title || 'No Title';
-    const eventDate = event?.event_date || 'No Date';
-    // const eventLocation = event?.location || 'No Location'; // Fallback if location is undefined
+    const eventDate = event?.eventDate || 'No Date';
 
     return (
       <>
         <View style={styles.bookingItem}>
           <Text style={styles.title}>{eventTitle}</Text>
           <Text style={styles.detail}>{formatDate(eventDate)}</Text>
-          {/* <Text style={styles.detail}>Location: {eventLocation}</Text> */}
           <Text style={styles.detail}>{paymentStatus}</Text>
           <View style={styles.buttons}>
-            {/* <TouchableOpacity
-            style={[styles.cancelButton, { borderColor: isDarkMode ? '#fff' : COLORS.blue }]}
-            onPress={() => handleCancelBooking(item.bookingId)}
-          >
-            <Text style={[styles.buttonText, { color: isDarkMode ? '#fff' : COLORS.blue }]}>
-              Cancel Booking
-            </Text>
-          </TouchableOpacity> */}
             <TouchableOpacity
               style={[styles.viewButton, { backgroundColor: isDarkMode ? '#EF412B' : COLORS.red }]}
               onPress={() => handleViewTicket(item.bookingId)}
@@ -135,6 +131,8 @@ const TicketsScreen = () => {
       </>
     );
   };
+
+  const { upcomingBookings, completedBookings } = categorizeBookings();
 
   return (
     <View style={styles.container}>
@@ -160,18 +158,38 @@ const TicketsScreen = () => {
 
       {isLoading ? (
         <Text style={styles.loadingText}>Loading...</Text>
-      ) : (
-        <FlatList
-          data={bookings}
-          keyExtractor={(item, index) => item.bookingId?.toString() || index.toString()}
-          renderItem={renderBookingItem}
-        />
-      )}
+      ) : selectedTab === 'Upcoming' ? (
+        upcomingBookings.length === 0 ? (
+          <Text style={styles.emptyText}>No upcoming events. Book your tickets now and stay updated!</Text>
+        ) : (
+          <FlatList
+            data={upcomingBookings}
+            keyExtractor={(item, index) => item.bookingId?.toString() || index.toString()}
+            renderItem={renderBookingItem}
+          />
+        )
+      ) : selectedTab === 'Completed' ? (
+        completedBookings.length === 0 ? (
+          <Text style={styles.emptyText}>You have no completed events yet. Once you attend an event, it'll show up here!</Text>
+        ) : (
+          <FlatList
+            data={completedBookings}
+            keyExtractor={(item, index) => item.bookingId?.toString() || index.toString()}
+            renderItem={renderBookingItem}
+          />
+        )
+      ) : null}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  emptyText: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#888',
+    marginTop: 20,
+  },
   container: {
     flex: 1,
     padding: 16,
@@ -182,53 +200,30 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
   },
-  card: {
-    flexDirection: 'row',
+  bookingItem: {
+    padding: 16,
     marginBottom: 16,
+    backgroundColor: '#fff',
     borderRadius: 8,
-    backgroundColor: '#f9f9f9',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
-    elevation: 2,
+    elevation: 3,
   },
-  image: {
-    width: 80,
-    height: 80,
-    borderRadius: 8,
-  },
-  details: {
-    flex: 1,
-    padding: 8,
-  },
-  eventName: {
+  title: {
     fontSize: 16,
     fontWeight: 'bold',
+    marginBottom: 8,
   },
-  eventDate: {
+  detail: {
     fontSize: 14,
+    marginBottom: 4,
     color: '#555',
-  },
-  location: {
-    fontSize: 14,
-    color: '#777',
-  },
-  paymentStatus: {
-    fontSize: 14,
-    color: '#4caf50', // Green for paid, customize based on status
-    fontWeight: 'bold',
   },
   buttons: {
     flexDirection: 'row',
     marginTop: 8,
-  },
-  cancelButton: {
-    flex: 1,
-    padding: 8,
-    backgroundColor: '#ff4d4d',
-    borderRadius: 4,
-    marginRight: 4,
   },
   viewButton: {
     flex: 1,
@@ -277,27 +272,6 @@ const styles = StyleSheet.create({
   selectedTabText: {
     color: '#EF412B',
     fontWeight: 'bold',
-  },
-  bookingItem: {
-    padding: 16,
-    marginBottom: 16,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  detail: {
-    fontSize: 14,
-    marginBottom: 4,
-    color: '#555',
   },
 });
 
