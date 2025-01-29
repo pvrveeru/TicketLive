@@ -27,6 +27,16 @@ interface RouteParams {
 }
 interface UserData {
     phoneNumber: string;
+    firstName: string;
+    lastName: string;
+    gender: string;
+    dateOfBirth: string | null;
+    emailId: string;
+    phone: string;
+    address: string;
+    city: string;
+    state: string;
+    termsAccepted: boolean;
 }
 interface RootState {
     userData: UserData;
@@ -35,20 +45,21 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
     const { isDarkMode } = useTheme();
     const route = useRoute();
     const userData = useSelector((state: RootState) => state.userData);
+    // console.log('userData i event booking details', userData);
     const phoneNumber = userData.phoneNumber;
 
     const { eventBookingDetails, eventId } = route.params as RouteParams;
 
     const [formData, setFormData] = useState<FormData>({
-        firstName: '',
-        lastName: '',
-        gender: 'Male',
-        dob: null,
-        email: '',
-        phone: phoneNumber ? phoneNumber : '',
-        address: '',
-        city: '',
-        state: '',
+        firstName: userData?.firstName || "",
+        lastName: userData?.lastName || "",
+        gender: userData?.gender || "Male",
+        dob: userData?.dateOfBirth ? new Date(userData.dateOfBirth) : null,
+        email: userData?.emailId || "",
+        phone: userData?.phoneNumber || phoneNumber || "",
+        address: "",
+        city: userData?.city || "",
+        state: userData?.state || "",
         termsAccepted: false,
     });
 

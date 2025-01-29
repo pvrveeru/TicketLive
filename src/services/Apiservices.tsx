@@ -30,15 +30,27 @@ api.interceptors.request.use(
       }
       return config;
     } catch (err) {
-      console.error('Request interceptor error', err);
+      console.log('Request interceptor error', err);
       return config;
     }
   },
   error => {
-    console.error('Request interceptor error', error);
+    console.log('Request interceptor error', error);
     return Promise.reject(error);
   },
 );
+
+
+export interface ValidationError {
+  msg: string;
+  param: string;
+}
+
+export interface ErrorResponse {
+  status: "error";
+  message: string;
+  errors?: ValidationError[]; // Only present for validation errors (400)
+}
 
 // Example API methods
 
@@ -49,7 +61,7 @@ export const createUser = async (phoneNumber: string) => {
     console.log('response', response.data.data);
     return response.data.data;
   } catch (error) {
-    console.error('Error creating user:', error);
+    console.log('Error creating user:', error);
     throw error;
   }
 };
@@ -61,7 +73,7 @@ export const createUserEvent = async (userPayload: any) => {
     console.log('response', response.data.data);
     return response.data.data;
   } catch (error) {
-    console.error('Error creating user:', error);
+    console.log('Error creating user:', error);
     throw error;
   }
 };
@@ -80,8 +92,27 @@ export const createBooking = async (bookingData: any) => {
     const response = await api.post('bookings', bookingData);
     console.log('Booking created:', response.data);
     return response.data;
-  } catch (error) {
-    console.log('Error creating booking:', error);
+  } catch (error: any) {
+    if (error.response) {
+      const { status, data } = error.response;
+
+      if (status === 400) {
+        console.log("Validation failed:", data);
+        throw {
+          status: "error",
+          message: "Validation failed",
+          errors: data.errors || [],
+        } as ErrorResponse;
+      }
+
+      if (status === 500) {
+        console.log("Error creating booking:", data.message);
+        throw {
+          status: "error",
+          message: `Error creating booking: ${data.message}`,
+        } as ErrorResponse;
+      }
+    }
     throw error;
   }
 };
@@ -92,7 +123,7 @@ export const getAllEvents = async () => {
     const response = await api.get('/events');
     return response.data;
   } catch (error) {
-    console.error('Error fetching events:', error);
+    console.log('Error fetching events:', error);
     throw error;
   }
 };
@@ -122,7 +153,7 @@ export const fetchFeaturedEvents = async (userId: number, limit: number = 10, of
     });
     return response.data.data;
   } catch (error) {
-    console.error('Error fetching featured events:', error);
+    console.log('Error fetching featured events:', error);
     throw error;
   }
 };
@@ -139,7 +170,7 @@ export const fetchPopularEvents = async (userId: number, limit: number = 10, off
     });
     return response.data.data;
   } catch (error) {
-    console.error('Error fetching popular events:', error);
+    console.log('Error fetching popular events:', error);
     throw error;
   }
 };
@@ -156,7 +187,7 @@ export const fetchManualEvents = async (userId: number, limit: number = 10, offs
     });
     return response.data.data;
   } catch (error) {
-    console.error('Error fetching manual events:', error);
+    console.log('Error fetching manual events:', error);
     throw error;
   }
 };
@@ -167,7 +198,7 @@ export const getEventById = async (eventId: number) => {
     const response = await api.get(`/events/${eventId}`);
     return response.data;
   } catch (error) {
-    console.error('Error fetching event details:', error);
+    console.log('Error fetching event details:', error);
     throw error;
   }
 };
@@ -187,7 +218,7 @@ export const getAllFavouriteEvents = async (userId: number) => {
     const response = await api.get(`/favorites/user/${userId}`);
     return response.data.data;
   } catch (error) {
-    console.error('Error fetching favorites:', error);
+    console.log('Error fetching favorites:', error);
     throw error;
   }
 };
@@ -203,7 +234,7 @@ export const getBookingsByUserId = async (userId: string) => {
     });
     return response.data.data;
   } catch (error: any) {
-    console.error('Error fetching bookings:', error.response?.data || error.message);
+    console.log('Error fetching bookings:', error.response?.data || error.message);
     throw new Error(error.response?.data?.message || 'Failed to fetch bookings');
   }
 };
@@ -214,7 +245,7 @@ export const getTicketsByBookingId = async (bookingId: number) => {
     const response = await api.get(avdurl1 + `tickets/booking/${bookingId}`);
     return response.data.data;
   } catch (error) {
-    console.error('Error fetching tickets:', error);
+    console.log('Error fetching tickets:', error);
     throw error;
   }
 };
@@ -225,7 +256,7 @@ export const getNotificationsByUserId = async (userId: string) => {
     const response = await api.get(avdurl1 + `/notifications/user/${userId}`);
     return response.data.data;
   } catch (error: any) {
-    console.error('Error fetching notifications:', error);
+    console.log('Error fetching notifications:', error);
     throw new Error(error?.response?.data?.message || 'Failed to fetch notifications');
   }
 };
@@ -235,7 +266,7 @@ export const fetchBannerImages = async () => {
     const response = await api.get(avdurl1 + 'uploads/bannerImages');
     return response.data.images;
   } catch (error) {
-    console.error('Error fetching banner images:', error);
+    console.log('Error fetching banner images:', error);
     return null;
   }
 };
@@ -245,7 +276,7 @@ export const fetchUserById = async (id: number) => {
     const response = await api.get(`/users/${id}`);
     return response.data.data;
   } catch (error) {
-    console.error('Error fetching user by ID:', error);
+    console.log('Error fetching user by ID:', error);
     throw error;
   }
 };
@@ -267,7 +298,7 @@ export const markEventAsFavorite = async (body: any) => {
     const response = await api.post('/favorites', body);
     return response.data;
   } catch (error) {
-    console.error('Error marking event as favorite:', error);
+    console.log('Error marking event as favorite:', error);
     throw error;
   }
 };
@@ -276,9 +307,31 @@ export const markEventAsDeleteFavorite = async (userId: number, eventId: number)
   try {
     const response = await api.delete(`/favorites/user/${userId}/event/${eventId}`);
     return response.data.data;
-  } catch (error) {
-    console.error('Error marking event as favorite:', error);
-    throw error;
+  } catch (error: any) {
+    let errorMessage = 'An unexpected error occurred.';
+    
+    if (error.response) {
+      // Handle the different error codes
+      switch (error.response.status) {
+        case 401:
+          errorMessage = `Unauthorized access. Please authenticate. Message: ${error.response.data.message}`;
+          break;
+        case 403:
+          errorMessage = `Forbidden access. Message: ${error.response.data.message}`;
+          break;
+        case 404:
+          errorMessage = `Event not found. Message: ${error.response.data.message}`;
+          break;
+        default:
+          errorMessage = `An unexpected error occurred. Message: ${error.response.data.message || error.message}`;
+          break;
+      }
+    } else {
+      errorMessage = `Error occurred: ${error.message}`;
+    }
+
+    // Throw the error with the detailed message
+    throw new Error(errorMessage);
   }
 };
 
@@ -287,7 +340,7 @@ export const updateUserNotifications = async (userId: string, notificationsEnabl
     const response = await api.put(avdurl1 + `users/${userId}`, { notificationsEnabled });
     return response.data.data;
   } catch (error) {
-    console.error('Error updating notifications:', error);
+    console.log('Error updating notifications:', error);
     throw error;
   }
 };
@@ -297,7 +350,7 @@ export const updateUserProfile = async (userId: any, userDetails: any) => {
     const response = await api.put(`/users/${userId}`,userDetails);
     return response.data.data; // Return the updated user data
   } catch (error) {
-    console.error('Error updating userdetails:', error);
+    console.log('Error updating userdetails:', error);
     throw error;
   }
 };

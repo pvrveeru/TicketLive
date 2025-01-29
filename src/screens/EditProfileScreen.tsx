@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TextInput, ScrollView, Button, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchUserById, updateUserProfile } from '../services/Apiservices'; // Import the update function
-import { useNavigation } from '@react-navigation/native'; // Import navigation hook
+import { fetchUserById, updateUserProfile } from '../services/Apiservices';
+import { useNavigation } from '@react-navigation/native';
 import { getUserData } from '../Redux/Actions';
 
 interface UserData {
@@ -15,7 +15,7 @@ interface RootState {
 const EditProfileScreen: React.FC = () => {
   const dispatch = useDispatch();
   const userData = useSelector((state: RootState) => state.userData);
-  const navigation = useNavigation(); // For navigating back
+  const navigation = useNavigation();
 
   const [loading, setLoading] = useState(true);
   const [firstName, setFirstName] = useState<string>('');
@@ -24,9 +24,9 @@ const EditProfileScreen: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [dateOfBirth, setDateOfBirth] = useState<string>('');
   const [gender, setGender] = useState<string>('');
-  const [city, setCity] = useState<string | null>(null);
+  const [address, setAddress] = useState<string | null>(null);
   const [state, setState] = useState<string | null>(null);
-  const [country, setCountry] = useState<string | null>(null);
+  const [city, setCity] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -44,7 +44,7 @@ const EditProfileScreen: React.FC = () => {
         setGender(user.gender || '');
         setCity(user.city || null);
         setState(user.state || null);
-        setCountry(user.country || null);
+        setCity(user.country || null);
       } catch (err: any) {
         console.error('Failed to fetch user data:', err.message || err);
       } finally {
@@ -56,7 +56,7 @@ const EditProfileScreen: React.FC = () => {
   }, [userData.userId]);
 
   const handleSaveChanges = async () => {
-    if (!firstName || !lastName || !emailId || !phoneNumber || !dateOfBirth || !gender || !city || !state || !country) {
+    if (!firstName || !lastName || !emailId || !phoneNumber || !dateOfBirth || !gender || !address || !state || !city) {
       Alert.alert('All fields are required!');
       return;
     }
@@ -68,18 +68,18 @@ const EditProfileScreen: React.FC = () => {
       phoneNumber,
       dateOfBirth,
       gender,
-      city,
+      address,
       state,
-      country,
+      city,
     };
-
+// console.log("userDetails::", userDetails)
     try {
       setLoading(true);
       const response = await updateUserProfile(userData.userId, userDetails);
       dispatch(getUserData(response));
-      console.log('response', response);
+      // console.log('response', response);
       Alert.alert('Profile updated successfully');
-      navigation.goBack(); // Navigate back to the previous screen after successful update
+      navigation.goBack();
     } catch (error) {
       console.log('Error updating profile: ', error);
     } finally {
@@ -112,8 +112,8 @@ const EditProfileScreen: React.FC = () => {
       <TextInput style={styles.input} value={phoneNumber} onChangeText={setPhoneNumber} placeholder="Phone Number" keyboardType="phone-pad" />
       <TextInput style={styles.input} value={dateOfBirth} onChangeText={setDateOfBirth} placeholder="Date of Birth (YYYY-MM-DD)" />
       <TextInput style={styles.input} value={gender} onChangeText={setGender} placeholder="Gender" />
-      <TextInput style={styles.input} value={city || ''} onChangeText={setCity} placeholder="Address" />
-      <TextInput style={styles.input} value={country || ''} onChangeText={setCountry} placeholder="City" />
+      <TextInput style={styles.input} value={address || ''} onChangeText={setAddress} placeholder="Address" />
+      <TextInput style={styles.input} value={city || ''} onChangeText={setCity} placeholder="City" />
       <TextInput style={styles.input} value={state || ''} onChangeText={setState} placeholder="State" />
 
       {/* Save Changes Button */}

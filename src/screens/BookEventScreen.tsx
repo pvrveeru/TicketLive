@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, Image, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { getSeatingOptionsByEventId } from '../services/Apiservices';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -17,16 +17,18 @@ interface SeatingOption {
     capacity: number;
 }
 
+const MAX_TOTAL_QUANTITY = 5;
+
 const BookEventScreen: React.FC = () => {
     const route = useRoute();
     const { isDarkMode } = useTheme();
     const navigation = useNavigation<any>();
     const { eventId, layoutImage } = route.params as RouteParams;
-    // console.log('layoutImage', layoutImage);
     const [seatingOptions, setSeatingOptions] = useState<SeatingOption[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [quantity, setQuantity] = useState<{ [key: number]: number }>({});
     const [selectedZones, setSelectedZones] = useState<SeatingOption[]>([]);
+    const [limitExceeded, setLimitExceeded] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchSeatingOptions = async () => {
@@ -47,29 +49,42 @@ const BookEventScreen: React.FC = () => {
         fetchSeatingOptions();
     }, [eventId]);
 
+    const getTotalQuantity = () => {
+        return Object.values(quantity).reduce((total, num) => total + num, 0);
+    };
+
     const toggleZoneSelection = (zone: SeatingOption) => {
         if (selectedZones.some((selectedZone) => selectedZone.seatingId === zone.seatingId)) {
-            // Deselect zone
             setSelectedZones(selectedZones.filter((selectedZone) => selectedZone.seatingId !== zone.seatingId));
             const newQuantity = { ...quantity };
             delete newQuantity[zone.seatingId];
             setQuantity(newQuantity);
+            setLimitExceeded(false);
         } else {
-            // Select zone
+            if (getTotalQuantity() + 1 > MAX_TOTAL_QUANTITY) {
+                setLimitExceeded(true);
+                Alert.alert('Limit Exceeded', 'You cannot select more than 5 tickets.');
+                return;
+            }
             setSelectedZones([...selectedZones, zone]);
-            setQuantity((prev) => ({ ...prev, [zone.seatingId]: 1 })); // Default to 1 ticket for the selected zone
+            setQuantity((prev) => ({ ...prev, [zone.seatingId]: 1 }));
         }
     };
 
     const incrementQuantity = (zoneId: number) => {
-        if (quantity[zoneId] < 5) {
+        if (getTotalQuantity() < MAX_TOTAL_QUANTITY) {
             setQuantity((prev) => ({ ...prev, [zoneId]: prev[zoneId] + 1 }));
+            setLimitExceeded(false);
+        } else {
+            setLimitExceeded(true);
+            Alert.alert('Limit Exceeded', 'You cannot select more than 5 tickets.');
         }
     };
 
     const decrementQuantity = (zoneId: number) => {
         if (quantity[zoneId] > 1) {
             setQuantity((prev) => ({ ...prev, [zoneId]: prev[zoneId] - 1 }));
+            setLimitExceeded(false);
         }
     };
 
@@ -92,7 +107,7 @@ const BookEventScreen: React.FC = () => {
             const totalPriceForZone = parseFloat(zone.price) * tickets;
             totalAmount += totalPriceForZone;
 
-            // console.log(`Zone: ${zone.zoneName}, Tickets: ${tickets}, Price per Ticket: ₹${zone.price}, Total Price: ₹${totalPriceForZone.toFixed(2)}`);
+            // console.log(Zone: ${zone.zoneName}, Tickets: ${tickets}, Price per Ticket: ₹${zone.price}, Total Price: ₹${totalPriceForZone.toFixed(2)});
         });
         const eventBookingDetails = {
             seatingIds: selectedSeatingIds,
@@ -108,7 +123,6 @@ const BookEventScreen: React.FC = () => {
         });
     };
 
-
     if (loading) {
         return (
             <View style={styles.loaderContainer}>
@@ -117,29 +131,8 @@ const BookEventScreen: React.FC = () => {
         );
     }
 
-    if (seatingOptions.length === 0) {
-        return (
-            <View style={styles.container}>
-                <Text style={styles.message}>No seating options available for this event.</Text>
-            </View>
-        );
-    }
-
-    // console.log('seatingOptions', seatingOptions);
     return (
         <View style={styles.container}>
-            {/* <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Icon name="arrow-back" size={30} color={isDarkMode ? '#fff' : '#333'} />
-                </TouchableOpacity>
-                <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Book Event</Text>
-            </View>
-            <Image
-                source={{ uri: layoutImage }}
-                style={{ width: 300, height: 300, alignSelf: 'center' }}
-            />
-            <Text style={styles.subTitle}>Choose number of seats</Text> */}
-
             <FlatList
                 data={seatingOptions}
                 keyExtractor={(item) => item.seatingId.toString()}
@@ -159,6 +152,10 @@ const BookEventScreen: React.FC = () => {
                         />
 
                         <Text style={styles.subTitle}>Choose number of seats</Text>
+
+                        {limitExceeded && (
+                            <Text style={styles.limitText}>⚠️ Your limit is exceeded! Maximum 5 tickets allowed.</Text>
+                        )}
                     </View>
                 }
                 renderItem={({ item }) => (
@@ -185,9 +182,9 @@ const BookEventScreen: React.FC = () => {
                                 </TouchableOpacity>
                                 <Text style={styles.quantityText}>{quantity[item.seatingId]}</Text>
                                 <TouchableOpacity
-                                    style={[styles.button, quantity[item.seatingId] === 5 && styles.disabledButton]}
+                                    style={[styles.button, getTotalQuantity() === MAX_TOTAL_QUANTITY && styles.disabledButton]}
                                     onPress={() => incrementQuantity(item.seatingId)}
-                                    disabled={quantity[item.seatingId] === 5}
+                                    disabled={getTotalQuantity() === MAX_TOTAL_QUANTITY}
                                 >
                                     <Text style={styles.buttonText}>+</Text>
                                 </TouchableOpacity>
@@ -213,6 +210,13 @@ const BookEventScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+    limitText: {
+        color: 'red',
+        textAlign: 'center',
+        fontWeight: 'bold',
+        marginBottom: 10,
+        fontSize: 16,
+    },
     container: {
         flex: 1,
         padding: 16,

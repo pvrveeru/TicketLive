@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Image, Alert } from 'react-native';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { getTicketsByBookingId } from '../services/Apiservices';
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import RNFS from 'react-native-fs';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { useTheme } from '../Theme/ThemeContext';
 
 type RootStackParamList = {
   TicketDetails: { bookingId: number };
@@ -30,6 +34,8 @@ interface Ticket {
 const TicketDetails = () => {
   const route = useRoute<TicketDetailsRouteProp>();
   const { bookingId } = route.params;
+  const navigation = useNavigation();
+  const { isDarkMode } = useTheme();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -52,21 +58,50 @@ const TicketDetails = () => {
     fetchTickets();
   }, [bookingId]);
 
-  const handleDownloadAllTickets = () => {
+  const handleDownloadAllTickets = async () => {
     if (tickets.length === 0) {
       console.log('No tickets available to download.');
       return;
     }
 
-    // Logic to handle downloading all tickets
-    tickets.forEach((ticket) => {
-      if (ticket.ticketurl) {
-        console.log(`Downloading ticket from URL: ${ticket.ticketurl}`);
-        // You can use libraries like `react-native-fs` to download files to the device
-      }
-    });
+    try {
+      let combinedHtml = `<h1>All Tickets</h1>`;
 
-    Alert.alert('All tickets downloaded successfully!');
+      // Loop through each ticket and append its details to the combined HTML
+      tickets.forEach((ticket) => {
+        combinedHtml += `
+          <h2>Ticket ID: ${ticket.ticketid}</h2>
+          <p><strong>Event:</strong> ${ticket.title}</p>
+          <p><strong>Date and Hour:</strong> ${ticket.eventdate}</p>
+          <p><strong>Event Location:</strong> ${ticket.eventlocation}</p>
+          <p><strong>Booking ID:</strong> ${ticket.bookingid}</p>
+          <p><strong>Booking Status:</strong> ${ticket.bookingstatus}</p>
+          <p><strong>Seat Number:</strong> ${ticket.seatnumber}</p>
+          <p><strong>QR Code:</strong></p>
+          ${ticket.qrcode ? `<img src="${ticket.qrcode}" style="width: 100px; height: 100px;" />` : '<p>No QR Code available</p>'}
+          <hr/>
+        `;
+      });
+
+      const options = {
+        html: combinedHtml,
+        fileName: `TicketLiv_Tickets`,
+        directory: 'Documents',
+      };
+
+      // Generate combined PDF
+      const file = await RNHTMLtoPDF.convert(options);
+
+      // Move the PDF to the Downloads directory
+      const downloadsDir = `${RNFS.DownloadDirectoryPath}/All_Tickets.pdf`;
+      await RNFS.moveFile(file.filePath, downloadsDir);
+
+      console.log(`Tickets PDF downloaded to: ${downloadsDir}`);
+      Alert.alert('All tickets downloaded successfully!', `The PDF has been saved to:\n${downloadsDir}`);
+    } catch (error) {
+      console.error('Error downloading tickets:', error);
+      Alert.alert('Failed to download tickets. Please try again.');
+    }
   };
 
   if (isLoading) {
@@ -95,6 +130,12 @@ const TicketDetails = () => {
 
   return (
     <ScrollView style={styles.container}>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" size={30} color={isDarkMode ? '#fff' : '#333'} />
+        </TouchableOpacity>
+        <Text style={styles.headerText}>E Tickets</Text>
+      </View>
       {tickets.map((ticket, index) => (
         <View key={index} style={styles.ticketCard}>
           {/* QR Code */}
@@ -131,6 +172,17 @@ const TicketDetails = () => {
 };
 
 const styles = StyleSheet.create({
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    columnGap: 20,
+    paddingVertical: 15,
+  },
+  headerText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',

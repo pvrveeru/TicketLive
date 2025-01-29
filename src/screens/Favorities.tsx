@@ -4,6 +4,7 @@ import { useTheme } from '../Theme/ThemeContext';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getAllFavouriteEvents, markEventAsDeleteFavorite } from '../services/Apiservices';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface Events {
   eventId: number;
@@ -42,6 +43,12 @@ const FavoritiesScreen: React.FC = () => {
       fetchFavoriteEvents();
     }
   }, [userId]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchFavoriteEvents();
+    }, [userId])
+  );
 
   const fetchFavoriteEvents = async () => {
     try {

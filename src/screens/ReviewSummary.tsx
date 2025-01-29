@@ -46,7 +46,8 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
   const userId = userData.userId;
   const { formData, eventBookingDetails, eventId } = route.params;
   const dob = formData.dob ? new Date(formData.dob) : null;
-
+  console.log('eventBookingDetails', eventBookingDetails);
+  console.log('formData', formData);
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [charges, setCharges] = useState<ChargesData | null>(null);
@@ -83,16 +84,16 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
     fetchCharges();
   }, [eventId]);
 
-  const totalAmount = Number(eventBookingDetails.totalAmount);
+  const totalAmount = Number(eventBookingDetails?.totalAmount);
   const gstPercentage = Number(charges?.gstPercentage || 0);
   const convenienceFee = Number(charges?.convenienceFee || 0);
   const gstAmount = (totalAmount * (gstPercentage / 100));
   const totalAmountWithCharges = (totalAmount + gstAmount + convenienceFee).toFixed(2);
 
   const handleContinue = async () => {
-    const seatingDetails = eventBookingDetails.seatingIds.map((id: any, index: number) => ({
+    const seatingDetails = eventBookingDetails?.seatingIds.map((id: any, index: number) => ({
       seatingId: id,
-      noOfTickets: eventBookingDetails.noOfTickets[index]
+      noOfTickets: eventBookingDetails?.noOfTickets[index]
     }));
 
     const payload = {
@@ -136,7 +137,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
         </TouchableOpacity>
         <Text style={styles.headerText}>Review Summary</Text>
       </View>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.eventDetailsContainer}>
           <Image source={{ uri: eventDetails?.thumbUrl }} style={styles.eventImage} />
           <View>
@@ -165,21 +166,21 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
         </View>
         <View style={styles.ticketDetailsContainer}>
           <Text style={styles.infoTitle}>Ticket Details</Text>
-          {eventBookingDetails.zoneNames.map((zone: string, index: number) => (
+          {eventBookingDetails?.zoneNames.map((zone: string, index: number) => (
             <View key={index} style={styles.ticketRow}>
               <Text style={styles.value}>Zone:</Text>
               <Text style={styles.label}>{zone}</Text>
             </View>
           ))}
 
-          {eventBookingDetails.noOfTickets.map((ticket: number, index: number) => (
+          {eventBookingDetails?.noOfTickets.map((ticket: number, index: number) => (
             <View key={index} style={styles.ticketRow}>
-              <Text style={styles.value}>Seats ({eventBookingDetails.selectedClass[index]}):</Text>
+              <Text style={styles.value}>Seats ({eventBookingDetails?.selectedClass[index]}):</Text>
               <Text style={styles.label}>{ticket}</Text>
             </View>
           ))}
 
-          {eventBookingDetails.prices.map((price: number, index: number) => (
+          {eventBookingDetails?.prices.map((price: number, index: number) => (
             <View key={index} style={styles.ticketRow}>
               <Text style={styles.value}>Price:</Text>
               <Text style={styles.label}>${price.toFixed(2)}</Text>
@@ -188,7 +189,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
           <View style={styles.horizontalLine} />
           <View style={styles.ticketRow}>
             <Text style={styles.value}>Base Price:</Text>
-            <Text style={styles.label}>${eventBookingDetails.totalAmount}</Text>
+            <Text style={styles.label}>${eventBookingDetails?.totalAmount}</Text>
           </View>
           <View style={styles.horizontalLine} />
           <View style={styles.ticketRow}>

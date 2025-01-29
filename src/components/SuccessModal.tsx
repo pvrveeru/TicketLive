@@ -29,7 +29,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ isVisible, onClose, onViewT
               <Text>You have successfully placed an order for National Music Festival. Enjoy the event!</Text>
             </Text>
             <TouchableOpacity style={styles.viewTicketButton} onPress={onViewTicket}>
-              <Text style={styles.buttonText}>View E-Ticket</Text>
+              <Text style={styles.buttonText}>View Bookings</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
               <Text style={styles.cancelButtonText}>Cancel</Text>

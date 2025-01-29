@@ -92,24 +92,13 @@ const HomeScreen: React.FC = () => {
   const [manualEvents, setManualEvents] = useState<EventData[]>([]);
   const [auserId, setUserId] = useState<number | null>(null)
   const userData = useSelector((state: RootState) => state.userData);
-  // console.log(' in homescreen', userData)
   const profileImage = require('../../assests/images/icon.png');
   const profileImageUrl = userData.profileImageUrl;
-  const userName = userData.userName;
-  // console.log('UserId', auserId);
+  const userName = userData.firstName;
 
   const [favorites, setFavorites] = useState<{ [key: number]: boolean }>({});
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // const toggleFavorite = (eventId: number) => {
-  //   console.log(`Toggled favorite for event ID: ${eventId}, User ID: ${auserId}`);
-  //   setFavorites((prevFavorites) => {
-  //     return {
-  //       ...prevFavorites,
-  //       [eventId]: !prevFavorites[eventId],
-  //     };
-  //   });
-  // };
 
   useEffect(() => {
     const getUserId = async () => {
@@ -146,6 +135,16 @@ const HomeScreen: React.FC = () => {
     React.useCallback(() => {
       if (auserId !== null) {
         fetchData(auserId);
+      }
+    }, [auserId])
+  );
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (auserId !== null) {
+        fetchEventData(fetchFeaturedEvents, setFeaturedEvents);
+        fetchEventData(fetchPopularEvents, setPopularEvents);
+        fetchEventData(fetchManualEvents, setManualEvents);
       }
     }, [auserId])
   );
@@ -203,14 +202,8 @@ const HomeScreen: React.FC = () => {
     navigation.navigate('EventDetails', { eventId });
   };
 
-  // console.log('featuredEvents', featuredEvents)
-  // console.log('popularevents', popularEvents)
-  // console.log('manualevents', manualEvents)
-
   const toggleFavorite = async (eventId: number) => {
     if (!auserId) return;
-
-    // Check if the event is currently a favorite
     const isCurrentlyFavorite = favorites[eventId] || false;
     setFavorites((prevFavorites) => {
       return {
@@ -221,17 +214,14 @@ const HomeScreen: React.FC = () => {
 
     try {
       if (isCurrentlyFavorite) {
-        // Call API to remove from favorites (unlike)
         await markEventAsDeleteFavorite(auserId, eventId);
         console.log(`Unliked event ID: ${eventId}`);
       } else {
-        // Call API to add to favorites (like)
         await markEventAsFavorite({ userId: auserId, eventId });
         console.log(`Liked event ID: ${eventId}`);
       }
     } catch (error) {
       console.error('Error toggling favorite:', error);
-      // Revert the favorite state if the API call fails
       setFavorites((prevFavorites) => {
         return {
           ...prevFavorites,
