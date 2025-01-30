@@ -3,7 +3,6 @@ import { View, Text, Image, StyleSheet, Button } from 'react-native';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTheme } from '../Theme/ThemeContext';
-import { RootStackParamList } from '../navigation/AppNavigator';
 
 type Product = {
   id: number;
@@ -17,6 +16,11 @@ type ExploreDetailsRouteProp = RouteProp<{ ExploreDetails: { item: Product } }, 
 
 type ExploreDetailsProps = {
   route: ExploreDetailsRouteProp;
+};
+export type RootStackParamList = {
+  ExploreDetails: { item: Product };
+  BookEventScreen: { item: Product };
+  // Add other screens here
 };
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'ExploreDetails'>;

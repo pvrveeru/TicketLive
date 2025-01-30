@@ -6,6 +6,7 @@ import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import RNFS from 'react-native-fs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../Theme/ThemeContext';
+import Share from 'react-native-share';
 
 type RootStackParamList = {
   TicketDetails: { bookingId: number };
@@ -39,13 +40,14 @@ const TicketDetails = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const Logo = require('../../assests/images/ticketliv_logo.png');
 
   useEffect(() => {
     const fetchTickets = async () => {
       try {
         setIsLoading(true);
         const result = await getTicketsByBookingId(bookingId);
-        console.log('Fetched Tickets:', result);
+        // console.log('Fetched Tickets:', result);
         setTickets(result.tickets);
       } catch (err) {
         setError('Failed to fetch tickets. Please try again.');
@@ -67,9 +69,13 @@ const TicketDetails = () => {
     try {
       let combinedHtml = `<h1>All Tickets</h1>`;
 
-      // Loop through each ticket and append its details to the combined HTML
       tickets.forEach((ticket) => {
         combinedHtml += `
+        <div class="vehicleimage"
+            style="width:200px; margin: 3px 30px 3px 0px;">
+            <img src="${Logo}" alt=""
+                style="object-fit: scale-down; height: 100%; width: 100%; max-height: 150px; max-width: 250px;"/>
+        </div>
           <h2>Ticket ID: ${ticket.ticketid}</h2>
           <p><strong>Event:</strong> ${ticket.title}</p>
           <p><strong>Date and Hour:</strong> ${ticket.eventdate}</p>
@@ -98,9 +104,25 @@ const TicketDetails = () => {
 
       console.log(`Tickets PDF downloaded to: ${downloadsDir}`);
       Alert.alert('All tickets downloaded successfully!', `The PDF has been saved to:\n${downloadsDir}`);
+      return downloadsDir;
     } catch (error) {
       console.error('Error downloading tickets:', error);
       Alert.alert('Failed to download tickets. Please try again.');
+    }
+  };
+
+  const shareTicketPDF = async () => {
+    const pdfPath = await handleDownloadAllTickets();
+    if (!pdfPath) return;
+
+    try {
+      await Share.open({
+        title: 'Share Tickets',
+        url: `file://${pdfPath}`,
+        type: 'application/pdf',
+      });
+    } catch (error) {
+      Alert.alert('Failed to share ticket.');
     }
   };
 
@@ -135,7 +157,11 @@ const TicketDetails = () => {
           <Icon name="arrow-back" size={30} color={isDarkMode ? '#fff' : '#333'} />
         </TouchableOpacity>
         <Text style={styles.headerText}>E Tickets</Text>
+        <TouchableOpacity onPress={shareTicketPDF}>
+          <Icon name="share-social-outline" size={28} color={isDarkMode ? '#fff' : '#333'} />
+        </TouchableOpacity>
       </View>
+
       {tickets.map((ticket, index) => (
         <View key={index} style={styles.ticketCard}>
           {/* QR Code */}
@@ -175,13 +201,13 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 20,
-    columnGap: 20,
-    paddingVertical: 15,
   },
   headerText: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
+    color: '#333',
   },
   container: {
     flex: 1,

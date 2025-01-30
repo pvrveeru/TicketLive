@@ -7,6 +7,7 @@ import { getAllFavouriteEvents, markEventAsDeleteFavorite } from '../services/Ap
 import { useFocusEffect } from '@react-navigation/native';
 
 interface Events {
+  event: any;
   eventId: number;
   title: string;
   city: string;
@@ -14,6 +15,7 @@ interface Events {
   eventDate: string;
   thumbUrl: string | null;
   isPopular: boolean;
+  location: string;
 }
 
 const FavoritiesScreen: React.FC = () => {
@@ -28,10 +30,10 @@ const FavoritiesScreen: React.FC = () => {
         const userData = await AsyncStorage.getItem('userData');
         if (userData) {
           const parsedData = JSON.parse(userData);
-          setUserId(parsedData.userId); // Ensure your AsyncStorage data contains `userId`
+          setUserId(parsedData.userId);
         }
-      } catch (error) {
-        console.error('Error fetching user data from AsyncStorage:', error);
+      } catch (error: any) {
+        console.error('Error fetching user data from AsyncStorage:', error.message);
       }
     };
 
@@ -55,11 +57,11 @@ const FavoritiesScreen: React.FC = () => {
       if (userId) {
         const events = await getAllFavouriteEvents(userId);
         setFavoriteEvents(events.favorites);
-        setIsRefreshing(false); // Stop refreshing after data is fetched
+        setIsRefreshing(false);
       }
     } catch (error) {
       console.error('Error fetching favorite events:', error);
-      setIsRefreshing(false); // Stop refreshing in case of error
+      setIsRefreshing(false);
     }
   };
 
@@ -67,7 +69,7 @@ const FavoritiesScreen: React.FC = () => {
     try {
       if (userId) {
         await markEventAsDeleteFavorite(userId, eventId);
-        fetchFavoriteEvents(); // Refresh the list of favorite events
+        fetchFavoriteEvents();
       }
     } catch (error) {
       console.error('Error removing favorite event:', error);
@@ -80,28 +82,28 @@ const FavoritiesScreen: React.FC = () => {
   };
 
   const renderEventItem = (item: Events) => {
-    const isFavorite = favoriteEvents.some((event) => event.eventId === item.eventId);
-
+    const eventDetails = item.event;
+    const isFavorite = favoriteEvents.some((event) => event.eventId === eventDetails.eventId);
     return (
       <TouchableOpacity
         key={item.eventId}
         style={[styles.eventContainer, { backgroundColor: isDarkMode ? 'gray' : '#fff' }]}
       >
         <View style={styles.eventDetails}>
-          {item.thumbUrl ? (
-            <Image source={{ uri: item.thumbUrl }} style={styles.eventImage} />
+          {eventDetails.thumbUrl ? (
+            <Image source={{ uri: eventDetails.thumbUrl }} style={styles.eventImage} />
           ) : (
             <Image source={require('../../assests/images/altimg.jpg')} style={styles.eventImage} />
           )}
-          <Text style={[styles.eventTitle, { color: isDarkMode ? '#fff' : '#000' }]}>{item.title}</Text>
+          <Text style={[styles.eventTitle, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails.title}</Text>
           <Text style={[styles.eventType, { color: isDarkMode ? '#fff' : '#000' }]}>
-            {item.city}, {item.state}
+            {eventDetails.location}
           </Text>
           <View style={styles.eventFooter}>
-            <Text style={styles.eventDate}>{formatEventDateTime(item.eventDate)}</Text>
+            <Text style={styles.eventDate}>{formatEventDateTime(eventDetails.eventDate)}</Text>
             <TouchableOpacity
               style={styles.favoriteIconContainer}
-              onPress={() => handleRemoveFavorite(item.eventId)}
+              onPress={() => handleRemoveFavorite(eventDetails.eventId)}
             >
               <Icon name={isFavorite ? 'heart' : 'heart-outline'} size={30} color={isFavorite ? 'red' : '#000'} />
             </TouchableOpacity>

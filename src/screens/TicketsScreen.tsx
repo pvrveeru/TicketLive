@@ -166,6 +166,7 @@ const TicketsScreen = () => {
             data={upcomingBookings}
             keyExtractor={(item, index) => item.bookingId?.toString() || index.toString()}
             renderItem={renderBookingItem}
+            showsVerticalScrollIndicator={false}
           />
         )
       ) : selectedTab === 'Completed' ? (

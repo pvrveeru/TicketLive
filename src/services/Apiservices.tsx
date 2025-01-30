@@ -311,7 +311,6 @@ export const markEventAsDeleteFavorite = async (userId: number, eventId: number)
     let errorMessage = 'An unexpected error occurred.';
     
     if (error.response) {
-      // Handle the different error codes
       switch (error.response.status) {
         case 401:
           errorMessage = `Unauthorized access. Please authenticate. Message: ${error.response.data.message}`;
@@ -329,8 +328,6 @@ export const markEventAsDeleteFavorite = async (userId: number, eventId: number)
     } else {
       errorMessage = `Error occurred: ${error.message}`;
     }
-
-    // Throw the error with the detailed message
     throw new Error(errorMessage);
   }
 };
@@ -348,7 +345,7 @@ export const updateUserNotifications = async (userId: string, notificationsEnabl
 export const updateUserProfile = async (userId: any, userDetails: any) => {
   try {
     const response = await api.put(`/users/${userId}`,userDetails);
-    return response.data.data; // Return the updated user data
+    return response.data.data;
   } catch (error) {
     console.log('Error updating userdetails:', error);
     throw error;

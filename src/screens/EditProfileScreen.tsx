@@ -4,6 +4,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchUserById, updateUserProfile } from '../services/Apiservices';
 import { useNavigation } from '@react-navigation/native';
 import { getUserData } from '../Redux/Actions';
+import { useTheme } from '../Theme/ThemeContext';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { COLORS } from '../styles/globalstyles';
 
 interface UserData {
   userId: number;
@@ -14,6 +17,7 @@ interface RootState {
 
 const EditProfileScreen: React.FC = () => {
   const dispatch = useDispatch();
+  const { isDarkMode } = useTheme();
   const userData = useSelector((state: RootState) => state.userData);
   const navigation = useNavigation();
 
@@ -72,7 +76,7 @@ const EditProfileScreen: React.FC = () => {
       state,
       city,
     };
-// console.log("userDetails::", userDetails)
+    // console.log("userDetails::", userDetails)
     try {
       setLoading(true);
       const response = await updateUserProfile(userData.userId, userDetails);
@@ -97,15 +101,13 @@ const EditProfileScreen: React.FC = () => {
 
   return (
     <ScrollView style={styles.container}>
-      {/* Header with Left Arrow */}
       <View style={styles.headerContainer}>
-        {/* <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.leftArrow}>←</Text>
-        </TouchableOpacity> */}
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-back" size={30} color={isDarkMode ? '#fff' : '#333'} />
+        </TouchableOpacity>
         <Text style={styles.header}>Edit Profile</Text>
       </View>
 
-      {/* Input Fields */}
       <TextInput style={styles.input} value={firstName} onChangeText={setFirstName} placeholder="First Name" />
       <TextInput style={styles.input} value={lastName} onChangeText={setLastName} placeholder="Last Name" />
       <TextInput style={styles.input} value={emailId || ''} onChangeText={setEmailId} placeholder="Email ID" keyboardType="email-address" />
@@ -116,8 +118,9 @@ const EditProfileScreen: React.FC = () => {
       <TextInput style={styles.input} value={city || ''} onChangeText={setCity} placeholder="City" />
       <TextInput style={styles.input} value={state || ''} onChangeText={setState} placeholder="State" />
 
-      {/* Save Changes Button */}
-      <Button title="Save Changes" onPress={handleSaveChanges} />
+      <TouchableOpacity onPress={handleSaveChanges} style={styles.button}>
+        <Text style={styles.btntext}>Update</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -132,6 +135,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
+    columnGap: 30,
   },
   leftArrow: {
     fontSize: 24,
@@ -155,6 +159,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  button: {
+    backgroundColor: COLORS.red,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    width: '100%',
+    borderRadius: 15,
+    marginTop: '20%',
+  },
+  btntext: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
   },
 });
 
