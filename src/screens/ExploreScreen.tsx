@@ -337,7 +337,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   favotites: {
-    alignSelf: 'flex-end',
+    position: 'absolute',
+    left: '85%',
+    bottom: 0,
+    right: 0,
   },
   container: {
     flex: 1,

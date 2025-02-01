@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons'; // Or any other icon library
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation hook
+import Icon from 'react-native-vector-icons/Ionicons';
+import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../Theme/ThemeContext';
 import { getNotificationsByUserId } from '../services/Apiservices';
 import { useSelector } from 'react-redux';
@@ -26,7 +26,7 @@ interface RootState {
 
 const Notifications = () => {
     const { isDarkMode } = useTheme();
-    const navigation = useNavigation(); // Initialize useNavigation hook
+    const navigation = useNavigation();
     const userData = useSelector((state: RootState) => state.userData);
     const userId = userData.userId;
     const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -64,29 +64,21 @@ const Notifications = () => {
             </View>
         );
     }
-    console.log('notifications', notifications);
 
-    const notificationsData: NotificationItem[] = [
-        { text: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.' },
-        { text: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliqui...' },
-        { text: 'Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit la...' },
-        { text: 'Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit la...' },
-    ];
+    const handleSettingsPress = () => {
+        Alert.alert('Settings', 'Settings icon clicked!', [{ text: 'OK' }]);
+    };
+
+    const notificationsData: NotificationItem[] = notifications?.map(notification => ({
+        text: notification.message,
+    }));
 
     const renderNotificationItem = ({ item }: { item: NotificationItem }) => (
         <View style={[styles.notificationItem, { backgroundColor: isDarkMode ? '#333' : '#f0f0f0' }]}>
             <Icon name="notifications-outline" size={24} color="#EF412B" style={styles.notificationIcon} />
-            <Text style={[styles.notificationText, { color: isDarkMode ? '#fff' : '#333' }]}>
-                {item.text}
-            </Text>
+            <Text style={[styles.notificationText, { color: isDarkMode ? '#fff' : '#333' }]}>{item.text}</Text>
         </View>
     );
-
-    const handleSettingsPress = () => {
-        Alert.alert('Settings', 'Settings icon clicked!', [
-            { text: 'OK' },
-        ]);
-    };
 
     return (
         <View style={[styles.container, { backgroundColor: isDarkMode ? '#333' : '#fff' }]}>
@@ -100,21 +92,26 @@ const Notifications = () => {
                 </TouchableOpacity>
             </View>
 
-            <FlatList
-                data={notificationsData}
-                renderItem={renderNotificationItem}
-                keyExtractor={(item, index) => index.toString()}
-                style={styles.list}
-            />
+            {notificationsData?.length === 0 ? (
+                <View style={styles.noNotificationsContainer}>
+                    <Text style={styles.noNotificationsText}>No notifications available.</Text>
+                </View>
+            ) : (
+                <FlatList
+                    data={notificationsData}
+                    renderItem={renderNotificationItem}
+                    keyExtractor={(item, index) => index.toString()}
+                    style={styles.list}
+                />
+            )}
         </View>
     );
 };
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 16,
-        paddingTop: 20, // Adjust as needed for status bar
+        paddingTop: 20,
     },
     header: {
         flexDirection: 'row',
@@ -140,10 +137,10 @@ const styles = StyleSheet.create({
     },
     notificationIcon: {
         marginRight: 10,
-        marginTop: 3, // Align icon vertically
+        marginTop: 3,
     },
     notificationText: {
-        flex: 1, // Allow text to wrap
+        flex: 1,
         fontSize: 16,
     },
     list: {
@@ -162,6 +159,16 @@ const styles = StyleSheet.create({
     errorText: {
         color: 'red',
         fontSize: 16,
+    },
+    noNotificationsContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    noNotificationsText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
 });
 

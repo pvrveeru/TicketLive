@@ -98,8 +98,6 @@ const HomeScreen: React.FC = () => {
 
   const [favorites, setFavorites] = useState<{ [key: number]: boolean }>({});
   const [isRefreshing, setIsRefreshing] = useState(false);
-  // console.log('featuredEvents', featuredEvents);
-  console.log('userData in homescreen', userData);
 
   useEffect(() => {
     const getUserId = async () => {
@@ -163,27 +161,16 @@ const HomeScreen: React.FC = () => {
     fetchEventData(fetchManualEvents, setManualEvents);
   }, []);
 
-  // const fetchEventData = async (fetchFunction: Function, setEvents: Function) => {
-  //   try {
-  //     const data = await fetchFunction(auserId, 10);
-  //     setEvents(data.result || []);
-  //   } catch (error) {
-  //     console.error('Error fetching events:', error);
-  //   }
-  // };
   const fetchEventData = async (fetchFunction: Function, setEvents: Function) => {
     try {
       const data = await fetchFunction(auserId, 10);
       const eventList = data.result || [];
-  
       setEvents(eventList);
-  
-      // Update favorites state based on fetched events
       const updatedFavorites: { [key: number]: boolean } = {};
       eventList.forEach((event: any) => {
         updatedFavorites[event.eventId] = event.isFavorite;
       });
-  
+
       setFavorites((prevFavorites) => ({
         ...prevFavorites,
         ...updatedFavorites,
@@ -236,13 +223,10 @@ const HomeScreen: React.FC = () => {
     try {
       if (isCurrentlyFavorite) {
         await markEventAsDeleteFavorite(auserId, eventId);
-        console.log(`Unliked event ID: ${eventId}`);
       } else {
         await markEventAsFavorite({ userId: auserId, eventId });
-        console.log(`Liked event ID: ${eventId}`);
       }
     } catch (error) {
-      console.error('Error toggling favorite:', error);
       setFavorites((prevFavorites) => {
         return {
           ...prevFavorites,
@@ -255,7 +239,9 @@ const HomeScreen: React.FC = () => {
     <View style={styles.section}>
       <View style={styles.headerRow}>
         <Text style={styles.title}>{title}</Text>
-        <Button title="See All" onPress={() => navigateToExplore(type)} />
+        <TouchableOpacity onPress={() => navigateToExplore(type)} style={styles.seeallbtn}>
+          <Text style={styles.seeallbtntxt}>See All</Text>
+        </TouchableOpacity>
       </View>
       <FlatList
         horizontal
@@ -282,7 +268,6 @@ const HomeScreen: React.FC = () => {
       refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}>
       <View style={styles.header}>
         <TouchableOpacity onPress={handleProfilePress} style={styles.profile}>
-          {/* <Image source={profileImage} style={styles.profileImage} /> */}
           {profileImageUrl ? (
             <Image source={{ uri: profileImageUrl }} style={styles.profileImage} />
           ) : (
@@ -298,16 +283,28 @@ const HomeScreen: React.FC = () => {
         </TouchableOpacity>
       </View>
       <HomeCarousel />
-      <View style={{ marginBottom: 40}}>
+      <View style={{ marginBottom: 40 }}>
         {renderEventSection('Featured Events', featuredEvents, 'Featured')}
         {renderEventSection('Popular Events', popularEvents, 'Popular')}
-        {/* {renderEventSection('Manual Events', manualEvents, 'Manual')} */}
       </View>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  seeallbtn: {
+    backgroundColor: COLORS.red,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+    borderRadius: 15,
+  },
+  seeallbtntxt: {
+    fontSize: 20,
+    color: 'white',
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
     padding: 20,
