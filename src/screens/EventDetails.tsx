@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { getEventById } from '../services/Apiservices';
+import { getEventById, markEventAsDeleteFavorite, markEventAsFavorite } from '../services/Apiservices';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -20,6 +20,7 @@ import { useTheme } from '../Theme/ThemeContext';
 import MapView, { Marker } from 'react-native-maps';
 import moment from 'moment';
 import CustomCarousel from '../components/CustomCarousel';
+import { useSelector } from 'react-redux';
 
 
 interface Category {
@@ -86,24 +87,34 @@ interface RouteParams {
   eventId: number;
   layoutImage: string;
 }
+interface UserData {
+  userId: number;
+}
+interface RootState {
+  userData: UserData;
+}
 
 const EventDetails: React.FC = () => {
   const { isDarkMode } = useTheme();
   const route = useRoute();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { eventId } = route.params as RouteParams;
+  const userData = useSelector((state: RootState) => state.userData);
+  const userId = userData.userId;
 
   const [eventDetails, setEventDetails] = useState<EventDetailsData | null>(
     null
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     const fetchEventDetails = async () => {
       try {
         const details = await getEventById(eventId);
         setEventDetails(details.data);
+        setIsFavorite(details.data.isFavorite);
       } catch (err) {
         setError('Failed to load event details.');
       } finally {
@@ -114,6 +125,19 @@ const EventDetails: React.FC = () => {
     fetchEventDetails();
   }, [eventId]);
 
+  const toggleFavorite = async () => {
+    try {
+      if (isFavorite) {
+        await markEventAsDeleteFavorite(userId, eventId);
+      } else {
+        await markEventAsFavorite({ userId: userId, eventId });
+      }
+      setIsFavorite(!isFavorite);
+    } catch (err) {
+      console.error('Failed to update favorite status', err);
+    }
+  };
+  
   if (loading) {
     return <ActivityIndicator style={styles.loader} size="large" color={COLORS.red} />;
   }
@@ -139,7 +163,7 @@ const EventDetails: React.FC = () => {
     navigation.navigate('BookEventScreen', { eventId, layoutImage });
   };
 
-  console.log('eventDetails', eventDetails);
+  console.log('eventDetails isFavorite', isFavorite);
   return (
     <>
       <View style={[styles.header, isDarkMode ? styles.dark : styles.light]}>
@@ -179,8 +203,8 @@ const EventDetails: React.FC = () => {
                 {moment(eventDetails.eventDate).format('DD/MM/YYYY')}
               </Text>
             </View>
-            <TouchableOpacity style={styles.iconButton}>
-              <Ionicons name="heart-outline" size={24} color="white" />
+            <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
+              <Ionicons name={isFavorite ? "heart" : "heart-outline"} size={30} color={isFavorite ? "red" : "#888"} />
             </TouchableOpacity>
           </View>
 
@@ -330,6 +354,13 @@ const styles = StyleSheet.create({
   iconButton: {
     backgroundColor: '#c11c84',
     padding: 10,
+    borderRadius: 50,
+    alignItems: 'center',
+  },
+  heartButton: {
+    borderWidth: 1,
+    borderColor: '#c11c84',
+    padding: 5,
     borderRadius: 50,
     alignItems: 'center',
   },

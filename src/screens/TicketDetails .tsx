@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Image, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Image, Alert, Platform } from 'react-native';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { getTicketsByBookingId } from '../services/Apiservices';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
@@ -47,7 +47,7 @@ const TicketDetails = () => {
       try {
         setIsLoading(true);
         const result = await getTicketsByBookingId(bookingId);
-        // console.log('Fetched Tickets:', result);
+        console.log('Fetched Tickets:', result.tickets);
         setTickets(result.tickets);
       } catch (err) {
         setError('Failed to fetch tickets. Please try again.');
@@ -96,10 +96,14 @@ const TicketDetails = () => {
       };
 
       // Generate combined PDF
-      const file = await RNHTMLtoPDF.convert(options);
+      const file = await RNHTMLtoPDF.convert(options)
+      let downloadsDir;
+      if (Platform.OS === 'ios') {
+        downloadsDir = `${RNFS.DocumentDirectoryPath}/Ticketliv_Tickets.pdf`;
+      } else {
+        downloadsDir = `${RNFS.DownloadDirectoryPath}/Ticketliv_Tickets.pdf`;
+      }
 
-      // Move the PDF to the Downloads directory
-      const downloadsDir = `${RNFS.DownloadDirectoryPath}/All_Tickets.pdf`;
       await RNFS.moveFile(file.filePath, downloadsDir);
 
       console.log(`Tickets PDF downloaded to: ${downloadsDir}`);
@@ -112,19 +116,51 @@ const TicketDetails = () => {
   };
 
   const shareTicketPDF = async () => {
-    const pdfPath = await handleDownloadAllTickets();
-    if (!pdfPath) return;
-
     try {
+      // Generate the PDF
+      let combinedHtml = `<h1>All Tickets</h1>`;
+  
+      tickets.forEach((ticket) => {
+        combinedHtml += `
+          <div class="vehicleimage"
+              style="width:200px; margin: 3px 30px 3px 0px;">
+              <img src="${Logo}" alt=""
+                  style="object-fit: scale-down; height: 100%; width: 100%; max-height: 150px; max-width: 250px;"/>
+          </div>
+            <h2>Ticket ID: ${ticket.ticketid}</h2>
+            <p><strong>Event:</strong> ${ticket.title}</p>
+            <p><strong>Date and Hour:</strong> ${ticket.eventdate}</p>
+            <p><strong>Event Location:</strong> ${ticket.eventlocation}</p>
+            <p><strong>Booking ID:</strong> ${ticket.bookingid}</p>
+            <p><strong>Booking Status:</strong> ${ticket.bookingstatus}</p>
+            <p><strong>Seat Number:</strong> ${ticket.seatnumber}</p>
+            <p><strong>QR Code:</strong></p>
+            ${ticket.qrcode ? `<img src="${ticket.qrcode}" style="width: 100px; height: 100px;" />` : '<p>No QR Code available</p>'}
+            <hr/>
+        `;
+      });
+  
+      const options = {
+        html: combinedHtml,
+        fileName: `TicketLiv_Tickets`,
+        directory: 'Documents',
+      };
+  
+      // Generate the PDF
+      const file = await RNHTMLtoPDF.convert(options);
+  
+      // Share the generated PDF directly
       await Share.open({
         title: 'Share Tickets',
-        url: `file://${pdfPath}`,
+        url: `file://${file.filePath}`,
         type: 'application/pdf',
       });
     } catch (error) {
-      Alert.alert('Failed to share ticket.');
+      console.error('Error sharing tickets:', error);
+      Alert.alert('Failed to share tickets. Please try again.');
     }
   };
+  
 
   if (isLoading) {
     return (
@@ -180,10 +216,8 @@ const TicketDetails = () => {
           <Text style={styles.detailText}>{ticket.title}</Text>
           <Text style={styles.label}>Date and Hour: </Text>
           <Text style={styles.detailText}>{ticket.eventdate}</Text>
-          <Text style={styles.detailText}>
-            <Text style={styles.label}>Event Location: </Text>
-            {ticket.eventlocation}
-          </Text>
+          <Text style={styles.label}>Event Location: </Text>
+          <Text style={styles.detailText}>{ticket.eventlocation} </Text>
           <Text style={styles.label}>Event Organizer: </Text>
           <Text style={styles.detailText}>{ticket.title}</Text>
         </View>

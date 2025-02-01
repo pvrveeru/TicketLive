@@ -19,11 +19,11 @@ const HomeCarousel: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (bannerImages.length === 0) return;
+    if (bannerImages?.length === 0) return;
 
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => {
-        const nextIndex = prevIndex + 1 < bannerImages.length ? prevIndex + 1 : 0;
+        const nextIndex = prevIndex + 1 < bannerImages?.length ? prevIndex + 1 : 0;
         scrollViewRef.current?.scrollTo({
           x: screenWidth * nextIndex,
           animated: true,
@@ -45,7 +45,7 @@ const HomeCarousel: React.FC = () => {
         style={{ width: screenWidth }}
         contentContainerStyle={{ alignItems: 'center' }}
       >
-        {bannerImages.map((imageUrl, index) => (
+        {bannerImages?.map((imageUrl, index) => (
           <Image key={index} source={{ uri: imageUrl }} style={[styles.image, { width: screenWidth }]} />
         ))}
       </ScrollView>
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    height: 200,
+    height: 400,
     resizeMode: 'contain',
   },
 });

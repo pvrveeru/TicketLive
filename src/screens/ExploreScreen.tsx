@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
-import { fetchEvents, fetchFeaturedEvents, fetchManualEvents, fetchPopularEvents } from '../services/Apiservices';
+import { View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { fetchEvents, fetchFeaturedEvents, fetchManualEvents, fetchPopularEvents, getAllEventCategories, markEventAsDeleteFavorite, markEventAsFavorite } from '../services/Apiservices';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import moment from 'moment';
+import { COLORS } from '../styles/globalstyles';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 type EventData = {
   id: any;
@@ -51,6 +54,14 @@ type RootStackParamList = {
 
 type ExploreScreenRouteProps = RouteProp<RootStackParamList, 'Explore'>;
 
+type Category = {
+  categoryId: number;
+  categoryName: string;
+  createdAt: string;
+  uniqueCategoryId: string;
+  updatedAt: string;
+};
+
 const ExploreScreen = () => {
   const route = useRoute<ExploreScreenRouteProps>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -60,7 +71,9 @@ const ExploreScreen = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [auserId, setUserId] = useState<number | null>(null);
-  const [noEventsMessage, setNoEventsMessage] = useState<string>(''); // New state to hold no events message
+  const [noEventsMessage, setNoEventsMessage] = useState<string>('');
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
 
   useEffect(() => {
     const getUserId = async () => {
@@ -79,9 +92,12 @@ const ExploreScreen = () => {
   }, []);
 
   useEffect(() => {
+    AllCatageories();
+  }, [])
+  useEffect(() => {
     const loadByType = async () => {
       setLoading(true);
-      setNoEventsMessage(''); // Clear any previous no events message
+      setNoEventsMessage('');
       try {
         let data;
         if (auserId === null) {
@@ -107,6 +123,7 @@ const ExploreScreen = () => {
             data = await fetchPopularEvents(auserId, 10);
             if (!data.result) setNoEventsMessage('No popular events found');
           } else {
+            console.log('All Events API is calling');
             data = await fetchEvents({
               keyword: searchKeyword,
               sortBy: 'createdAt',
@@ -129,6 +146,11 @@ const ExploreScreen = () => {
     loadByType();
   }, [searchKeyword, type, auserId]);
 
+  const AllCatageories = async () => {
+    const result = await getAllEventCategories();
+    setCategories(result);
+    console.log('catageories result', result);
+  }
   const handleEventPress = (eventId: number | undefined) => {
     if (eventId) {
       navigation.navigate('EventDetails', { eventId });
@@ -137,22 +159,109 @@ const ExploreScreen = () => {
     }
   };
 
-  const renderEventItem = ({ item }: { item: EventData }) => (
-    <View style={styles.eventItem}>
-      <TouchableOpacity onPress={() => handleEventPress(item.eventId)}>
-        <Image source={{ uri: item.thumbUrl }} style={styles.eventImage} />
-        <View style={styles.eventDetails}>
-          <Text style={styles.eventTitle}>{item.title}</Text>
-          <Text style={styles.eventDescription}>{item.brief}</Text>
-          <Text style={styles.eventLocation}>{item.location}</Text>
-        </View>
-      </TouchableOpacity>
-    </View>
-  );
+  const formatDate = (dateString: string) => {
+    return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
+  };
 
+  const toggleFavorite = async (eventId: number) => {
+    setEvents((prevEvents) =>
+      prevEvents.map((event) =>
+        event.eventId === eventId
+          ? { ...event, isFavorite: !event.isFavorite }
+          : event
+      )
+    );
+
+    if (auserId === null) {
+      console.error("User ID is null, can't toggle favorite");
+      return;
+    }
+
+    try {
+      const event = events.find((e) => e.eventId === eventId);
+      if (event) {
+        const isCurrentlyFavorite = event.isFavorite;
+
+        if (isCurrentlyFavorite) {
+          await markEventAsDeleteFavorite(auserId, eventId);
+          console.log(`Unliked event ID: ${eventId}`);
+        } else {
+          await markEventAsFavorite({ userId: auserId, eventId });
+          console.log(`Liked event ID: ${eventId}`);
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      setEvents((prevFavorites) =>
+        prevFavorites.map((event) =>
+          event.eventId === eventId
+            ? { ...event, isFavorite: !event.isFavorite }
+            : event
+        )
+      );
+    }
+  };
+
+
+  const renderEventRow = ({ item, index }: { item: EventData[]; index: number }) => {
+    return (
+      <View style={styles.eventRow}>
+        {item?.map((event, idx) => (
+          <TouchableOpacity
+            key={event.id || idx}
+            style={styles.eventCard}
+            onPress={() => handleEventPress(event?.eventId)}
+          >
+            <Image source={{ uri: event?.thumbUrl }} style={styles.eventImage} />
+            <View style={styles.eventDetails}>
+              <Text style={styles.eventTitle}>{event?.title}</Text>
+              <Text style={styles.eventDescription}>{event?.location}</Text>
+              <Text style={styles.eventDate}>{formatDate(event?.eventDate || '')}</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  if (event?.eventId !== undefined) {
+                    toggleFavorite(event.eventId); // Only call if eventId is defined
+                  } else {
+                    console.warn("Event ID is undefined");
+                  }
+                }}
+              >
+                <Ionicons
+                  name={event?.isFavorite ? "heart" : "heart-outline"}
+                  size={30}
+                  color={event?.isFavorite ? "red" : "#888"}
+                />
+              </TouchableOpacity>
+
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+    );
+  };
+
+
+  const transformDataToRows = (data: EventData[]) => {
+    const rows: EventData[][] = [];
+    for (let i = 0; i < data?.length; i += 2) {
+      rows.push(data.slice(i, i + 2));
+    }
+    return rows;
+  };
+
+  const handleCategoryClick = (categoryId: number) => {
+    if (selectedCategory === categoryId) {
+      setSelectedCategory(null);
+    } else {
+      setSelectedCategory(categoryId);
+    }
+  };
+
+  const filteredEvents = selectedCategory
+    ? events.filter(event => event.categoryId?.categoryId === selectedCategory)
+    : events;
   return (
     <View style={styles.container}>
-      {/* Header with Explore Events and Search Bar */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Explore Events</Text>
         <View style={styles.searchContainer}>
@@ -163,20 +272,32 @@ const ExploreScreen = () => {
             onChangeText={setSearchKeyword}
           />
         </View>
-        <Text style={styles.eventCount}>Events found: {events?.length}</Text>
+        <Text style={styles.eventCount}>{type} Events found: {filteredEvents?.length ? filteredEvents?.length : events?.length}</Text>
       </View>
-
-      {/* Message when no events are found */}
+      <ScrollView contentContainerStyle={styles.buttonContainer} horizontal>
+        {categories.length > 0 ? (
+          categories.map((category) => (
+            <TouchableOpacity
+              key={category.categoryId}
+              style={styles.button}
+              onPress={() => handleCategoryClick(category.categoryId)}
+            >
+              <Text style={styles.buttonText}>{category.categoryName}</Text>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <Text>Loading categories...</Text>
+        )}
+      </ScrollView>
       {noEventsMessage && <Text style={styles.noEventsMessage}>{noEventsMessage}</Text>}
 
-      {/* Event List */}
       {loading ? (
         <Text>Loading events...</Text>
       ) : (
         <FlatList
-          data={events}
-          renderItem={renderEventItem}
-          keyExtractor={(item, index) => (item.id ? item.id.toString() : index.toString())}
+          data={transformDataToRows(filteredEvents)}
+          renderItem={renderEventRow}
+          keyExtractor={(item, index) => index.toString()}
         />
       )}
     </View>
@@ -184,6 +305,27 @@ const ExploreScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  buttonContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginBottom: 20,
+    columnGap: 20,
+  },
+  button: {
+    backgroundColor: COLORS.red,
+    borderRadius: 5,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
     padding: 16,
@@ -217,36 +359,40 @@ const styles = StyleSheet.create({
     color: '#000',
     fontWeight: 'bold',
   },
-  eventItem: {
+  eventRow: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    paddingBottom: 8,
+  },
+  eventCard: {
+    flex: 1,
+    marginHorizontal: 8,
+    borderRadius: 8,
+    backgroundColor: '#f9f9f9',
+    overflow: 'hidden',
+    elevation: 2,
   },
   eventImage: {
-    width: 100,
-    height: 100,
-    marginRight: 16,
-    borderRadius: 8,
+    width: '100%',
+    height: 120,
   },
   eventDetails: {
-    flex: 1,
-    justifyContent: 'center',
+    padding: 8,
   },
   eventTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   eventDescription: {
-    marginTop: 8,
+    marginTop: 4,
     fontSize: 14,
     color: '#777',
   },
-  eventLocation: {
-    marginTop: 8,
+  eventDate: {
+    marginTop: 4,
     fontSize: 14,
-    color: '#333',
+    color: 'red',
+    fontWeight: 'bold',
   },
   noEventsMessage: {
     fontSize: 18,

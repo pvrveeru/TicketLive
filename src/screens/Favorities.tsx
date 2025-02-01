@@ -4,7 +4,8 @@ import { useTheme } from '../Theme/ThemeContext';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getAllFavouriteEvents, markEventAsDeleteFavorite } from '../services/Apiservices';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 interface Events {
   event: any;
@@ -17,8 +18,11 @@ interface Events {
   isPopular: boolean;
   location: string;
 }
-
+type RootStackParamList = {
+  EventDetails: { eventId: number };
+};
 const FavoritiesScreen: React.FC = () => {
+   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { isDarkMode } = useTheme();
   const [favoriteEvents, setFavoriteEvents] = useState<Events[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
@@ -81,6 +85,10 @@ const FavoritiesScreen: React.FC = () => {
     return eventDate.toLocaleString();
   };
 
+  const handleEventPress = (eventId: number) => {
+    navigation.navigate('EventDetails', { eventId });
+  };
+
   const renderEventItem = (item: Events) => {
     const eventDetails = item.event;
     const isFavorite = favoriteEvents.some((event) => event.eventId === eventDetails.eventId);
@@ -88,6 +96,7 @@ const FavoritiesScreen: React.FC = () => {
       <TouchableOpacity
         key={item.eventId}
         style={[styles.eventContainer, { backgroundColor: isDarkMode ? 'gray' : '#fff' }]}
+        onPress={() => handleEventPress(eventDetails.eventId)}
       >
         <View style={styles.eventDetails}>
           {eventDetails.thumbUrl ? (

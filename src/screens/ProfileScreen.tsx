@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Switch, Image, Modal, ScrollView, Button } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../Theme/ThemeContext';
@@ -6,8 +6,10 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { updateUserNotifications } from '../services/Apiservices';
+import { fetchUserById, updateUserNotifications, uploadUserProfile } from '../services/Apiservices';
 import { getUserData } from '../Redux/Actions';
+import { requestCameraPermission } from '../components/requestCameraPermission ';
+import CustomSwitch from '../components/CustomSwitch';
 
 interface ProfileOption {
   title: string;
@@ -24,7 +26,7 @@ type RootStackParamList = {
 interface UserData {
   profileImageUrl: string;
   notificationsEnabled: boolean;
-  userId: string;
+  userId: number;
 }
 interface RootState {
   userData: UserData;
@@ -35,15 +37,15 @@ const ProfileScreen = () => {
   const { isDarkMode, toggleDarkMode } = useTheme();
   const dispatch = useDispatch();
   const userData = useSelector((state: RootState) => state.userData);
-  // console.log(userData)
-  const profileImageUrl = userData.profileImageUrl;
-  const notificationState = userData.notificationsEnabled;
-  const userId = userData.userId;
+  const profileImageUrl = userData?.profileImageUrl;
+  const notificationState = userData?.notificationsEnabled;
+  const userId = userData?.userId;
 
   const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(notificationState);
   const [isNModalVisible, setIsNModalVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [imageSource, setImageSource] = useState<string | null>(null);
+  const [imageSource, setImageSource] = useState<string | null>(profileImageUrl);
+  const [previousNotificationState, setPreviousNotificationState] = useState(notificationState);
 
   const profileOptions: ProfileOption[] = [
     { title: 'Edit Profile', icon: 'person-outline' },
@@ -54,29 +56,68 @@ const ProfileScreen = () => {
     { title: 'Help Center', icon: 'help-circle-outline' },
   ];
 
+  useEffect(() => {
+    setImageSource(userData?.profileImageUrl);
+  }, [userData?.profileImageUrl]);
+
+  const fetchData = async (userId: number | null) => {
+      if (userId === null) {
+        console.log('User ID is null, skipping fetch');
+        return;
+      }
+      try {
+        const response = await fetchUserById(userId);
+        dispatch(getUserData(response));
+      } catch (err: any) {
+        console.log(err.message || 'Failed to fetch user data.');
+      }
+    };
+
   const toggleNotifications = () => {
     setIsNotificationsEnabled(prevState => !prevState);
   };
 
   const openModal = () => setIsModalVisible(true);
   const closeModal = () => setIsModalVisible(false);
-  const NotificationCancel = () => {
-    setIsNModalVisible(false);
+
+  const handleImageUpload = async (body: any) => {
+    try {
+      const response = await uploadUserProfile(userId, body);
+      if (response) {
+        setImageSource(response);
+        await fetchData(userId);
+        // dispatch(getUserData({ ...userData, profileImageUrl: response }));
+      }
+    } catch (error: any) {
+      console.error("Error uploading profile image:", error.message);
+    }
   };
 
+
   const handleCameraSelection = async () => {
+    const hasPermission = await requestCameraPermission();
+    if (!hasPermission) {
+      console.log('Camera permission denied');
+      return;
+    }
     const response = await launchCamera({
       mediaType: 'photo',
     });
 
     if (response.didCancel) {
-      console.log('User cancelled camera');
     } else if (response.errorCode) {
-      console.log('Camera Error: ', response.errorMessage);
     } else {
+      const formData = new FormData();
+      const image = response.assets?.[0];
+
+      formData.append('image', {
+        uri: image?.uri,
+        name: image?.fileName,
+        type: image?.type,
+      });
       const uri = response.assets?.[0]?.uri ?? null;
+      await handleImageUpload(formData)
       setImageSource(uri);
-      console.log('Captured Image URI:', uri);
     }
     closeModal();
   };
@@ -87,27 +128,43 @@ const ProfileScreen = () => {
     });
 
     if (response.didCancel) {
-      console.log('User cancelled image picker');
     } else if (response.errorCode) {
-      console.log('ImagePicker Error: ', response.errorMessage);
     } else {
+      const formData = new FormData();
+      const image = response.assets?.[0];
+
+      formData.append('image', {
+        uri: image?.uri,
+        name: image?.fileName,
+        type: image?.type,
+      });
       const uri = response.assets?.[0]?.uri ?? null;
+      await handleImageUpload(formData)
       setImageSource(uri);
-      console.log('Selected Image URI:', uri);
     }
     closeModal();
   };
 
+  // const openNotificationModal = (state: boolean) => {
+  //   setIsNotificationsEnabled(state);
+  //   setIsNModalVisible(true);
+  // };
   const openNotificationModal = (state: boolean) => {
+    setPreviousNotificationState(isNotificationsEnabled);
     setIsNotificationsEnabled(state);
     setIsNModalVisible(true);
   };
 
+  const NotificationCancel = () => {
+    setIsNotificationsEnabled(previousNotificationState);
+    setIsNModalVisible(false);
+  };
   const handleNotificationChange = async () => {
     if (isNotificationsEnabled === null) return;
 
     try {
       const result = await updateUserNotifications(userId, isNotificationsEnabled);
+      console.log('result noto', result);
       dispatch(getUserData(result));
     } catch (error) {
       console.error('Error updating notifications:', error);
@@ -143,44 +200,25 @@ const ProfileScreen = () => {
       <Icon name={icon} size={24} color={isDarkMode ? '#fff' : '#333'} style={styles.optionIcon} />
       <Text style={[styles.optionText, { color: isDarkMode ? '#fff' : '#333' }]}>{title}</Text>
       {index === 2 && (
-        // <Switch
-        //   value={isNotificationsEnabled}
-        //   onValueChange={toggleNotifications}
-        //   trackColor={{ false: '#ccc', true: '#00cc66' }}
-        //   thumbColor={isNotificationsEnabled ? '#fff' : '#f4f3f4'}
-        //   style={styles.notificationSwitch}
-        // />
-        <Switch
-          value={isNotificationsEnabled}
-          onValueChange={() => openNotificationModal(!isNotificationsEnabled)}
-          trackColor={{ false: '#ccc', true: '#00cc66' }}
-          thumbColor={isNotificationsEnabled ? '#fff' : '#f4f3f4'}
-          style={styles.notificationSwitch}
-        />
+        <CustomSwitch value={isNotificationsEnabled} onChange={() => openNotificationModal(!isNotificationsEnabled)} />
       )}
       {index === 3 && (
-        <Switch
-          value={isDarkMode}
-          onValueChange={toggleDarkMode}
-          trackColor={{ false: '#ccc', true: '#00cc66' }}
-          thumbColor={isDarkMode ? '#fff' : '#f4f3f4'}
-          style={styles.notificationSwitch}
-        />
+        <CustomSwitch value={isDarkMode} onChange={toggleDarkMode} />
       )}
     </TouchableOpacity>
   );
 
   return (
-    <ScrollView>
-      <View style={[styles.container, { backgroundColor: isDarkMode ? '#333' : '#fff' }]}>
+    <ScrollView style={[styles.container, { backgroundColor: isDarkMode ? '#333' : '#fff' }]}>
+      <View>
         <View style={styles.view}>
           <View style={styles.header}>
             <Text style={[styles.headerTitle, { color: isDarkMode ? '#fff' : '#fff' }]}>Profile</Text>
           </View>
           <View style={styles.profileTop}>
             <View style={styles.profileImageContainer}>
-              {profileImageUrl ? (
-                <Image source={{ uri: profileImageUrl }} style={styles.profileImage} />
+              {imageSource ? (
+                <Image source={{ uri: imageSource }} style={styles.profileImage} />
               ) : (
                 <Icon name="person-circle-outline" size={80} color="#fff" />
               )}

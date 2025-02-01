@@ -46,7 +46,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
     const route = useRoute();
     const userData = useSelector((state: RootState) => state.userData);
     // console.log('userData i event booking details', userData);
-    const phoneNumber = userData.phoneNumber;
+    const phoneNumber = userData?.phoneNumber;
 
     const { eventBookingDetails, eventId } = route.params as RouteParams;
 
@@ -57,7 +57,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
         dob: userData?.dateOfBirth ? new Date(userData.dateOfBirth) : null,
         email: userData?.emailId || "",
         phone: userData?.phoneNumber || phoneNumber || "",
-        address: "",
+        address: userData?.address || "",
         city: userData?.city || "",
         state: userData?.state || "",
         termsAccepted: false,

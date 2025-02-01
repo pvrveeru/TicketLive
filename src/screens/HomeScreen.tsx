@@ -93,12 +93,13 @@ const HomeScreen: React.FC = () => {
   const [auserId, setUserId] = useState<number | null>(null)
   const userData = useSelector((state: RootState) => state.userData);
   const profileImage = require('../../assests/images/icon.png');
-  const profileImageUrl = userData.profileImageUrl;
-  const userName = userData.firstName;
+  const profileImageUrl = userData?.profileImageUrl;
+  const userName = userData?.firstName;
 
   const [favorites, setFavorites] = useState<{ [key: number]: boolean }>({});
   const [isRefreshing, setIsRefreshing] = useState(false);
-
+  // console.log('featuredEvents', featuredEvents);
+  console.log('userData in homescreen', userData);
 
   useEffect(() => {
     const getUserId = async () => {
@@ -162,15 +163,35 @@ const HomeScreen: React.FC = () => {
     fetchEventData(fetchManualEvents, setManualEvents);
   }, []);
 
+  // const fetchEventData = async (fetchFunction: Function, setEvents: Function) => {
+  //   try {
+  //     const data = await fetchFunction(auserId, 10);
+  //     setEvents(data.result || []);
+  //   } catch (error) {
+  //     console.error('Error fetching events:', error);
+  //   }
+  // };
   const fetchEventData = async (fetchFunction: Function, setEvents: Function) => {
     try {
       const data = await fetchFunction(auserId, 10);
-      setEvents(data.result || []);
+      const eventList = data.result || [];
+  
+      setEvents(eventList);
+  
+      // Update favorites state based on fetched events
+      const updatedFavorites: { [key: number]: boolean } = {};
+      eventList.forEach((event: any) => {
+        updatedFavorites[event.eventId] = event.isFavorite;
+      });
+  
+      setFavorites((prevFavorites) => ({
+        ...prevFavorites,
+        ...updatedFavorites,
+      }));
     } catch (error) {
       console.error('Error fetching events:', error);
     }
   };
-
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
@@ -267,17 +288,20 @@ const HomeScreen: React.FC = () => {
           ) : (
             <Image source={profileImage} style={styles.profileImage} />
           )}
-          <Text style={[styles.name, isDarkMode ? styles.darkText : styles.lightText]}>{userName}</Text>
+          <View>
+            <Text style={isDarkMode ? styles.darkText : styles.welcome}>Welcome</Text>
+            <Text style={[styles.name, isDarkMode ? styles.darkText : styles.lightText]}>{userName}</Text>
+          </View>
         </TouchableOpacity>
         <TouchableOpacity style={styles.notificationIcon} onPress={handleNotificationPress}>
           <MaterialCommunityIcons name="bell-badge-outline" style={[styles.socialIcon, isDarkMode ? styles.darkIcon : styles.lightIcon]} />
         </TouchableOpacity>
       </View>
       <HomeCarousel />
-      <View>
+      <View style={{ marginBottom: 40}}>
         {renderEventSection('Featured Events', featuredEvents, 'Featured')}
         {renderEventSection('Popular Events', popularEvents, 'Popular')}
-        {renderEventSection('Manual Events', manualEvents, 'Manual')}
+        {/* {renderEventSection('Manual Events', manualEvents, 'Manual')} */}
       </View>
     </ScrollView>
   );
@@ -315,6 +339,11 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  welcome: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'gray',
   },
   darkText: {
     color: '#FFFFFF',

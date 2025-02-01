@@ -25,6 +25,7 @@ api.interceptors.request.use(
   async config => {
     try {
       const token = await getBearerToken();
+      console.log('token in api interceptors', token);
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -122,8 +123,18 @@ export const getAllEvents = async () => {
   try {
     const response = await api.get('/events');
     return response.data;
+  } catch (error: any) {
+    console.log('Error fetching events:', error.message);
+    throw error;
+  }
+};
+
+export const getAllEventCategories = async () => {
+  try {
+    const response = await api.get('/event-category');
+    return response.data.data.categories;
   } catch (error) {
-    console.log('Error fetching events:', error);
+    console.log('Error fetching catageories:', error);
     throw error;
   }
 };
@@ -135,8 +146,8 @@ export const fetchEvents = async (params = {}) => {
     const response = await api.get('events', { params });
 
     return response.data.data;
-  } catch (error) {
-    console.log("Error fetching events:", error);
+  } catch (error: any) {
+    console.log("Error fetching events:", error.message);
     throw error;
   }
 };
@@ -152,15 +163,15 @@ export const fetchFeaturedEvents = async (userId: number, limit: number = 10, of
       }
     });
     return response.data.data;
-  } catch (error) {
-    console.log('Error fetching featured events:', error);
+  } catch (error: any) {
+    console.log('Error fetching featured events:', error.message);
     throw error;
   }
 };
 
 export const fetchPopularEvents = async (userId: number, limit: number = 10, offset: number = 0) => {
   try {
-    const response = await api.get('/events', {
+    const response = await api.get('events', {
       params: {
         userId,
         isPopular: true,
@@ -169,15 +180,15 @@ export const fetchPopularEvents = async (userId: number, limit: number = 10, off
       }
     });
     return response.data.data;
-  } catch (error) {
-    console.log('Error fetching popular events:', error);
+  } catch (error: any) {
+    console.log('Error fetching popular events:', error.message);
     throw error;
   }
 };
 
 export const fetchManualEvents = async (userId: number, limit: number = 10, offset: number = 0) => {
   try {
-    const response = await api.get('/events', {
+    const response = await api.get('events', {
       params: {
         userId,
         isManual: true,
@@ -186,8 +197,8 @@ export const fetchManualEvents = async (userId: number, limit: number = 10, offs
       }
     });
     return response.data.data;
-  } catch (error) {
-    console.log('Error fetching manual events:', error);
+  } catch (error: any) {
+    console.log('Error fetching manual events:', error.message);
     throw error;
   }
 };
@@ -205,7 +216,7 @@ export const getEventById = async (eventId: number) => {
 
 export const getSeatingOptionsByEventId = async (eventId: number) => {
   try {
-    const response = await axios.get(avdurl1 + `seating-options/event/${eventId}`);
+    const response = await api.get(avdurl1 + `seating-options/event/${eventId}`);
     return response.data.data;
   } catch (error) {
     console.log('Failed to fetch seating options', error);
@@ -285,7 +296,7 @@ export const getChargesByEventId = async (
   eventId: number
 ) => {
   try {
-    const response = await api.get(`charges/event/${eventId}`);
+    const response = await api.get(`/charges/event/${eventId}`);
     return response.data.data;
   } catch (error) {
     console.log('Error fetching user by ID:', error);
@@ -309,7 +320,7 @@ export const markEventAsDeleteFavorite = async (userId: number, eventId: number)
     return response.data.data;
   } catch (error: any) {
     let errorMessage = 'An unexpected error occurred.';
-    
+
     if (error.response) {
       switch (error.response.status) {
         case 401:
@@ -332,7 +343,7 @@ export const markEventAsDeleteFavorite = async (userId: number, eventId: number)
   }
 };
 
-export const updateUserNotifications = async (userId: string, notificationsEnabled: boolean) => {
+export const updateUserNotifications = async (userId: number, notificationsEnabled: boolean) => {
   try {
     const response = await api.put(avdurl1 + `users/${userId}`, { notificationsEnabled });
     return response.data.data;
@@ -344,10 +355,26 @@ export const updateUserNotifications = async (userId: string, notificationsEnabl
 
 export const updateUserProfile = async (userId: any, userDetails: any) => {
   try {
-    const response = await api.put(`/users/${userId}`,userDetails);
+    const response = await api.put(`/users/${userId}`, userDetails);
     return response.data.data;
   } catch (error) {
     console.log('Error updating userdetails:', error);
+    throw error;
+  }
+};
+export const uploadUserProfile = async (userId: number, body: FormData) => {
+  console.log('body in api:', body);
+  const url = avdurl1 + `uploads/user/${userId}`;
+  console.log('Full URL:', url);
+  try {
+    const response = await api.post(url, body, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data.urls;
+  } catch (error:any) {
+    console.log('Error uploading user profile:', error);
     throw error;
   }
 };

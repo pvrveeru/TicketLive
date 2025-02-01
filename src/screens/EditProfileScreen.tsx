@@ -38,7 +38,7 @@ const EditProfileScreen: React.FC = () => {
         setLoading(true);
         const response = await fetchUserById(userData.userId);
         dispatch(getUserData(response));
-        console.log('response', response);
+        // console.log('response', response);
         const user = response;
         setFirstName(user.firstName || '');
         setLastName(user.lastName || '');
@@ -49,6 +49,7 @@ const EditProfileScreen: React.FC = () => {
         setCity(user.city || null);
         setState(user.state || null);
         setCity(user.country || null);
+        setAddress(user.address || '')
       } catch (err: any) {
         console.error('Failed to fetch user data:', err.message || err);
       } finally {

@@ -46,8 +46,6 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
   const userId = userData.userId;
   const { formData, eventBookingDetails, eventId } = route.params;
   const dob = formData.dob ? new Date(formData.dob) : null;
-  console.log('eventBookingDetails', eventBookingDetails);
-  console.log('formData', formData);
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [charges, setCharges] = useState<ChargesData | null>(null);
@@ -73,6 +71,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
       setLoading(true);
       try {
         const data = await getChargesByEventId(eventId);
+        console.log('data', data);
         setCharges(data);
       } catch (err: any) {
         console.log('error for fetching charges', err.message);
@@ -166,12 +165,12 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
         </View>
         <View style={styles.ticketDetailsContainer}>
           <Text style={styles.infoTitle}>Ticket Details</Text>
-          {eventBookingDetails?.zoneNames.map((zone: string, index: number) => (
+          {/* {eventBookingDetails?.zoneNames.map((zone: string, index: number) => (
             <View key={index} style={styles.ticketRow}>
               <Text style={styles.value}>Zone:</Text>
               <Text style={styles.label}>{zone}</Text>
             </View>
-          ))}
+          ))} */}
 
           {eventBookingDetails?.noOfTickets.map((ticket: number, index: number) => (
             <View key={index} style={styles.ticketRow}>
@@ -191,15 +190,20 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
             <Text style={styles.value}>Base Price:</Text>
             <Text style={styles.label}>${eventBookingDetails?.totalAmount}</Text>
           </View>
-          <View style={styles.horizontalLine} />
-          <View style={styles.ticketRow}>
-            <Text style={styles.value}>Convenience Fee:</Text>
-            <Text style={styles.label}>${charges?.convenienceFee.toFixed(2) || '0.00'}</Text>
-          </View>
-          <View style={styles.ticketRow}>
-            <Text style={styles.value}>GST ({charges?.gstPercentage || 0}%):</Text>
-            <Text style={styles.label}>${gstAmount.toFixed(2)}</Text>
-          </View>
+          {charges && (
+
+            <>
+              <View style={styles.horizontalLine} />
+              <View style={styles.ticketRow}>
+                <Text style={styles.value}>Convenience Fee:</Text>
+                <Text style={styles.label}>${charges?.convenienceFee.toFixed(2) || '0.00'}</Text>
+              </View>
+              <View style={styles.ticketRow}>
+                <Text style={styles.value}>GST ({charges?.gstPercentage || 0}%):</Text>
+                <Text style={styles.label}>${gstAmount.toFixed(2)}</Text>
+              </View>
+            </>
+          )}
           <View style={styles.horizontalLine} />
           <View style={styles.ticketRow}>
             <Text style={styles.value}>Total Price:</Text>

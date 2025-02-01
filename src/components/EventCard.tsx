@@ -66,6 +66,7 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '../styles/globalstyles';
+import moment from 'moment';
 
 type EventCardProps = {
   imageUrl: string;
@@ -78,8 +79,11 @@ type EventCardProps = {
 };
 
 const EventCard: React.FC<EventCardProps> = ({ onPress, imageUrl, title, dateTime, location, isFavorite, onFavoritePress }) => {
-  // console.log('isFavorite', isFavorite);
+  console.log('isFavorite', isFavorite);
   const AltImg = require('../../assests/images/altimg.jpg');
+   const formatDate = (dateString: string) => {
+      return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
+    };
   return (
     <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
       {imageUrl ? (
@@ -89,7 +93,7 @@ const EventCard: React.FC<EventCardProps> = ({ onPress, imageUrl, title, dateTim
       )}
       <View style={styles.content}>
         <Text style={styles.title} numberOfLines={1}>{title}</Text>
-        <Text style={styles.dateTime}>{dateTime}</Text>
+        <Text style={styles.dateTime}>{formatDate(dateTime)}</Text>
         <View style={styles.rowContainer}>
           <View style={styles.locationContainer}>
             <Ionicons name="location-sharp" size={25} color="#555" />
@@ -99,7 +103,7 @@ const EventCard: React.FC<EventCardProps> = ({ onPress, imageUrl, title, dateTim
             <Ionicons
               name={isFavorite ? "heart" : "heart-outline"}
               size={30}
-              color={isFavorite ? "red" : "#888"} // Make sure the color changes based on isFavorite
+              color={isFavorite ? "red" : "#888"}
             />
           </TouchableOpacity>
         </View>
@@ -111,7 +115,7 @@ const EventCard: React.FC<EventCardProps> = ({ onPress, imageUrl, title, dateTim
 
 const styles = StyleSheet.create({
   cardContainer: {
-    width: 300,
+    width: 250,
     borderRadius: 10,
     overflow: 'hidden',
     backgroundColor: '#fff',

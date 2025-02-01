@@ -44,6 +44,7 @@ type Event = {
   eventDate: string;
   event_id: number;
   title: string;
+  thumbUrl: string;
 };
 
 type User = {
@@ -112,13 +113,17 @@ const TicketsScreen = () => {
     const { event, paymentStatus } = item;
     const eventTitle = event?.title || 'No Title';
     const eventDate = event?.eventDate || 'No Date';
-
     return (
       <>
         <View style={styles.bookingItem}>
-          <Text style={styles.title}>{eventTitle}</Text>
-          <Text style={styles.detail}>{formatDate(eventDate)}</Text>
-          <Text style={styles.detail}>{paymentStatus}</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center', columnGap: 10}}>
+            <Image source={{ uri: event?.thumbUrl }} style={{ width: 100, height: 100 }} />
+            <View>
+              <Text style={styles.title}>{eventTitle}</Text>
+              <Text style={styles.detail}>{formatDate(eventDate)}</Text>
+              <Text style={styles.detail}>{paymentStatus}</Text>
+            </View>
+          </View>
           <View style={styles.buttons}>
             <TouchableOpacity
               style={[styles.viewButton, { backgroundColor: isDarkMode ? '#EF412B' : COLORS.red }]}
@@ -133,7 +138,7 @@ const TicketsScreen = () => {
   };
 
   const { upcomingBookings, completedBookings } = categorizeBookings();
-
+  // console.log('upcomingBookings', upcomingBookings);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
