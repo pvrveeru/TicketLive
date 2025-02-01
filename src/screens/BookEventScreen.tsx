@@ -105,6 +105,10 @@ const BookEventScreen: React.FC = () => {
         }
     };
 
+    const handleBackPress = () => {
+        navigation.goBack(); // Go back to the previous screen
+    };
+
     const handleContinue = () => {
         const selectedSeatingIds: number[] = [];
         const selectedZoneNames: string[] = [];
@@ -124,7 +128,7 @@ const BookEventScreen: React.FC = () => {
             const totalPriceForZone = parseFloat(zone.price) * tickets;
             totalAmount += totalPriceForZone;
 
-            // console.log(Zone: ${zone.zoneName}, Tickets: ${tickets}, Price per Ticket: ₹${zone.price}, Total Price: ₹${totalPriceForZone.toFixed(2)});
+            // console.log(Zone: ₹{zone.zoneName}, Tickets: ₹{tickets}, Price per Ticket: ₹₹{zone.price}, Total Price: ₹₹{totalPriceForZone.toFixed(2)});
         });
         const eventBookingDetails = {
             seatingIds: selectedSeatingIds,
@@ -154,19 +158,18 @@ const BookEventScreen: React.FC = () => {
                 data={seatingOptions}
                 keyExtractor={(item) => item.seatingId.toString()}
                 ListHeaderComponent={
-                    <View style={styles.container}>
-                        <View style={styles.header}>
-                            <TouchableOpacity onPress={() => navigation.goBack()}>
-                                <Icon name="arrow-back" size={30} color={isDarkMode ? '#fff' : '#333'} />
-                            </TouchableOpacity>
-                            <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Book Event</Text>
-                        </View>
+                    <View>
 
-                        <Text style={styles.subTitle}>Layout Of the Event</Text>
-                        <Image
-                            source={{ uri: layoutImage }}
-                            style={{ width: 300, height: 300, alignSelf: 'center', marginBottom: 20 }}
-                        />
+                        <View style={styles.imageContainer}>
+                            <Image
+                                source={{ uri: layoutImage }}
+                                style={styles.layoutImage}
+                            />
+                            <Text style={styles.layoutText}>Layout Of the Event</Text>
+                            <TouchableOpacity onPress={handleBackPress} style={styles.backArrow}>
+                                <Icon name="arrow-back" size={30} color="white" />
+                            </TouchableOpacity>
+                        </View>
 
                         <Text style={styles.subTitle}>Choose number of seats</Text>
 
@@ -188,7 +191,7 @@ const BookEventScreen: React.FC = () => {
                             {/* Zone Details */}
                             <View style={styles.zoneDetails}>
                                 <Text style={styles.zoneName}>{item.zoneName}</Text>
-                                <Text style={styles.zonePrice}>Price: ${item.price}</Text>
+                                <Text style={styles.zonePrice}>Price: ₹{item.price}</Text>
                                 <Text style={styles.zoneCapacity}>Available Seats: {item.seatsAvailable}</Text>
                             </View>
 
@@ -230,7 +233,7 @@ const BookEventScreen: React.FC = () => {
                 disabled={selectedZones.length === 0}
             >
                 <Text style={styles.continueButtonText}>
-                    Continue - $
+                    Continue - ₹
                     {selectedZones.reduce((total, zone) => total + parseFloat(zone.price) * (quantity[zone.seatingId] || 1), 0).toFixed(2)}
                 </Text>
             </TouchableOpacity>
@@ -239,6 +242,35 @@ const BookEventScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+    backArrow: {
+        position: 'absolute',
+        top: 10,
+        left: 10,
+        padding: 10,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        borderRadius: 50,
+    },
+    imageContainer: {
+        position: 'relative',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    layoutImage: {
+        width: '100%',
+        height: 300,
+        alignSelf: 'center',
+        resizeMode: 'cover',
+    },
+    layoutText: {
+        position: 'absolute',
+        bottom: 10,
+        right: 10,
+        color: '#fff',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Optional: background for better readability
+        padding: 10,
+        borderRadius: 5,
+        fontSize: 20,
+    },
     rowContainer: {
         flexDirection: "row",
         alignItems: "center",
@@ -263,7 +295,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        padding: 16,
+        // padding: 16,
         backgroundColor: '#f9f9f9',
     },
     header: {
@@ -286,7 +318,7 @@ const styles = StyleSheet.create({
     subTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 16,
+        margin: 16,
     },
     zoneCard: {
         padding: 16,
@@ -294,6 +326,7 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         borderWidth: 1,
         borderColor: '#ccc',
+        margin: 16,
     },
     zoneName: {
         fontSize: 18,

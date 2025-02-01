@@ -280,12 +280,12 @@ const ExploreScreen = () => {
   };
 
   const filteredEvents = selectedCategory
-    ? events.filter(event =>
+    ? events?.filter(event =>
       event.categoryId?.categoryId === selectedCategory &&
       (event?.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
         event?.location?.toLowerCase().includes(searchKeyword.toLowerCase()))
     )
-    : events.filter(event =>
+    : events?.filter(event =>
       event?.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
       event?.location?.toLowerCase().includes(searchKeyword.toLowerCase())
     );
@@ -313,7 +313,7 @@ const ExploreScreen = () => {
           >
             <Text style={[styles.buttonText,
             selectedCategory === null && styles.selectedButtontxt,
-            ]}>All Events</Text>
+            ]}>All</Text>
           </TouchableOpacity>
           {categories.length > 0 ? (
             categories.map((category) => (
