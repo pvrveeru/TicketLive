@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView, ActivityIndicator } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { COLORS } from '../styles/globalstyles';
 import SuccessModal from '../components/SuccessModal';
@@ -7,6 +7,8 @@ import { createBooking, getChargesByEventId, getEventById } from '../services/Ap
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../Theme/ThemeContext';
 import { useSelector } from 'react-redux';
+import { Dialog } from '@rneui/themed';
+import moment from 'moment';
 
 interface ReviewSummaryProps {
   route: any;
@@ -50,6 +52,9 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
   const [loading, setLoading] = useState(true);
   const [charges, setCharges] = useState<ChargesData | null>(null);
   const [eventDetails, setEventDetails] = useState<EventDetailsData | null>(null);
+const formatDate = (dateString: string) => {
+        return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
+      };
 
   useEffect(() => {
     const fetchEventDetails = async () => {
@@ -71,7 +76,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
       setLoading(true);
       try {
         const data = await getChargesByEventId(eventId);
-        console.log('data', data);
+        // console.log('data', data);
         setCharges(data);
       } catch (err: any) {
         console.log('error for fetching charges', err.message);
@@ -85,11 +90,13 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
 
   const totalAmount = Number(eventBookingDetails?.totalAmount);
   const gstPercentage = Number(charges?.gstPercentage || 0);
-  const convenienceFee = Number(charges?.convenienceFee || 0);
+  const convenienceFeePercentage = Number(charges?.convenienceFee || 0);
   const gstAmount = (totalAmount * (gstPercentage / 100));
+  const convenienceFee = totalAmount * (convenienceFeePercentage / 100);
   const totalAmountWithCharges = (totalAmount + gstAmount + convenienceFee).toFixed(2);
 
   const handleContinue = async () => {
+    setLoading(true);
     const seatingDetails = eventBookingDetails?.seatingIds.map((id: any, index: number) => ({
       seatingId: id,
       noOfTickets: eventBookingDetails?.noOfTickets[index]
@@ -114,7 +121,8 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
     console.log('Booking result payload:', payload);
     try {
       const result = await createBooking(payload);
-      console.log('Booking result:', result);
+      // console.log('Booking result:', result);
+      setLoading(false);
       setModalVisible(true);
     } catch (error) {
       console.error('Error during booking:', error);
@@ -127,7 +135,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
     setModalVisible(false);
     navigation.navigate('BottomBar', { screen: 'Tickets' });
   };
-  console.log('charges in review screen', charges);
+  // console.log('charges in review screen', charges);
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
@@ -141,7 +149,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
           <Image source={{ uri: eventDetails?.thumbUrl }} style={styles.eventImage} />
           <View>
             <Text style={styles.eventTitle}>{eventDetails?.title}</Text>
-            <Text style={styles.eventDate}>{eventDetails?.eventDate}</Text>
+            <Text style={styles.eventDate}>{formatDate(eventDetails?.eventDate || '')}</Text>
             <Text style={styles.eventLocation}>{eventDetails?.location}</Text>
           </View>
         </View>
@@ -182,13 +190,13 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
           {eventBookingDetails?.prices.map((price: number, index: number) => (
             <View key={index} style={styles.ticketRow}>
               <Text style={styles.value}>Price:</Text>
-              <Text style={styles.label}>${price.toFixed(2)}</Text>
+              <Text style={styles.label}>₹{price.toFixed(2)}</Text>
             </View>
           ))}
           <View style={styles.horizontalLine} />
           <View style={styles.ticketRow}>
             <Text style={styles.value}>Base Price:</Text>
-            <Text style={styles.label}>${eventBookingDetails?.totalAmount}</Text>
+            <Text style={styles.label}>₹{eventBookingDetails?.totalAmount}</Text>
           </View>
           {charges && (
 
@@ -196,18 +204,18 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
               <View style={styles.horizontalLine} />
               <View style={styles.ticketRow}>
                 <Text style={styles.value}>Convenience Fee:</Text>
-                <Text style={styles.label}>${charges?.convenienceFee.toFixed(2) || '0.00'}</Text>
+                <Text style={styles.label}>₹{convenienceFee}</Text>
               </View>
               <View style={styles.ticketRow}>
                 <Text style={styles.value}>GST ({charges?.gstPercentage || 0}%):</Text>
-                <Text style={styles.label}>${gstAmount.toFixed(2)}</Text>
+                <Text style={styles.label}>₹{gstAmount.toFixed(2)}</Text>
               </View>
             </>
           )}
           <View style={styles.horizontalLine} />
           <View style={styles.ticketRow}>
             <Text style={styles.value}>Total Price:</Text>
-            <Text style={styles.label}>${totalAmountWithCharges}</Text>
+            <Text style={styles.label}>₹{totalAmountWithCharges}</Text>
           </View>
         </View>
 
@@ -224,6 +232,13 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
         onClose={() => setModalVisible(false)}
         onViewTicket={handleViewTicket}
       />
+      <Dialog isVisible={loading}>
+          {/* <Dialog.Loading /> */}
+          <ActivityIndicator
+              size="large"
+              color={COLORS.red}
+            />
+        </Dialog>
     </View>
   );
 };

@@ -14,7 +14,6 @@ const api = axios.create({
 async function getBearerToken() {
   try {
     const token = await AsyncStorage.getItem('acessToken');
-    console.log('token in api service file', token);
     return token;
   } catch (err) {
     console.log('Async storage function error', err);
@@ -25,7 +24,6 @@ api.interceptors.request.use(
   async config => {
     try {
       const token = await getBearerToken();
-      console.log('token in api interceptors', token);
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -41,25 +39,12 @@ api.interceptors.request.use(
   },
 );
 
-
-export interface ValidationError {
-  msg: string;
-  param: string;
-}
-
-export interface ErrorResponse {
-  status: "error";
-  message: string;
-  errors?: ValidationError[]; // Only present for validation errors (400)
-}
-
 // Example API methods
 
 export const createUser = async (phoneNumber: string) => {
   console.log(phoneNumber);
   try {
     const response = await axios.post(avdurl1 + 'users', { phoneNumber });
-    console.log('response', response.data.data);
     return response.data.data;
   } catch (error) {
     console.log('Error creating user:', error);
@@ -68,10 +53,8 @@ export const createUser = async (phoneNumber: string) => {
 };
 
 export const createUserEvent = async (userPayload: any) => {
-  console.log('userPayload', userPayload);
   try {
     const response = await axios.post(avdurl1 + 'users', userPayload);
-    console.log('response', response.data.data);
     return response.data.data;
   } catch (error) {
     console.log('Error creating user:', error);
@@ -91,29 +74,9 @@ export const validateOtp = async (phoneNumber: string, otpCode: string) => {
 export const createBooking = async (bookingData: any) => {
   try {
     const response = await api.post('bookings', bookingData);
-    console.log('Booking created:', response.data);
     return response.data;
   } catch (error: any) {
-    if (error.response) {
-      const { status, data } = error.response;
-
-      if (status === 400) {
-        console.log("Validation failed:", data);
-        throw {
-          status: "error",
-          message: "Validation failed",
-          errors: data.errors || [],
-        } as ErrorResponse;
-      }
-
-      if (status === 500) {
-        console.log("Error creating booking:", data.message);
-        throw {
-          status: "error",
-          message: `Error creating booking: ${data.message}`,
-        } as ErrorResponse;
-      }
-    }
+    console.log('error fetching bookings', error)
     throw error;
   }
 };
@@ -141,7 +104,6 @@ export const getAllEventCategories = async () => {
 
 // Function to fetch all events
 export const fetchEvents = async (params = {}) => {
-  console.log('params', params)
   try {
     const response = await api.get('events', { params });
 
@@ -319,27 +281,8 @@ export const markEventAsDeleteFavorite = async (userId: number, eventId: number)
     const response = await api.delete(`/favorites/user/${userId}/event/${eventId}`);
     return response.data.data;
   } catch (error: any) {
-    let errorMessage = 'An unexpected error occurred.';
-
-    if (error.response) {
-      switch (error.response.status) {
-        case 401:
-          errorMessage = `Unauthorized access. Please authenticate. Message: ${error.response.data.message}`;
-          break;
-        case 403:
-          errorMessage = `Forbidden access. Message: ${error.response.data.message}`;
-          break;
-        case 404:
-          errorMessage = `Event not found. Message: ${error.response.data.message}`;
-          break;
-        default:
-          errorMessage = `An unexpected error occurred. Message: ${error.response.data.message || error.message}`;
-          break;
-      }
-    } else {
-      errorMessage = `Error occurred: ${error.message}`;
-    }
-    throw new Error(errorMessage);
+    console.log('Error marking event as favorite delete:', error);
+    throw error;
   }
 };
 
@@ -363,9 +306,7 @@ export const updateUserProfile = async (userId: any, userDetails: any) => {
   }
 };
 export const uploadUserProfile = async (userId: number, body: FormData) => {
-  console.log('body in api:', body);
   const url = avdurl1 + `uploads/user/${userId}`;
-  console.log('Full URL:', url);
   try {
     const response = await api.post(url, body, {
       headers: {

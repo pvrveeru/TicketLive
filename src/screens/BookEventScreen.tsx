@@ -20,9 +20,9 @@ interface SeatingOption {
 type Event = {
     eventId: number;
     title: string;
-  };
-  
-  type SeatingZone = {
+};
+
+type SeatingZone = {
     capacity: number;
     createdAt: string;
     event: Event;
@@ -32,7 +32,7 @@ type Event = {
     seatsAvailable: number;
     updatedAt: string;
     zoneName: string;
-  };
+};
 
 const MAX_TOTAL_QUANTITY = 5;
 
@@ -51,7 +51,7 @@ const BookEventScreen: React.FC = () => {
         const fetchSeatingOptions = async () => {
             try {
                 const options = await getSeatingOptionsByEventId(eventId);
-                console.log('options', options);
+                // console.log('options', options);
                 if (Array.isArray(options)) {
                     setSeatingOptions(options);
                 } else {
@@ -176,38 +176,51 @@ const BookEventScreen: React.FC = () => {
                     </View>
                 }
                 renderItem={({ item }) => (
-                    <View>
-                        <TouchableOpacity
-                            style={[styles.zoneCard, { backgroundColor: item.seatsAvailable === 0 ? '#ccc' : selectedZones.some((zone) => zone.seatingId === item.seatingId) ? '#d3f3f7' : '#fff' }]}
-                            onPress={() => toggleZoneSelection(item)}
-                            disabled={item.seatsAvailable === 0}
-                        >
-                            <Text style={styles.zoneName}>{item.zoneName}</Text>
-                            <Text style={styles.zonePrice}>Price: ${item.price}</Text>
-                            <Text style={styles.zoneCapacity}>Available Seats: {item.seatsAvailable}</Text>
-                            {item.seatsAvailable === 0 && <Text style={styles.noSeatsText}>Seats are not available</Text>}
-                        </TouchableOpacity>
-                        {selectedZones.some((zone) => zone.seatingId === item.seatingId) && item.seatsAvailable > 0 && (
-                            <View style={styles.quantityContainer}>
-                                <TouchableOpacity
-                                    style={[styles.button, quantity[item.seatingId] === 1 && styles.disabledButton]}
-                                    onPress={() => decrementQuantity(item.seatingId)}
-                                    disabled={quantity[item.seatingId] === 1}
-                                >
-                                    <Text style={styles.buttonText}>-</Text>
-                                </TouchableOpacity>
-                                <Text style={styles.quantityText}>{quantity[item.seatingId]}</Text>
-                                <TouchableOpacity
-                                    style={[styles.button, quantity[item.seatingId] >= item.seatsAvailable && styles.disabledButton]}
-                                    onPress={() => incrementQuantity(item)}
-                                    disabled={quantity[item.seatingId] >= item.seatsAvailable}
-                                >
-                                    <Text style={styles.buttonText}>+</Text>
-                                </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[
+                            styles.zoneCard,
+                            { backgroundColor: item.seatsAvailable === 0 ? '#ccc' : selectedZones.some((zone) => zone.seatingId === item.seatingId) ? '#d3f3f7' : '#fff' }
+                        ]}
+                        onPress={() => toggleZoneSelection(item)}
+                        disabled={item.seatsAvailable === 0}
+                    >
+                        <View style={styles.rowContainer}>
+                            {/* Zone Details */}
+                            <View style={styles.zoneDetails}>
+                                <Text style={styles.zoneName}>{item.zoneName}</Text>
+                                <Text style={styles.zonePrice}>Price: ${item.price}</Text>
+                                <Text style={styles.zoneCapacity}>Available Seats: {item.seatsAvailable}</Text>
                             </View>
-                        )}
-                    </View>
+
+                            {/* Quantity Controls (Show only if zone is selected and seats are available) */}
+                            {selectedZones.some((zone) => zone.seatingId === item.seatingId) && item.seatsAvailable > 0 && (
+                                <View style={styles.quantityContainer}>
+                                    <TouchableOpacity
+                                        style={[styles.button, quantity[item.seatingId] === 1 && styles.disabledButton]}
+                                        onPress={() => decrementQuantity(item.seatingId)}
+                                        disabled={quantity[item.seatingId] === 1}
+                                    >
+                                        <Text style={styles.buttonText}>-</Text>
+                                    </TouchableOpacity>
+
+                                    <Text style={styles.quantityText}>{quantity[item.seatingId]}</Text>
+
+                                    <TouchableOpacity
+                                        style={[styles.button, quantity[item.seatingId] >= item.seatsAvailable && styles.disabledButton]}
+                                        onPress={() => incrementQuantity(item)}
+                                        disabled={quantity[item.seatingId] >= item.seatsAvailable}
+                                    >
+                                        <Text style={styles.buttonText}>+</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                        </View>
+
+                        {/* Message if seats are unavailable */}
+                        {item.seatsAvailable === 0 && <Text style={styles.noSeatsText}>Seats are not available</Text>}
+                    </TouchableOpacity>
                 )}
+
                 showsVerticalScrollIndicator={false}
             />
 
@@ -226,6 +239,14 @@ const BookEventScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+    rowContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+    },
+    zoneDetails: {
+        flex: 1, // Allow details to take available space
+    },
     limitText: {
         color: 'red',
         textAlign: 'center',

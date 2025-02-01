@@ -7,6 +7,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 import { COLORS } from '../styles/globalstyles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Header from '../components/Header';
+import { useSelector } from 'react-redux';
 
 type EventData = {
   id: any;
@@ -50,6 +52,8 @@ type EventData = {
 type RootStackParamList = {
   Explore: { type: string };
   EventDetails: { eventId: number };
+  BottomBar: { screen: string };
+  Notification: undefined;
 };
 
 type ExploreScreenRouteProps = RouteProp<RootStackParamList, 'Explore'>;
@@ -62,11 +66,21 @@ type Category = {
   updatedAt: string;
 };
 
+interface UserData {
+  userId: string;
+  profileImageUrl: string;
+}
+interface RootState {
+  userData: UserData;
+}
+
 const ExploreScreen = () => {
   const route = useRoute<ExploreScreenRouteProps>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { type } = route.params || { type: '' };
-  console.log('type', type);
+  const userData = useSelector((state: RootState) => state.userData);
+  const profileImage = require('../../assests/images/icon.png');
+  const profileImageUrl = userData?.profileImageUrl;
   const [events, setEvents] = useState<EventData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [searchKeyword, setSearchKeyword] = useState<string>('');
@@ -158,7 +172,6 @@ const ExploreScreen = () => {
   const AllCatageories = async () => {
     const result = await getAllEventCategories();
     setCategories(result);
-    console.log('catageories result', result);
   }
   const handleEventPress = (eventId: number | undefined) => {
     if (eventId) {
@@ -211,6 +224,9 @@ const ExploreScreen = () => {
     }
   };
 
+  const handleNotificationPress = () => {
+    navigation.navigate('Notification');
+  };
 
   const renderEventRow = ({ item, index }: { item: EventData[]; index: number }) => {
     return (
@@ -259,82 +275,111 @@ const ExploreScreen = () => {
     return rows;
   };
 
-  const handleCategoryClick = (categoryId: number) => {
-    if (selectedCategory === categoryId) {
-      setSelectedCategory(null);
-    } else {
-      setSelectedCategory(categoryId);
-    }
+  const handleCategoryClick = (categoryId: number | null) => {
+    setSelectedCategory(categoryId);
   };
 
   const filteredEvents = selectedCategory
-    ? events.filter(event => event.categoryId?.categoryId === selectedCategory)
-    : events;
+    ? events.filter(event =>
+      event.categoryId?.categoryId === selectedCategory &&
+      (event?.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+        event?.location?.toLowerCase().includes(searchKeyword.toLowerCase()))
+    )
+    : events.filter(event =>
+      event?.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+      event?.location?.toLowerCase().includes(searchKeyword.toLowerCase())
+    );
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Explore Events</Text>
-        <View style={styles.searchContainer}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search for events..."
-            value={searchKeyword}
-            onChangeText={setSearchKeyword}
-          />
+    <><Header
+      title={'Explore Events'}
+      profileImageUrl={userData?.profileImageUrl}
+      profileImage={require('../../assests/images/icon.png')}
+      onNotificationPress={handleNotificationPress} />
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.searchContainer}>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search for events..."
+              value={searchKeyword}
+              onChangeText={setSearchKeyword} />
+          </View>
+          <Text style={styles.eventCount}>{type} Events found: {filteredEvents?.length ? filteredEvents?.length : events?.length}</Text>
         </View>
-        <Text style={styles.eventCount}>{type} Events found: {filteredEvents?.length ? filteredEvents?.length : events?.length}</Text>
-      </View>
-      <ScrollView contentContainerStyle={styles.buttonContainer} horizontal>
-        {categories.length > 0 ? (
-          categories.map((category) => (
-            <TouchableOpacity
-              key={category.categoryId}
-              style={styles.button}
-              onPress={() => handleCategoryClick(category.categoryId)}
-            >
-              <Text style={styles.buttonText}>{category.categoryName}</Text>
-            </TouchableOpacity>
-          ))
-        ) : (
-          <Text>Loading categories...</Text>
-        )}
-      </ScrollView>
-      {noEventsMessage && <Text style={styles.noEventsMessage}>{noEventsMessage}</Text>}
+        <ScrollView contentContainerStyle={styles.buttonContainer} horizontal>
+          <TouchableOpacity
+            style={[styles.button, selectedCategory === null && styles.selectedButton]}
+            onPress={() => handleCategoryClick(null)}
+          >
+            <Text style={[styles.buttonText,
+            selectedCategory === null && styles.selectedButtontxt,
+            ]}>All Events</Text>
+          </TouchableOpacity>
+          {categories.length > 0 ? (
+            categories.map((category) => (
+              <TouchableOpacity
+                key={category.categoryId}
+                style={[
+                  styles.button,
+                  selectedCategory === category.categoryId && styles.selectedButton,
+                ]}
+                onPress={() => handleCategoryClick(category.categoryId)}
+              >
+                <Text style={[styles.buttonText,
+                selectedCategory === category.categoryId && styles.selectedButtontxt,
+                ]}>{category.categoryName}</Text>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <Text>Loading categories...</Text>
+          )}
+        </ScrollView>
+        {noEventsMessage && <Text style={styles.noEventsMessage}>{noEventsMessage}</Text>}
 
-      {loading ? (
-        <Text>Loading events...</Text>
-      ) : (
-        <FlatList
-          data={transformDataToRows(filteredEvents)}
-          renderItem={renderEventRow}
-          keyExtractor={(item, index) => index.toString()}
-        />
-      )}
-    </View>
+        {loading ? (
+          <Text>Loading events...</Text>
+        ) : (
+          <FlatList
+            data={transformDataToRows(filteredEvents)}
+            renderItem={renderEventRow}
+            keyExtractor={(item, index) => index.toString()} />
+        )}
+      </View></>
   );
 };
 
 const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
     marginBottom: 20,
-    columnGap: 20,
   },
   button: {
-    backgroundColor: COLORS.red,
+    borderColor: '#EF412B',
+    borderWidth: 1,
+    marginRight: 10,
     borderRadius: 5,
-    height: 30,
+    height: 40,
+    paddingHorizontal: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 10,
+    marginBottom: 20,
+  },
+  selectedButton: {
+    backgroundColor: '#EF412B',
+    marginRight: 10,
+    borderRadius: 5,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 20,
   },
   buttonText: {
-    color: 'white',
-    fontSize: 12,
-    fontWeight: 'bold',
+    color: '#000',
+    fontSize: 16,
+  },
+  selectedButtontxt: {
+    color: '#fff',
+    fontSize: 16,
   },
   favotites: {
     position: 'absolute',
@@ -350,15 +395,10 @@ const styles = StyleSheet.create({
   header: {
     marginBottom: 16,
   },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 10,
+    marginBottom: 10,
   },
   searchInput: {
     flex: 1,

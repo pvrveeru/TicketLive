@@ -137,7 +137,7 @@ const EventDetails: React.FC = () => {
       console.error('Failed to update favorite status', err);
     }
   };
-  
+
   if (loading) {
     return <ActivityIndicator style={styles.loader} size="large" color={COLORS.red} />;
   }
@@ -162,33 +162,37 @@ const EventDetails: React.FC = () => {
     const layoutImage = eventDetails?.layoutImageUrl || '';
     navigation.navigate('BookEventScreen', { eventId, layoutImage });
   };
-
-  console.log('eventDetails isFavorite', isFavorite);
+  const handleBackPress = () => {
+    navigation.goBack(); // Go back to the previous screen
+  };
+  // console.log('eventDetails isFavorite', isFavorite);
   return (
     <>
-      <View style={[styles.header, isDarkMode ? styles.dark : styles.light]}>
+      {/* <View style={[styles.header, isDarkMode ? styles.dark : styles.light]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon name="arrow-back" size={30} color={isDarkMode ? '#fff' : '#333'} />
         </TouchableOpacity>
         <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Book Event</Text>
-      </View>
+      </View> */}
       <ScrollView style={[styles.container, isDarkMode ? styles.dark : styles.light]}>
-        {/* <Image source={{ uri: eventDetails.layoutImageUrl }} style={styles.eventImage} /> */}
         {eventDetails.galleryImages && eventDetails.galleryImages.length > 0 ? (
           <CustomCarousel
             images={eventDetails.galleryImages}
             interval={3000}
-            height={250}
+            height={300}
             containerStyle={{ marginBottom: 20 }}
             imageStyle={{ borderRadius: 10 }}
+            artistName={eventDetails.artistName}
+            eventTitle={eventDetails.title}
+            onBackPress={handleBackPress}
           />
         ) : (
           <Image source={require('../../assests/images/altimg.jpg')} style={styles.eventImage} />
         )}
-        <View style={styles.header2}>
+        {/* <View style={styles.header2}>
           <Text style={styles.organizer}>By {eventDetails.artistName}</Text>
           <Text style={styles.eventName}>{eventDetails.title}</Text>
-        </View>
+        </View> */}
         <View style={styles.detailsContainer}>
           <View style={[styles.row, styles.spaceBetween]}>
             <View style={styles.row}>
@@ -234,16 +238,16 @@ const EventDetails: React.FC = () => {
         <MapView
           style={styles.map}
           initialRegion={{
-            latitude: parseFloat(eventDetails?.latitude ?? '0'), // Fallback to '0' if undefined or invalid
-            longitude: parseFloat(eventDetails?.longitude ?? '0'), // Fallback to '0' if undefined or invalid
+            latitude: parseFloat(eventDetails?.latitude ?? '0'),
+            longitude: parseFloat(eventDetails?.longitude ?? '0'),
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
         >
           <Marker
             coordinate={{
-              latitude: parseFloat(eventDetails?.latitude ?? '0'), // Fallback to '0' if undefined or invalid
-              longitude: parseFloat(eventDetails?.longitude ?? '0'), // Fallback to '0' if undefined or invalid
+              latitude: parseFloat(eventDetails?.latitude ?? '0'),
+              longitude: parseFloat(eventDetails?.longitude ?? '0'),
             }}
             title={eventDetails.title}
             description={eventDetails.location}

@@ -8,9 +8,11 @@ import { COLORS } from '../styles/globalstyles';
 import { useTheme } from '../Theme/ThemeContext';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
+import Header from '../components/Header';
 
 type RootStackParamList = {
   TicketDetails: { bookingId: number };
+  BottomBar: { screen: string };
   Notification: undefined;
 };
 
@@ -56,6 +58,7 @@ type User = {
 
 interface UserData {
   userId: string;
+  profileImageUrl: string;
 }
 interface RootState {
   userData: UserData;
@@ -69,8 +72,14 @@ const TicketsScreen = () => {
   const [selectedTab, setSelectedTab] = useState<string>('Upcoming');
   const userData = useSelector((state: RootState) => state.userData);
   const userId = userData.userId;
+  const profileImage = require('../../assests/images/icon.png');
+  const profileImageUrl = userData?.profileImageUrl;
   const formatDate = (dateString: string) => {
     return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
+  };
+
+  const handleProfilePress = () => {
+    navigation.navigate('BottomBar', { screen: 'Profile' });
   };
 
   const fetchBookings = async () => {
@@ -116,7 +125,7 @@ const TicketsScreen = () => {
     return (
       <>
         <View style={styles.bookingItem}>
-          <View style={{flexDirection: 'row', alignItems: 'center', columnGap: 10}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', columnGap: 10 }}>
             <Image source={{ uri: event?.thumbUrl }} style={{ width: 100, height: 100 }} />
             <View>
               <Text style={styles.title}>{eventTitle}</Text>
@@ -140,52 +149,48 @@ const TicketsScreen = () => {
   const { upcomingBookings, completedBookings } = categorizeBookings();
   // console.log('upcomingBookings', upcomingBookings);
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={[styles.headerTitle, { color: isDarkMode ? '#fff' : '#000' }]}>My Tickets</Text>
-        <TouchableOpacity style={styles.bellIconContainer} onPress={handleNotificationPress}>
-          <MaterialCommunityIcons name="bell-badge-outline" size={30} color={COLORS.red} />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.tabBar}>
-        {['Upcoming', 'Completed'].map((tab) => (
-          <TouchableOpacity
-            key={tab}
-            style={[styles.tabItem, selectedTab === tab && styles.selectedTab]}
-            onPress={() => setSelectedTab(tab)}
-          >
-            <Text style={[styles.tabText, selectedTab === tab && styles.selectedTabText]}>
-              {tab}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+    <><Header
+      title={'My Tickets'}
+      profileImageUrl={userData?.profileImageUrl}
+      profileImage={require('../../assests/images/icon.png')}
+      onNotificationPress={handleNotificationPress} /><View style={styles.container}>
+        <View style={styles.tabBar}>
+          {['Upcoming', 'Completed'].map((tab) => (
+            <TouchableOpacity
+              key={tab}
+              style={[styles.tabItem, selectedTab === tab && styles.selectedTab]}
+              onPress={() => setSelectedTab(tab)}
+            >
+              <Text style={[styles.tabText, selectedTab === tab && styles.selectedTabText]}>
+                {tab}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-      {isLoading ? (
-        <Text style={styles.loadingText}>Loading...</Text>
-      ) : selectedTab === 'Upcoming' ? (
-        upcomingBookings.length === 0 ? (
-          <Text style={styles.emptyText}>No upcoming events. Book your tickets now and stay updated!</Text>
-        ) : (
-          <FlatList
-            data={upcomingBookings}
-            keyExtractor={(item, index) => item.bookingId?.toString() || index.toString()}
-            renderItem={renderBookingItem}
-            showsVerticalScrollIndicator={false}
-          />
-        )
-      ) : selectedTab === 'Completed' ? (
-        completedBookings.length === 0 ? (
-          <Text style={styles.emptyText}>You have no completed events yet. Once you attend an event, it'll show up here!</Text>
-        ) : (
-          <FlatList
-            data={completedBookings}
-            keyExtractor={(item, index) => item.bookingId?.toString() || index.toString()}
-            renderItem={renderBookingItem}
-          />
-        )
-      ) : null}
-    </View>
+        {isLoading ? (
+          <Text style={styles.loadingText}>Loading...</Text>
+        ) : selectedTab === 'Upcoming' ? (
+          upcomingBookings.length === 0 ? (
+            <Text style={styles.emptyText}>No upcoming events. Book your tickets now and stay updated!</Text>
+          ) : (
+            <FlatList
+              data={upcomingBookings}
+              keyExtractor={(item, index) => item.bookingId?.toString() || index.toString()}
+              renderItem={renderBookingItem}
+              showsVerticalScrollIndicator={false} />
+          )
+        ) : selectedTab === 'Completed' ? (
+          completedBookings.length === 0 ? (
+            <Text style={styles.emptyText}>You have no completed events yet. Once you attend an event, it'll show up here!</Text>
+          ) : (
+            <FlatList
+              data={completedBookings}
+              keyExtractor={(item, index) => item.bookingId?.toString() || index.toString()}
+              renderItem={renderBookingItem} />
+          )
+        ) : null}
+      </View></>
   );
 };
 

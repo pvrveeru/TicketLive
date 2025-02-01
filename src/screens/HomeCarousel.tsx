@@ -31,7 +31,7 @@ const HomeCarousel: React.FC = () => {
         });
         return nextIndex;
       });
-    }, 3000); // Auto-scroll every 3 seconds
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [bannerImages, screenWidth]);
@@ -50,7 +50,7 @@ const HomeCarousel: React.FC = () => {
           <Image
             key={index}
             source={{ uri: imageUrl }}
-            style={[styles.image, { width: screenWidth }]} // Ensure the image fills the width of the container
+            style={[styles.image, { width: screenWidth }]}
           />
         ))}
       </ScrollView>
@@ -60,15 +60,15 @@ const HomeCarousel: React.FC = () => {
 
 const styles = StyleSheet.create({
   carouselContainer: {
-    height: '25%', // Adjust the height of the container as needed
-    width: '100%', // Ensure the container takes the full width
+    height: 200,
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: "#ccc", // Background color for the carousel
+    backgroundColor: "#ccc",
   },
   image: {
-    height: '100%', // Ensure the image fills the container height
-    resizeMode: 'cover', // Use 'cover' to ensure the image covers the container without distortion
+    height: '100%',
+    resizeMode: 'cover',
   },
 });
 

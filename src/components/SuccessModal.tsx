@@ -31,9 +31,9 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ isVisible, onClose, onViewT
             <TouchableOpacity style={styles.viewTicketButton} onPress={onViewTicket}>
               <Text style={styles.buttonText}>View Bookings</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+            {/* <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
               <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
       </Modal>

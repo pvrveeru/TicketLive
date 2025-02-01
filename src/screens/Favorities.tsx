@@ -6,6 +6,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getAllFavouriteEvents, markEventAsDeleteFavorite } from '../services/Apiservices';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useSelector } from 'react-redux';
+import Header from '../components/Header';
 
 interface Events {
   event: any;
@@ -20,13 +22,34 @@ interface Events {
 }
 type RootStackParamList = {
   EventDetails: { eventId: number };
+  BottomBar: { screen: string };
+  Notification: undefined;
 };
+
+interface UserData {
+  userId: string;
+  profileImageUrl: string;
+}
+interface RootState {
+  userData: UserData;
+}
 const FavoritiesScreen: React.FC = () => {
-   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { isDarkMode } = useTheme();
+  const userData = useSelector((state: RootState) => state.userData);
+  const profileImage = require('../../assests/images/icon.png');
+  const profileImageUrl = userData?.profileImageUrl;
   const [favoriteEvents, setFavoriteEvents] = useState<Events[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleProfilePress = () => {
+    navigation.navigate('BottomBar', { screen: 'Profile' });
+  };
+
+  const handleNotificationPress = () => {
+    navigation.navigate('Notification');
+  };
 
   useEffect(() => {
     const getUserId = async () => {
@@ -123,32 +146,31 @@ const FavoritiesScreen: React.FC = () => {
   };
 
   return (
-    <View style={[styles.main, isDarkMode ? styles.darkBackground : styles.lightBackground]}>
-      <View style={styles.header}>
-        <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Favorite Events</Text>
-      </View>
-      <ScrollView
-        contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={fetchFavoriteEvents} />
-        }
-      >
-        {Array.isArray(favoriteEvents) && favoriteEvents.length === 0 ? (
-          <Text style={[styles.noResultsText, { color: isDarkMode ? '#fff' : '#000' }]}>
-            No favorite events found.
-          </Text>
-        ) : (
-          Array.isArray(favoriteEvents) ? (
-            favoriteEvents.map((event) => renderEventItem(event))
-          ) : (
+    <><Header
+      title={'Favorities'}
+      profileImageUrl={userData?.profileImageUrl}
+      profileImage={require('../../assests/images/icon.png')}
+      onNotificationPress={handleNotificationPress} /><View style={[styles.main, isDarkMode ? styles.darkBackground : styles.lightBackground]}>
+        <ScrollView
+          contentContainerStyle={styles.container}
+          showsVerticalScrollIndicator={false}
+          refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={fetchFavoriteEvents} />}
+        >
+          {Array.isArray(favoriteEvents) && favoriteEvents.length === 0 ? (
             <Text style={[styles.noResultsText, { color: isDarkMode ? '#fff' : '#000' }]}>
-              Error loading events.
+              No favorite events found.
             </Text>
-          )
-        )}
-      </ScrollView>
-    </View>
+          ) : (
+            Array.isArray(favoriteEvents) ? (
+              favoriteEvents.map((event) => renderEventItem(event))
+            ) : (
+              <Text style={[styles.noResultsText, { color: isDarkMode ? '#fff' : '#000' }]}>
+                Error loading events.
+              </Text>
+            )
+          )}
+        </ScrollView>
+      </View></>
   );
 };
 

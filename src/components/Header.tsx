@@ -1,0 +1,106 @@
+import React from "react";
+import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { COLORS } from "../styles/globalstyles";
+
+interface HeaderProps {
+    profileImageUrl?: string;
+    profileImage?: any;
+    userName?: string;
+    isDarkMode?: boolean;
+    Welcome?: string;
+    onProfilePress?: () => void;
+    onNotificationPress?: () => void;
+    title?: string;
+}
+
+const Header: React.FC<HeaderProps> = ({
+    profileImageUrl,
+    profileImage,
+    userName,
+    isDarkMode = false,
+    Welcome,
+    onProfilePress,
+    onNotificationPress,
+    title,
+}) => {
+
+    return (
+        <View style={styles.header}>
+                <TouchableOpacity onPress={onProfilePress} style={styles.profile}>
+                    {profileImageUrl ? (
+                        <Image
+                            source={{ uri: profileImageUrl }}
+                            style={styles.profileImage}
+                        />
+                    ) : (
+                        <Image source={profileImage} style={styles.profileImage} />
+                    )}
+                </TouchableOpacity>
+            {title && <Text style={[styles.name, isDarkMode ? styles.darkText : styles.lightText]}>{title}</Text>}
+
+            {onNotificationPress && (
+                <TouchableOpacity style={styles.notificationIcon} onPress={onNotificationPress}>
+                    <MaterialCommunityIcons
+                        name="bell-badge-outline"
+                        style={[styles.socialIcon, isDarkMode ? styles.darkIcon : styles.lightIcon]}
+                    />
+                </TouchableOpacity>
+            )}
+        </View>
+    );
+};
+
+const styles = StyleSheet.create({
+    header: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        backgroundColor: "#fff",
+        borderBottomWidth: 1,
+        borderBottomColor: '#000',
+        padding: 10,
+    },
+    profile: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    profileImage: {
+        width: 45,
+        height: 45,
+        borderRadius: 50,
+        marginRight: 10,
+        borderWidth: 1,
+        borderColor: "#ccc"
+    },
+    light: {
+        fontSize: 14,
+        color: "#555",
+    },
+    name: {
+        fontSize: 16,
+        fontWeight: "bold",
+    },
+    darkText: {
+        color: "#fff",
+    },
+    lightText: {
+        color: "#000",
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+    notificationIcon: {
+        padding: 8,
+    },
+    socialIcon: {
+        fontSize: 24,
+    },
+    darkIcon: {
+        color: "#fff",
+    },
+    lightIcon: {
+        color: COLORS.red,
+    },
+});
+
+export default Header;

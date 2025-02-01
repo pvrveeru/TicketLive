@@ -7,6 +7,7 @@ import RNFS from 'react-native-fs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../Theme/ThemeContext';
 import Share from 'react-native-share';
+import moment from 'moment';
 
 type RootStackParamList = {
   TicketDetails: { bookingId: number };
@@ -47,7 +48,7 @@ const TicketDetails = () => {
       try {
         setIsLoading(true);
         const result = await getTicketsByBookingId(bookingId);
-        console.log('Fetched Tickets:', result.tickets);
+        // console.log('Fetched Tickets:', result.tickets);
         setTickets(result.tickets);
       } catch (err) {
         setError('Failed to fetch tickets. Please try again.');
@@ -106,7 +107,6 @@ const TicketDetails = () => {
 
       await RNFS.moveFile(file.filePath, downloadsDir);
 
-      console.log(`Tickets PDF downloaded to: ${downloadsDir}`);
       Alert.alert('All tickets downloaded successfully!', `The PDF has been saved to:\n${downloadsDir}`);
       return downloadsDir;
     } catch (error) {
@@ -156,11 +156,13 @@ const TicketDetails = () => {
         type: 'application/pdf',
       });
     } catch (error) {
-      console.error('Error sharing tickets:', error);
+      console.log('Error sharing tickets:', error);
       Alert.alert('Failed to share tickets. Please try again.');
     }
   };
-  
+const formatDate = (dateString: string) => {
+    return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
+  };  
 
   if (isLoading) {
     return (
@@ -211,19 +213,17 @@ const TicketDetails = () => {
             )}
           </View>
 
-          {/* Ticket Details */}
           <Text style={styles.label}>Event: </Text>
           <Text style={styles.detailText}>{ticket.title}</Text>
           <Text style={styles.label}>Date and Hour: </Text>
-          <Text style={styles.detailText}>{ticket.eventdate}</Text>
+          <Text style={styles.detailText}>{formatDate(ticket.eventdate || '')}</Text>
           <Text style={styles.label}>Event Location: </Text>
           <Text style={styles.detailText}>{ticket.eventlocation} </Text>
-          <Text style={styles.label}>Event Organizer: </Text>
-          <Text style={styles.detailText}>{ticket.title}</Text>
+          <Text style={styles.label}>Ticket No: </Text>
+          <Text style={styles.detailText}>{ticket.ticketid}</Text>
         </View>
       ))}
 
-      {/* Download All Tickets Button */}
       <TouchableOpacity style={styles.downloadButton} onPress={handleDownloadAllTickets}>
         <Text style={styles.downloadButtonText}>Download Ticket</Text>
       </TouchableOpacity>
