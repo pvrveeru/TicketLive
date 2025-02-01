@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { fetchEvents, fetchFeaturedEvents, fetchManualEvents, fetchPopularEvents, getAllEventCategories, markEventAsDeleteFavorite, markEventAsFavorite } from '../services/Apiservices';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { RouteProp, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
@@ -94,14 +94,36 @@ const ExploreScreen = () => {
   useEffect(() => {
     AllCatageories();
   }, [])
-  useEffect(() => {
-    const loadByType = async () => {
-      setLoading(true);
-      setNoEventsMessage('');
-      try {
-        let data;
-        if (auserId === null) {
-          console.log('User ID is null, skipping type-specific API calls');
+
+  const loadByType = async () => {
+    setLoading(true);
+    setNoEventsMessage('');
+    try {
+      let data;
+      if (auserId === null) {
+        console.log('User ID is null, skipping type-specific API calls');
+        data = await fetchEvents({
+          keyword: searchKeyword,
+          sortBy: 'createdAt',
+          sortOrder: 'asc',
+          limit: 10,
+          offset: 0,
+        });
+      } else {
+        if (type === 'Featured') {
+          console.log('Featured API is calling');
+          data = await fetchFeaturedEvents(auserId, 10);
+          if (!data.result) setNoEventsMessage('No featured events found');
+        } else if (type === 'Manual') {
+          console.log('Manual API is calling');
+          data = await fetchManualEvents(auserId, 10);
+          if (!data.result) setNoEventsMessage('No manual events found');
+        } else if (type === 'Popular') {
+          console.log('Popular API is calling');
+          data = await fetchPopularEvents(auserId, 10);
+          if (!data.result) setNoEventsMessage('No popular events found');
+        } else {
+          console.log('All Events API is calling');
           data = await fetchEvents({
             keyword: searchKeyword,
             sortBy: 'createdAt',
@@ -109,42 +131,29 @@ const ExploreScreen = () => {
             limit: 10,
             offset: 0,
           });
-        } else {
-          if (type === 'Featured') {
-            console.log('Featured API is calling');
-            data = await fetchFeaturedEvents(auserId, 10);
-            if (!data.result) setNoEventsMessage('No featured events found');
-          } else if (type === 'Manual') {
-            console.log('Manual API is calling');
-            data = await fetchManualEvents(auserId, 10);
-            if (!data.result) setNoEventsMessage('No manual events found');
-          } else if (type === 'Popular') {
-            console.log('Popular API is calling');
-            data = await fetchPopularEvents(auserId, 10);
-            if (!data.result) setNoEventsMessage('No popular events found');
-          } else {
-            console.log('All Events API is calling');
-            data = await fetchEvents({
-              keyword: searchKeyword,
-              sortBy: 'createdAt',
-              sortOrder: 'asc',
-              limit: 10,
-              offset: 0,
-            });
-            if (!data.result) setNoEventsMessage('No events found');
-          }
+          if (!data.result) setNoEventsMessage('No events found');
         }
-        setEvents(data.result);
-      } catch (err) {
-        console.log('Failed to load events', err);
-        setNoEventsMessage('Error loading events');
-      } finally {
-        setLoading(false);
       }
-    };
+      setEvents(data.result);
+    } catch (err) {
+      console.log('Failed to load events', err);
+      setNoEventsMessage('Error loading events');
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     loadByType();
   }, [searchKeyword, type, auserId]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (auserId !== null) {
+        loadByType();
+      }
+    }, [searchKeyword, type, auserId])
+  );
 
   const AllCatageories = async () => {
     const result = await getAllEventCategories();
@@ -220,11 +229,12 @@ const ExploreScreen = () => {
               <TouchableOpacity
                 onPress={() => {
                   if (event?.eventId !== undefined) {
-                    toggleFavorite(event.eventId); // Only call if eventId is defined
+                    toggleFavorite(event.eventId);
                   } else {
                     console.warn("Event ID is undefined");
                   }
                 }}
+                style={styles.favotites}
               >
                 <Ionicons
                   name={event?.isFavorite ? "heart" : "heart-outline"}
@@ -325,6 +335,9 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  favotites: {
+    alignSelf: 'flex-end',
   },
   container: {
     flex: 1,

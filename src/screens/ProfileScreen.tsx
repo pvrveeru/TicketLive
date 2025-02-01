@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Switch, Image, Modal, ScrollView, Button } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Switch, Image, Modal, ScrollView, Button, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../Theme/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
@@ -10,6 +10,7 @@ import { fetchUserById, updateUserNotifications, uploadUserProfile } from '../se
 import { getUserData } from '../Redux/Actions';
 import { requestCameraPermission } from '../components/requestCameraPermission ';
 import CustomSwitch from '../components/CustomSwitch';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface ProfileOption {
   title: string;
@@ -21,6 +22,7 @@ type RootStackParamList = {
   EditProfile: undefined;
   TermsConditions: undefined;
   HelpCenter: undefined;
+  Login: undefined;
 };
 
 interface UserData {
@@ -54,24 +56,54 @@ const ProfileScreen = () => {
     { title: isDarkMode ? 'Light Mode' : 'Dark Mode', icon: isDarkMode ? 'sunny-outline' : 'moon-outline' },
     { title: 'Terms & Conditions', icon: 'document-text-outline' },
     { title: 'Help Center', icon: 'help-circle-outline' },
+    { title: 'LogOut', icon: 'log-out-outline' },
   ];
+
+  const handleLogout = async () => {
+    Alert.alert(
+      'Log Out',
+      'Are you sure you want to log out?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: async () => {
+            try {
+              await AsyncStorage.removeItem('userData');
+              dispatch(getUserData([]));
+              Alert.alert('Logged out', 'You have been logged out successfully.');
+              navigation.navigate('Login');
+            } catch (error) {
+              console.error('Logout failed:', error);
+              Alert.alert('Error', 'An error occurred while logging out.');
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
 
   useEffect(() => {
     setImageSource(userData?.profileImageUrl);
   }, [userData?.profileImageUrl]);
 
   const fetchData = async (userId: number | null) => {
-      if (userId === null) {
-        console.log('User ID is null, skipping fetch');
-        return;
-      }
-      try {
-        const response = await fetchUserById(userId);
-        dispatch(getUserData(response));
-      } catch (err: any) {
-        console.log(err.message || 'Failed to fetch user data.');
-      }
-    };
+    if (userId === null) {
+      console.log('User ID is null, skipping fetch');
+      return;
+    }
+    try {
+      const response = await fetchUserById(userId);
+      dispatch(getUserData(response));
+    } catch (err: any) {
+      console.log(err.message || 'Failed to fetch user data.');
+    }
+  };
 
   const toggleNotifications = () => {
     setIsNotificationsEnabled(prevState => !prevState);
@@ -194,6 +226,8 @@ const ProfileScreen = () => {
           navigation.navigate('TermsConditions');
         } else if (index === 5) {
           navigation.navigate('HelpCenter');
+        } else if (index === 6) {
+          handleLogout();
         }
       }}
     >
