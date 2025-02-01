@@ -280,15 +280,20 @@ const ExploreScreen = () => {
   };
 
   const filteredEvents = selectedCategory
-    ? events.filter(event =>
-      event.categoryId?.categoryId === selectedCategory &&
-      (event?.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-        event?.location?.toLowerCase().includes(searchKeyword.toLowerCase()))
+  ? events?.filter(event =>
+      event?.categoryId?.categoryId === selectedCategory &&
+      (
+        (event?.title?.toLowerCase().includes(searchKeyword.toLowerCase())) ||
+        (event?.location?.toLowerCase().includes(searchKeyword.toLowerCase()))
+      )
     )
-    : events.filter(event =>
-      event?.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-      event?.location?.toLowerCase().includes(searchKeyword.toLowerCase())
+  : events?.filter(event =>
+      (
+        (event?.title?.toLowerCase().includes(searchKeyword.toLowerCase())) ||
+        (event?.location?.toLowerCase().includes(searchKeyword.toLowerCase()))
+      )
     );
+
   return (
     <><Header
       title={'Explore Events'}

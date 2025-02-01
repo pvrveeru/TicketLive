@@ -352,8 +352,9 @@ const styles = StyleSheet.create({
   },
   actionButtons: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     marginVertical: 20,
+    marginHorizontal: 20,
   },
   iconButton: {
     backgroundColor: '#c11c84',
