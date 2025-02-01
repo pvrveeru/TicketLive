@@ -327,8 +327,10 @@ const styles = StyleSheet.create({
   profileImage: {
     width: 45,
     height: 45,
-    borderRadius: 25,
+    borderRadius: 50,
     marginRight: 10,
+    borderWidth: 1,
+    borderColor: "#ccc"
   },
   greeting: {
     fontSize: 16,
@@ -338,7 +340,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   welcome: {
-    fontSize: 18,
+    fontSize: 12,
     fontWeight: 'bold',
     color: 'gray',
   },

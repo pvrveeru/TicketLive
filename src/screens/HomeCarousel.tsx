@@ -8,6 +8,7 @@ const HomeCarousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   const screenWidth = Dimensions.get('window').width;
+  const screenHeight = Dimensions.get('window').height;
 
   useEffect(() => {
     const getBannerImages = async () => {
@@ -46,7 +47,11 @@ const HomeCarousel: React.FC = () => {
         contentContainerStyle={{ alignItems: 'center' }}
       >
         {bannerImages?.map((imageUrl, index) => (
-          <Image key={index} source={{ uri: imageUrl }} style={[styles.image, { width: screenWidth }]} />
+          <Image
+            key={index}
+            source={{ uri: imageUrl }}
+            style={[styles.image, { width: screenWidth }]} // Ensure the image fills the width of the container
+          />
         ))}
       </ScrollView>
     </View>
@@ -55,13 +60,15 @@ const HomeCarousel: React.FC = () => {
 
 const styles = StyleSheet.create({
   carouselContainer: {
-    height: 200,
+    height: '25%', // Adjust the height of the container as needed
+    width: '100%', // Ensure the container takes the full width
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: "#ccc", // Background color for the carousel
   },
   image: {
-    height: 400,
-    resizeMode: 'contain',
+    height: '100%', // Ensure the image fills the container height
+    resizeMode: 'cover', // Use 'cover' to ensure the image covers the container without distortion
   },
 });
 
