@@ -58,9 +58,10 @@ const styles = StyleSheet.create({
     marginRight: 15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.2,
     shadowRadius: 3,
-    elevation: 5,
+    elevation: 2,
+    marginBottom: 10,
   },
   image: {
     width: '100%',

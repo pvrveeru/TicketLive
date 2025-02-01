@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: COLORS.red,
     borderRadius: 5,
-    height: 40,
+    height: 30,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 10,
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: 'bold',
   },
   favotites: {

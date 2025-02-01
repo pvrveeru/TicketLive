@@ -294,16 +294,16 @@ const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
   seeallbtn: {
     backgroundColor: COLORS.red,
-    height: 40,
+    height: 30,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 10,
     borderRadius: 15,
   },
   seeallbtntxt: {
-    fontSize: 20,
+    fontSize: 12,
     color: 'white',
-    fontWeight: 'bold',
+    fontWeight: 'normal',
   },
   container: {
     flex: 1,
