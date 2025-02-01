@@ -168,12 +168,6 @@ const EventDetails: React.FC = () => {
   // console.log('eventDetails isFavorite', isFavorite);
   return (
     <>
-      {/* <View style={[styles.header, isDarkMode ? styles.dark : styles.light]}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={30} color={isDarkMode ? '#fff' : '#333'} />
-        </TouchableOpacity>
-        <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Book Event</Text>
-      </View> */}
       <ScrollView style={[styles.container, isDarkMode ? styles.dark : styles.light]}>
         {eventDetails.galleryImages && eventDetails.galleryImages.length > 0 ? (
           <CustomCarousel

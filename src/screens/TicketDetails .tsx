@@ -160,9 +160,15 @@ const TicketDetails = () => {
       Alert.alert('Failed to share tickets. Please try again.');
     }
   };
-const formatDate = (dateString: string) => {
-    return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
-  };  
+  const formatDate = (dateString: string) => {
+    const date = moment.utc(dateString);
+  
+    if (!date.isValid()) {
+      return 'Invalid Date';  // Return a fallback message if the date is invalid
+    }
+  
+    return date.local().format('MM-DD-YY : h:mm A');
+  };
 
   if (isLoading) {
     return (
@@ -202,26 +208,44 @@ const formatDate = (dateString: string) => {
 
       {tickets.map((ticket, index) => (
         <View key={index} style={styles.ticketCard}>
-          {/* QR Code */}
-          <View style={styles.qrContainer}>
-            {ticket.qrcode ? (
-              <Image source={{ uri: ticket.qrcode }} style={styles.qrCode} />
-            ) : (
-              <View style={styles.qrPlaceholder}>
-                <Text style={styles.qrPlaceholderText}>QR Code</Text>
-              </View>
-            )}
-          </View>
-
-          <Text style={styles.label}>Event: </Text>
-          <Text style={styles.detailText}>{ticket.title}</Text>
-          <Text style={styles.label}>Date and Hour: </Text>
-          <Text style={styles.detailText}>{formatDate(ticket.eventdate || '')}</Text>
-          <Text style={styles.label}>Event Location: </Text>
-          <Text style={styles.detailText}>{ticket.eventlocation} </Text>
-          <Text style={styles.label}>Ticket No: </Text>
-          <Text style={styles.detailText}>{ticket.ticketid}</Text>
+        {/* QR Code */}
+        <View style={styles.qrContainer}>
+          {ticket.qrcode ? (
+            <Image source={{ uri: ticket.qrcode }} style={styles.qrCode} />
+          ) : (
+            <View style={styles.qrPlaceholder}>
+              <Text style={styles.qrPlaceholderText}>QR Code</Text>
+            </View>
+          )}
         </View>
+      
+        {/* Ticket Details Table */}
+        <View style={styles.tableContainer}>
+          <View style={styles.tableRow}>
+            <Text style={styles.tableHeader}>Event</Text>
+            <Text style={styles.tableCell}>{ticket.title}</Text>
+          </View>
+          <View style={styles.tableRow}>
+            <Text style={styles.tableHeader}>Date & Time</Text>
+            <Text style={styles.tableCell}>{formatDate(ticket.eventdate || '')}</Text>
+          </View>
+          <View style={styles.tableRow}>
+            <Text style={styles.tableHeader}>Location</Text>
+            <Text style={styles.tableCell}>{ticket.eventlocation}</Text>
+          </View>
+          <View style={styles.tableRow}>
+            <Text style={styles.tableHeader}>Ticket No</Text>
+            <Text style={styles.tableCell}>{ticket.ticketid}</Text>
+          </View>
+        </View>
+      
+        {/* Download Button */}
+        <TouchableOpacity style={styles.downloadButton} onPress={() => {}}>
+          <Text style={styles.downloadButtonText}>Download Ticket</Text>
+        </TouchableOpacity>
+      </View>
+      
+      
       ))}
 
       <TouchableOpacity style={styles.downloadButton} onPress={handleDownloadAllTickets}>
@@ -230,7 +254,6 @@ const formatDate = (dateString: string) => {
     </ScrollView>
   );
 };
-
 const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
@@ -264,22 +287,27 @@ const styles = StyleSheet.create({
   },
   ticketCard: {
     backgroundColor: '#fff',
-    padding: 16,
+    padding: 20,
     borderRadius: 12,
     marginBottom: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 2,
+    shadowRadius: 10,
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
   qrContainer: {
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   qrCode: {
     width: 120,
     height: 120,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
   qrPlaceholder: {
     width: 120,
@@ -288,31 +316,52 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
   qrPlaceholderText: {
     color: '#888',
     fontSize: 14,
-  },
-  detailText: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  label: {
     fontWeight: 'bold',
   },
+  
+  // Table Styles
+  tableContainer: {
+    marginBottom: 20,
+  },
+  tableRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  tableHeader: {
+    fontWeight: 'bold',
+    fontSize: 14,
+    color: '#555',
+    flex: 1,
+  },
+  tableCell: {
+    fontSize: 16,
+    color: '#333',
+    flex: 2,
+    textAlign: 'right', // Aligns content to the right for better readability
+  },
+
   downloadButton: {
     backgroundColor: '#ff6f61',
     paddingVertical: 12,
     borderRadius: 8,
-    marginTop: 16,
-    marginBottom: 16,
+    marginTop: 20,
+    alignItems: 'center',
   },
   downloadButtonText: {
     color: '#fff',
-    textAlign: 'center',
     fontSize: 16,
     fontWeight: 'bold',
   },
 });
+
 
 export default TicketDetails;

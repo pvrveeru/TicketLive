@@ -289,6 +289,7 @@ const ExploreScreen = () => {
       event?.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
       event?.location?.toLowerCase().includes(searchKeyword.toLowerCase())
     );
+
   return (
     <><Header
       title={'Explore Events'}
