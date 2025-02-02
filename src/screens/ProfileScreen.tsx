@@ -93,6 +93,7 @@ const ProfileScreen = () => {
   }, [userData?.profileImageUrl]);
 
   const fetchData = async (userId: number | null) => {
+    console.log('api calling');
     if (userId === null) {
       console.log('User ID is null, skipping fetch');
       return;

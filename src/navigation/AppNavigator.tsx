@@ -20,6 +20,7 @@ import { COLORS } from '../styles/globalstyles';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import TermsConditionsScreen from '../screens/TermsConditionsScreen';
 import HelpCenterScreen from '../screens/HelpCenterScreen';
+import FullMapScreen from '../screens/FullMapScreen';
 
 export type RootStackParamList = {
   Login: undefined;
@@ -35,6 +36,7 @@ export type RootStackParamList = {
   HelpCenter: undefined;
   TermsConditions: undefined;
   EditProfile: undefined;
+  FullMapScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -92,6 +94,7 @@ const AppNavigator: React.FC = () => {
           <Stack.Screen name="EditProfile" component={EditProfileScreen} />
         <Stack.Screen name="TermsConditions" component={TermsConditionsScreen} />
         <Stack.Screen name="HelpCenter" component={HelpCenterScreen} />
+        <Stack.Screen name="FullMapScreen" component={FullMapScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </ThemeProvider>

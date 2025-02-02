@@ -286,6 +286,7 @@ const HomeScreen: React.FC = () => {
       <View style={{ marginBottom: 40 }}>
         {renderEventSection('Featured Events', featuredEvents, 'Featured')}
         {renderEventSection('Popular Events', popularEvents, 'Popular')}
+        {/* {renderEventSection('Manual Events', manualEvents, 'Manual')} */}
       </View>
     </ScrollView>
   );

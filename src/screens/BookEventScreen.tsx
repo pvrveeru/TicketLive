@@ -46,14 +46,18 @@ const BookEventScreen: React.FC = () => {
     const [quantity, setQuantity] = useState<{ [key: number]: number }>({});
     const [selectedZones, setSelectedZones] = useState<SeatingZone[]>([]);
     const [limitExceeded, setLimitExceeded] = useState<boolean>(false);
+    const [ismanual, setIsManual] = useState<boolean>(false)
 
     useEffect(() => {
         const fetchSeatingOptions = async () => {
             try {
                 const options = await getSeatingOptionsByEventId(eventId);
-                // console.log('options', options);
+                console.log('options', options);
                 if (Array.isArray(options)) {
                     setSeatingOptions(options);
+                    if (options.length > 0) {
+                        setIsManual(options[0].event.isManual);
+                    }
                 } else {
                     console.error('API returned data in unexpected format:', options);
                 }
@@ -141,6 +145,7 @@ const BookEventScreen: React.FC = () => {
         navigation.navigate('EventBookingDetails', {
             eventBookingDetails,
             eventId,
+            ismanual,
         });
     };
 
@@ -188,14 +193,11 @@ const BookEventScreen: React.FC = () => {
                         disabled={item.seatsAvailable === 0}
                     >
                         <View style={styles.rowContainer}>
-                            {/* Zone Details */}
                             <View style={styles.zoneDetails}>
                                 <Text style={styles.zoneName}>{item.zoneName}</Text>
                                 <Text style={styles.zonePrice}>Price: ₹{item.price}</Text>
                                 <Text style={styles.zoneCapacity}>Available Seats: {item.seatsAvailable}</Text>
                             </View>
-
-                            {/* Quantity Controls (Show only if zone is selected and seats are available) */}
                             {selectedZones.some((zone) => zone.seatingId === item.seatingId) && item.seatsAvailable > 0 && (
                                 <View style={styles.quantityContainer}>
                                     <TouchableOpacity
@@ -218,8 +220,6 @@ const BookEventScreen: React.FC = () => {
                                 </View>
                             )}
                         </View>
-
-                        {/* Message if seats are unavailable */}
                         {item.seatsAvailable === 0 && <Text style={styles.noSeatsText}>Seats are not available</Text>}
                     </TouchableOpacity>
                 )}
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
         bottom: 10,
         right: 10,
         color: '#fff',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Optional: background for better readability
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         padding: 10,
         borderRadius: 5,
         fontSize: 20,
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
     },
     zoneDetails: {
-        flex: 1, // Allow details to take available space
+        flex: 1,
     },
     limitText: {
         color: 'red',
@@ -378,8 +378,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#ff6f61',
         padding: 16,
         alignItems: 'center',
-        borderRadius: 8,
-        marginTop: 20,
+        borderRadius: 20,
+        marginBottom: 20,
+        width: '90%',
+        alignSelf: 'center',
     },
     continueButtonText: {
         fontSize: 16,

@@ -81,6 +81,12 @@ interface EventDetailsData {
 
 type RootStackParamList = {
   BookEventScreen: { eventId: number, layoutImage: string };
+  FullMapScreen: {
+    latitude: number;
+    longitude: number;
+    title: string;
+    location: string;
+  };
 };
 
 interface RouteParams {
@@ -165,19 +171,29 @@ const EventDetails: React.FC = () => {
   const handleBackPress = () => {
     navigation.goBack(); // Go back to the previous screen
   };
-  // console.log('eventDetails isFavorite', isFavorite);
+  // console.log('eventDetails', eventDetails);
+
+  const handleMarkerPress = () => {
+    navigation.navigate('FullMapScreen', {
+      latitude: parseFloat(eventDetails?.latitude ?? '0'),
+      longitude: parseFloat(eventDetails?.longitude ?? '0'),
+      title: eventDetails?.title ?? 'Unknown Title',
+      location: eventDetails?.location ?? 'Unknown Location',
+    });
+  };
+  
   return (
     <>
       <ScrollView style={[styles.container, isDarkMode ? styles.dark : styles.light]}>
-        {eventDetails.galleryImages && eventDetails.galleryImages.length > 0 ? (
+        {eventDetails?.galleryImages && eventDetails?.galleryImages.length > 0 ? (
           <CustomCarousel
-            images={eventDetails.galleryImages}
+            images={eventDetails?.galleryImages}
             interval={3000}
             height={300}
             containerStyle={{ marginBottom: 20 }}
             imageStyle={{ borderRadius: 10 }}
-            artistName={eventDetails.artistName}
-            eventTitle={eventDetails.title}
+            artistName={eventDetails?.artistName}
+            eventTitle={eventDetails?.title}
             onBackPress={handleBackPress}
           />
         ) : (
@@ -192,13 +208,13 @@ const EventDetails: React.FC = () => {
             <View style={styles.row}>
               <FontAwesome name="clock-o" size={20} color="gray" />
               <Text style={styles.text}>
-                {moment(eventDetails.eventDate).format('HH:mm:ss')}
+                {moment(eventDetails?.eventDate).format('HH:mm:ss')}
               </Text>
             </View>
             <View style={styles.row}>
               <Ionicons name="calendar-outline" size={20} color="gray" />
               <Text style={styles.text}>
-                {moment(eventDetails.eventDate).format('DD/MM/YYYY')}
+                {moment(eventDetails?.eventDate).format('DD/MM/YYYY')}
               </Text>
             </View>
             <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
@@ -208,7 +224,17 @@ const EventDetails: React.FC = () => {
 
           <View style={styles.row}>
             <Ionicons name="location-outline" size={20} color="gray" />
-            <Text style={styles.text}>{eventDetails.location}</Text>
+            <Text style={styles.text}>{eventDetails?.location}</Text>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
+            <View style={styles.row}>
+              <Text style={styles.text}>Langauage:</Text>
+              <Text style={styles.text}>{eventDetails?.language}</Text>
+            </View>
+            <View style={styles.row}>
+              <Text style={styles.text}>Duration:</Text>
+              <Text style={styles.text}>{eventDetails?.duration}</Text>
+            </View>
           </View>
         </View>
         <View style={styles.actionButtons}>
@@ -216,7 +242,7 @@ const EventDetails: React.FC = () => {
           <View style={styles.row}>
             <MaterialIcons name="group" size={20} color="gray" />
             <Text style={styles.text}>
-              {eventDetails.favoritesCount} Interested
+              {eventDetails?.favoritesCount} Interested
             </Text>
           </View>
           <TouchableOpacity style={styles.iconButton}>
@@ -227,7 +253,7 @@ const EventDetails: React.FC = () => {
           </TouchableOpacity>
         </View>
         <Text style={styles.sectionTitle}>About Event</Text>
-        <Text style={styles.description}>{eventDetails.description}</Text>
+        <Text style={styles.description}>{eventDetails?.description}</Text>
         <Text style={styles.sectionTitle}>Location</Text>
         <MapView
           style={styles.map}
@@ -243,8 +269,9 @@ const EventDetails: React.FC = () => {
               latitude: parseFloat(eventDetails?.latitude ?? '0'),
               longitude: parseFloat(eventDetails?.longitude ?? '0'),
             }}
-            title={eventDetails.title}
-            description={eventDetails.location}
+            title={eventDetails?.title}
+            description={eventDetails?.location}
+            onPress={handleMarkerPress}
           />
         </MapView>
 

@@ -291,11 +291,12 @@ const ExploreScreen = () => {
     );
 
   return (
-    <><Header
-      title={'Explore Events'}
-      profileImageUrl={userData?.profileImageUrl}
-      profileImage={require('../../assests/images/icon.png')}
-      onNotificationPress={handleNotificationPress} />
+    <>
+      <Header
+        title={'Explore Events'}
+        profileImageUrl={userData?.profileImageUrl}
+        profileImage={require('../../assests/images/icon.png')}
+        onNotificationPress={handleNotificationPress} />
       <View style={styles.container}>
         <View style={styles.header}>
           <View style={styles.searchContainer}>
@@ -307,45 +308,49 @@ const ExploreScreen = () => {
           </View>
           <Text style={styles.eventCount}>{type} Events found: {filteredEvents?.length ? filteredEvents?.length : events?.length}</Text>
         </View>
-        <ScrollView contentContainerStyle={styles.buttonContainer} horizontal>
-          <TouchableOpacity
-            style={[styles.button, selectedCategory === null && styles.selectedButton]}
-            onPress={() => handleCategoryClick(null)}
-          >
-            <Text style={[styles.buttonText,
-            selectedCategory === null && styles.selectedButtontxt,
-            ]}>All</Text>
-          </TouchableOpacity>
-          {categories.length > 0 ? (
-            categories.map((category) => (
-              <TouchableOpacity
-                key={category.categoryId}
-                style={[
-                  styles.button,
-                  selectedCategory === category.categoryId && styles.selectedButton,
-                ]}
-                onPress={() => handleCategoryClick(category.categoryId)}
-              >
-                <Text style={[styles.buttonText,
-                selectedCategory === category.categoryId && styles.selectedButtontxt,
-                ]}>{category.categoryName}</Text>
-              </TouchableOpacity>
-            ))
-          ) : (
-            <Text>Loading categories...</Text>
-          )}
-        </ScrollView>
+        <View>
+          <ScrollView contentContainerStyle={styles.buttonContainer} horizontal>
+            <TouchableOpacity
+              style={[styles.button, selectedCategory === null && styles.selectedButton]}
+              onPress={() => handleCategoryClick(null)}
+            >
+              <Text style={[styles.buttonText,
+              selectedCategory === null && styles.selectedButtontxt,
+              ]}>All</Text>
+            </TouchableOpacity>
+            {categories.length > 0 ? (
+              categories.map((category) => (
+                <TouchableOpacity
+                  key={category.categoryId}
+                  style={[
+                    styles.button,
+                    selectedCategory === category.categoryId && styles.selectedButton,
+                  ]}
+                  onPress={() => handleCategoryClick(category.categoryId)}
+                >
+                  <Text style={[styles.buttonText,
+                  selectedCategory === category.categoryId && styles.selectedButtontxt,
+                  ]}>{category.categoryName}</Text>
+                </TouchableOpacity>
+              ))
+            ) : (
+              <Text>Loading categories...</Text>
+            )}
+          </ScrollView>
+        </View>
         {noEventsMessage && <Text style={styles.noEventsMessage}>{noEventsMessage}</Text>}
-
-        {loading ? (
-          <Text>Loading events...</Text>
-        ) : (
-          <FlatList
-            data={transformDataToRows(filteredEvents)}
-            renderItem={renderEventRow}
-            keyExtractor={(item, index) => index.toString()} />
-        )}
-      </View></>
+        <View style={{marginBottom: '50%'}}>
+          {loading ? (
+            <Text>Loading events...</Text>
+          ) : (
+            <FlatList
+              data={transformDataToRows(filteredEvents)}
+              renderItem={renderEventRow}
+              keyExtractor={(item, index) => index.toString()} />
+          )}
+        </View>
+      </View>
+    </>
   );
 };
 

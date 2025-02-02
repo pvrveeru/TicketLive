@@ -5,7 +5,7 @@
 
 // export default store;
 import { createStore } from 'redux';
-import { reducerFunction } from './Reducers'; // assuming you have a reducer
+import { reducerFunction } from './Reducers';
 
 // Create the Redux store
 const store = createStore(reducerFunction);

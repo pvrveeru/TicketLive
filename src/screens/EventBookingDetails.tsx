@@ -24,6 +24,7 @@ interface FormData {
 interface RouteParams {
     eventBookingDetails: any;
     eventId: number;
+    ismanual: boolean;
 }
 interface UserData {
     phoneNumber: string;
@@ -48,8 +49,8 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
     // console.log('userData i event booking details', userData);
     const phoneNumber = userData?.phoneNumber;
 
-    const { eventBookingDetails, eventId } = route.params as RouteParams;
-
+    const { eventBookingDetails, eventId, ismanual } = route.params as RouteParams;
+    console.log('ismanual', ismanual);
     const [formData, setFormData] = useState<FormData>({
         firstName: userData?.firstName || "",
         lastName: userData?.lastName || "",
@@ -126,6 +127,9 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                     </TouchableOpacity>
                     <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Book Event</Text>
                 </View>
+                {ismanual && (
+                    <Text>Please Give Me Valid Details (or) Please carry the ticket for an event</Text>
+                )}
                 <Text style={[styles.Contact, { color: isDarkMode ? '#fff' : '#000' }]}>Contact Information</Text>
 
                 <TextInput
