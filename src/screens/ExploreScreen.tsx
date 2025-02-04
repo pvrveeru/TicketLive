@@ -9,6 +9,8 @@ import { COLORS } from '../styles/globalstyles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Header from '../components/Header';
 import { useSelector } from 'react-redux';
+import SkeletonLoader from '../components/SkeletonLoading';
+import { useTheme } from '../Theme/ThemeContext';
 
 type EventData = {
   id: any;
@@ -75,6 +77,7 @@ interface RootState {
 }
 
 const ExploreScreen = () => {
+  const { isDarkMode } = useTheme();
   const route = useRoute<ExploreScreenRouteProps>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { type } = route.params || { type: '' };
@@ -88,6 +91,7 @@ const ExploreScreen = () => {
   const [noEventsMessage, setNoEventsMessage] = useState<string>('');
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [skloading, setSkLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const getUserId = async () => {
@@ -111,6 +115,7 @@ const ExploreScreen = () => {
 
   const loadByType = async () => {
     setLoading(true);
+    setSkLoading(true);
     setNoEventsMessage('');
     try {
       let data;
@@ -144,6 +149,7 @@ const ExploreScreen = () => {
             sortOrder: 'asc',
             limit: 10,
             offset: 0,
+            status: "Published",
           });
           if (!data.result) setNoEventsMessage('No events found');
         }
@@ -154,6 +160,7 @@ const ExploreScreen = () => {
       setNoEventsMessage('Error loading events');
     } finally {
       setLoading(false);
+      setSkLoading(false);
     }
   };
 
@@ -228,19 +235,23 @@ const ExploreScreen = () => {
     navigation.navigate('Notification');
   };
 
+  const handleProfilePress = () => {
+    navigation.navigate('BottomBar', { screen: 'Profile' });
+  };
+
   const renderEventRow = ({ item, index }: { item: EventData[]; index: number }) => {
     return (
       <View style={styles.eventRow}>
         {item?.map((event, idx) => (
           <TouchableOpacity
             key={event.id || idx}
-            style={styles.eventCard}
+            style={[styles.eventCard, { backgroundColor: isDarkMode ? 'gray' : '#f9f9ff9' }]}
             onPress={() => handleEventPress(event?.eventId)}
           >
             <Image source={{ uri: event?.thumbUrl }} style={styles.eventImage} />
             <View style={styles.eventDetails}>
-              <Text style={styles.eventTitle}>{event?.title}</Text>
-              <Text style={styles.eventDescription}>{event?.location}</Text>
+              <Text style={[styles.eventTitle, { color: isDarkMode ? '#fff' : '#000' }]}>{event?.title}</Text>
+              <Text style={[styles.eventDescription, { color: isDarkMode ? '#fff' : '#000' }]}>{event?.location}</Text>
               <Text style={styles.eventDate}>{formatDate(event?.eventDate || '')}</Text>
               <TouchableOpacity
                 onPress={() => {
@@ -255,7 +266,7 @@ const ExploreScreen = () => {
                 <Ionicons
                   name={event?.isFavorite ? "heart" : "heart-outline"}
                   size={30}
-                  color={event?.isFavorite ? "red" : "#888"}
+                  color={event?.isFavorite ? "red" : "#000"}
                 />
               </TouchableOpacity>
 
@@ -296,17 +307,19 @@ const ExploreScreen = () => {
         title={'Explore Events'}
         profileImageUrl={userData?.profileImageUrl}
         profileImage={require('../../assests/images/icon.png')}
-        onNotificationPress={handleNotificationPress} />
-      <View style={styles.container}>
+        onNotificationPress={handleNotificationPress} 
+        onProfilePress={handleProfilePress}/>
+      <View style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>
         <View style={styles.header}>
           <View style={styles.searchContainer}>
             <TextInput
-              style={styles.searchInput}
+              style={[styles.searchInput, { color: isDarkMode ? '#fff' : '#000' }]}
               placeholder="Search for events..."
+              placeholderTextColor={isDarkMode ? '#fff' : '#000'}
               value={searchKeyword}
               onChangeText={setSearchKeyword} />
           </View>
-          <Text style={styles.eventCount}>{type} Events found: {filteredEvents?.length ? filteredEvents?.length : events?.length}</Text>
+          <Text style={[styles.eventCount, { color: isDarkMode ? '#fff' : '#000' }]}>{type} Events found: {filteredEvents?.length ? filteredEvents?.length : events?.length}</Text>
         </View>
         <View>
           <ScrollView contentContainerStyle={styles.buttonContainer} horizontal>
@@ -314,7 +327,7 @@ const ExploreScreen = () => {
               style={[styles.button, selectedCategory === null && styles.selectedButton]}
               onPress={() => handleCategoryClick(null)}
             >
-              <Text style={[styles.buttonText,
+              <Text style={[isDarkMode ? styles.darkbuttontext : styles.buttonText,
               selectedCategory === null && styles.selectedButtontxt,
               ]}>All</Text>
             </TouchableOpacity>
@@ -328,8 +341,13 @@ const ExploreScreen = () => {
                   ]}
                   onPress={() => handleCategoryClick(category.categoryId)}
                 >
-                  <Text style={[styles.buttonText,
-                  selectedCategory === category.categoryId && styles.selectedButtontxt,
+                  <Text style={[
+                    styles.buttonText,
+                    selectedCategory === category.categoryId &&
+                    styles.selectedButtontxt,
+                    isDarkMode && selectedCategory !== category.categoryId
+                      ? { color: 'white' }
+                      : null,
                   ]}>{category.categoryName}</Text>
                 </TouchableOpacity>
               ))
@@ -339,9 +357,17 @@ const ExploreScreen = () => {
           </ScrollView>
         </View>
         {noEventsMessage && <Text style={styles.noEventsMessage}>{noEventsMessage}</Text>}
-        <View style={{marginBottom: '50%'}}>
+        <View style={{ marginBottom: '50%' }}>
           {loading ? (
-            <Text>Loading events...</Text>
+            <ScrollView>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <View key={index} style={{ margin: 5 }}>
+                  <SkeletonLoader width="100%" height={120} borderRadius={10} />
+                </View>
+              ))}
+            </ScrollView>
+          ) : filteredEvents.length === 0 ? (
+            <Text style={[styles.noResultsText, { color: isDarkMode ? '#fff' : '#000' }]}>No events found.</Text>
           ) : (
             <FlatList
               data={transformDataToRows(filteredEvents)}
@@ -349,15 +375,20 @@ const ExploreScreen = () => {
               keyExtractor={(item, index) => index.toString()} />
           )}
         </View>
-      </View>
+      </View >
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  noResultsText: {
+    textAlign: 'center',
+    fontSize: 18,
+    color: 'gray',
+  },
   buttonContainer: {
     flexDirection: 'row',
-    marginBottom: 20,
+    // marginBottom: 20,
   },
   button: {
     borderColor: '#EF412B',
@@ -381,6 +412,10 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#000',
+    fontSize: 16,
+  },
+  darkbuttontext: {
+    color: '#fff',
     fontSize: 16,
   },
   selectedButtontxt: {

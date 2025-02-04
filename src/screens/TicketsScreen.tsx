@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { getBookingsByUserId } from '../services/Apiservices';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -9,6 +9,7 @@ import { useTheme } from '../Theme/ThemeContext';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import Header from '../components/Header';
+import SkeletonLoader from '../components/SkeletonLoading';
 
 type RootStackParamList = {
   TicketDetails: { bookingId: number };
@@ -87,6 +88,7 @@ const TicketsScreen = () => {
     try {
       const data = await getBookingsByUserId(userId);
       setBookings(data.bookings);
+      // console.log('all bookings', data.bookings);
     } catch (error) {
       console.error('error fetching bookings', error);
     } finally {
@@ -124,13 +126,13 @@ const TicketsScreen = () => {
     const eventDate = event?.eventDate || 'No Date';
     return (
       <>
-        <View style={styles.bookingItem}>
+        <View style={[styles.bookingItem, { backgroundColor: isDarkMode ? 'gray' : '#fff' }]}>
           <View style={{ flexDirection: 'row', alignItems: 'center', columnGap: 10 }}>
             <Image source={{ uri: event?.thumbUrl }} style={{ width: 100, height: 100 }} />
             <View>
-              <Text style={styles.title}>{eventTitle}</Text>
-              <Text style={styles.detail}>{formatDate(eventDate)}</Text>
-              <Text style={styles.detail}>{paymentStatus}</Text>
+              <Text style={[styles.title, { color: isDarkMode ? '#fff' : '#000' }]}>{eventTitle}</Text>
+              <Text style={[styles.detail, { color: isDarkMode ? '#fff' : '#000' }]}>{formatDate(eventDate)}</Text>
+              <Text style={[styles.detail, { color: isDarkMode ? '#fff' : '#000' }]}>{paymentStatus}</Text>
             </View>
           </View>
           <View style={styles.buttons}>
@@ -149,11 +151,14 @@ const TicketsScreen = () => {
   const { upcomingBookings, completedBookings } = categorizeBookings();
   // console.log('upcomingBookings', upcomingBookings);
   return (
-    <><Header
-      title={'My Tickets'}
-      profileImageUrl={userData?.profileImageUrl}
-      profileImage={require('../../assests/images/icon.png')}
-      onNotificationPress={handleNotificationPress} /><View style={styles.container}>
+    <>
+      <Header
+        title={'My Tickets'}
+        profileImageUrl={userData?.profileImageUrl}
+        profileImage={require('../../assests/images/icon.png')}
+        onNotificationPress={handleNotificationPress}
+        onProfilePress={handleProfilePress} />
+      <View style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>
         <View style={styles.tabBar}>
           {['Upcoming', 'Completed'].map((tab) => (
             <TouchableOpacity
@@ -169,7 +174,13 @@ const TicketsScreen = () => {
         </View>
 
         {isLoading ? (
-          <Text style={styles.loadingText}>Loading...</Text>
+          <ScrollView>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <View key={index} style={{ margin: 5 }}>
+                <SkeletonLoader width="100%" height={150} borderRadius={10} />
+              </View>
+            ))}
+          </ScrollView>
         ) : selectedTab === 'Upcoming' ? (
           upcomingBookings.length === 0 ? (
             <Text style={styles.emptyText}>No upcoming events. Book your tickets now and stay updated!</Text>
@@ -190,7 +201,7 @@ const TicketsScreen = () => {
               renderItem={renderBookingItem} />
           )
         ) : null}
-      </View></>
+      </View ></>
   );
 };
 
@@ -238,9 +249,9 @@ const styles = StyleSheet.create({
   },
   viewButton: {
     flex: 1,
-    padding: 8,
+    padding: 10,
     backgroundColor: '#ff8533',
-    borderRadius: 4,
+    borderRadius: 15,
   },
   buttonText: {
     color: '#fff',

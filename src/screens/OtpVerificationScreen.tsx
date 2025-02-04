@@ -18,6 +18,7 @@ import { validateOtp } from '../services/Apiservices';
 import { getUserData } from '../Redux/Actions';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useTheme } from '../Theme/ThemeContext';
 
 type RootStackParamList = {
   Login: undefined;
@@ -26,6 +27,7 @@ type RootStackParamList = {
 };
 
 const OtpVerificationScreen: React.FC = () => {
+  const { isDarkMode } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const dispatch = useDispatch();
   const Logo = require('../../assests/images/ticketliv_logo.png');
@@ -72,13 +74,13 @@ const OtpVerificationScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-        <AntDesign name="arrowleft" size={30} color="#000" />
+        <AntDesign name="arrowleft" size={30} color={isDarkMode ? '#fff' : '#333'} />
       </TouchableOpacity>
       <Image source={Logo} style={styles.logo} />
-      <Text style={styles.title}>Mobile verification has successfully done</Text>
-      <Text style={styles.subtitle}>
+      <Text style={[styles.title, { color: isDarkMode ? '#fff' : '#000' }]}>Mobile verification has successfully done</Text>
+      <Text style={[styles.subtitle, { color: isDarkMode ? '#fff' : '#000' }]}>
         We have sent the OTP on {mobileNumber}. It will apply auto to the fields.
       </Text>
       <OtpInput
@@ -91,7 +93,7 @@ const OtpVerificationScreen: React.FC = () => {
         disabled={false}
       />
 
-      <Text style={styles.resendText}>
+      <Text style={[styles.resendText, { color: isDarkMode ? '#fff' : '#000' }]}>
         If you didn't receive a code?{' '}
         <Text style={styles.resendLink} onPress={() => Alert.alert('Resend OTP')}>
           Resend

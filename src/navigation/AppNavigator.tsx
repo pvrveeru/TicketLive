@@ -92,9 +92,9 @@ const AppNavigator: React.FC = () => {
           <Stack.Screen name="ReviewSummary" component={ReviewSummary} />
           <Stack.Screen name="EventDetails" component={EventDetails} />
           <Stack.Screen name="EditProfile" component={EditProfileScreen} />
-        <Stack.Screen name="TermsConditions" component={TermsConditionsScreen} />
-        <Stack.Screen name="HelpCenter" component={HelpCenterScreen} />
-        <Stack.Screen name="FullMapScreen" component={FullMapScreen} />
+          <Stack.Screen name="TermsConditions" component={TermsConditionsScreen} />
+          <Stack.Screen name="HelpCenter" component={HelpCenterScreen} />
+          <Stack.Screen name="FullMapScreen" component={FullMapScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </ThemeProvider>

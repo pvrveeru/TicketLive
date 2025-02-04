@@ -8,6 +8,7 @@ import {
   StyleSheet,
   useColorScheme,
 } from 'react-native';
+import { useTheme } from '../Theme/ThemeContext';
 
 interface OtpInputProps {
   onChange: (otpCode: string) => void;
@@ -29,8 +30,7 @@ const OtpInput: React.FC<OtpInputProps> = ({
   disabled = false,
 }) => {
   const inputRef = useRef<TextInput | null>(null);
-  const theme = useColorScheme();
-  const isDarkTheme = theme === 'dark';
+  const {isDarkMode} = useTheme();
 
   useEffect(() => {
     setTimeout(() => {
@@ -85,7 +85,7 @@ const OtpInput: React.FC<OtpInputProps> = ({
                     size === 'small' && styles.smallCellView,
                     (!!otpCode?.[index] || !!otpCode?.[index - 1]) && styles.activeCellView,
                     !!error && styles.errorCellView,
-                    isDarkTheme && styles.cellViewDark,
+                    isDarkMode && styles.cellViewDark,
                   ]}
                 >
                   <Text

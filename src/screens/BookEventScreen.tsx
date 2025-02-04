@@ -4,10 +4,13 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { getSeatingOptionsByEventId } from '../services/Apiservices';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../Theme/ThemeContext';
+import SkeletonLoader from '../components/SkeletonLoading';
 
 interface RouteParams {
     eventId: number;
     layoutImage: string;
+    maxTickets: number;
+    noOfTickets: number;
 }
 
 interface SeatingOption {
@@ -34,25 +37,24 @@ type SeatingZone = {
     zoneName: string;
 };
 
-const MAX_TOTAL_QUANTITY = 5;
-
 const BookEventScreen: React.FC = () => {
     const route = useRoute();
     const { isDarkMode } = useTheme();
     const navigation = useNavigation<any>();
-    const { eventId, layoutImage } = route.params as RouteParams;
+    const { eventId, layoutImage, maxTickets, noOfTickets } = route.params as RouteParams;
     const [seatingOptions, setSeatingOptions] = useState<SeatingZone[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [quantity, setQuantity] = useState<{ [key: number]: number }>({});
     const [selectedZones, setSelectedZones] = useState<SeatingZone[]>([]);
     const [limitExceeded, setLimitExceeded] = useState<boolean>(false);
     const [ismanual, setIsManual] = useState<boolean>(false)
-
+    const [skloading, setSkLoading] = useState<boolean>(true);
+    // console.log('noOfTickets maxTickets', noOfTickets ,maxTickets);
     useEffect(() => {
         const fetchSeatingOptions = async () => {
             try {
                 const options = await getSeatingOptionsByEventId(eventId);
-                console.log('options', options);
+                // console.log('options', options);
                 if (Array.isArray(options)) {
                     setSeatingOptions(options);
                     if (options.length > 0) {
@@ -71,10 +73,12 @@ const BookEventScreen: React.FC = () => {
         fetchSeatingOptions();
     }, [eventId]);
 
+   
     const getTotalQuantity = () => {
         return Object.values(quantity).reduce((total, num) => total + num, 0);
     };
-
+    const MAX_TOTAL_QUANTITY = maxTickets - noOfTickets;
+    // console.log('MAX_TOTAL_QUANTITY', MAX_TOTAL_QUANTITY);
     const toggleZoneSelection = (zone: SeatingZone) => {
         if (zone.seatsAvailable === 0) return;
         if (selectedZones.some((selectedZone) => selectedZone.seatingId === zone.seatingId)) {
@@ -158,7 +162,7 @@ const BookEventScreen: React.FC = () => {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>
             <FlatList
                 data={seatingOptions}
                 keyExtractor={(item) => item.seatingId.toString()}
@@ -166,9 +170,15 @@ const BookEventScreen: React.FC = () => {
                     <View>
 
                         <View style={styles.imageContainer}>
+                            {/* {skloading && (
+                                <SkeletonLoader width='100%' height={300}
+                                />
+                            )} */}
                             <Image
                                 source={{ uri: layoutImage }}
                                 style={styles.layoutImage}
+                            // onLoad={() => setSkLoading(false)}
+                            // onError={() => setSkLoading(false)}
                             />
                             <Text style={styles.layoutText}>Layout Of the Event</Text>
                             <TouchableOpacity onPress={handleBackPress} style={styles.backArrow}>
@@ -176,7 +186,7 @@ const BookEventScreen: React.FC = () => {
                             </TouchableOpacity>
                         </View>
 
-                        <Text style={styles.subTitle}>Choose number of seats</Text>
+                        <Text style={[styles.subTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Choose number of seats</Text>
 
                         {limitExceeded && (
                             <Text style={styles.limitText}>⚠️ Your limit is exceeded! Maximum 5 tickets allowed.</Text>

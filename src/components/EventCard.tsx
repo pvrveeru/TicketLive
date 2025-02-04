@@ -1,53 +1,88 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '../styles/globalstyles';
 import moment from 'moment';
+import SkeletonLoader from './SkeletonLoading';
+import { useTheme } from '../Theme/ThemeContext';
+// import SkeletonLoading from './SkeletonLoading';
 
 type EventCardProps = {
-  imageUrl: string;
-  title: string;
-  dateTime: string;
-  location: string;
+  imageUrl?: string;
+  title?: string;
+  dateTime?: string;
+  location?: string;
   isFavorite: boolean;
   onPress?: () => void;
   onFavoritePress: () => void;
+  loading: boolean;
 };
 
-const EventCard: React.FC<EventCardProps> = ({ onPress, imageUrl, title, dateTime, location, isFavorite, onFavoritePress }) => {
-  
+const EventCard: React.FC<EventCardProps> = ({
+  onPress,
+  imageUrl,
+  title,
+  dateTime,
+  location,
+  isFavorite,
+  onFavoritePress,
+  loading,
+}) => {
+  const { isDarkMode } = useTheme();
   const AltImg = require('../../assests/images/altimg.jpg');
-   const formatDate = (dateString: string) => {
-      return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
-    };
+
+  const formatDate = (dateString: string) => {
+    return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
+  };
+
   return (
     <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
-      {imageUrl ? (
-        <Image source={{ uri: imageUrl }} style={styles.image} />
-      ) : (
-        <Image source={AltImg} style={styles.image} />
-      )}
-      <View style={styles.content}>
-        <Text style={styles.title} numberOfLines={1}>{title}</Text>
-        <Text style={styles.dateTime}>{formatDate(dateTime)}</Text>
-        <View style={styles.rowContainer}>
-          <View style={styles.locationContainer}>
-            <Ionicons name="location-sharp" size={25} color="#555" />
-            <Text style={styles.location}>{location}</Text>
+      {loading ? (
+        <>
+          <SkeletonLoader width="100%" height={200} borderRadius={10} />
+          <View style={styles.content}>
+            <SkeletonLoader width="80%" height={20} borderRadius={4} />
+            <SkeletonLoader width="60%" height={15} borderRadius={4} style={{ marginVertical: 5 }} />
+            <View style={styles.rowContainer}>
+              <View style={styles.locationContainer}>
+                <Ionicons name="location-sharp" size={25} color="#555" />
+                <SkeletonLoader width="50%" height={15} borderRadius={4} />
+              </View>
+              <TouchableOpacity>
+                <SkeletonLoader width={30} height={30} borderRadius={15} />
+              </TouchableOpacity>
+            </View>
           </View>
-          <TouchableOpacity onPress={onFavoritePress}>
-            <Ionicons
-              name={isFavorite ? "heart" : "heart-outline"}
-              size={30}
-              color={isFavorite ? "red" : "#888"}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
+        </>
+      ) : (
+        <>
+          {imageUrl ? (
+            <Image source={{ uri: imageUrl }} style={styles.image} />
+          ) : (
+            <Image source={AltImg} style={styles.image} />
+          )}
+          <View style={[styles.content, { backgroundColor: isDarkMode ? 'gray' : '#fff' }]}>
+            <Text style={[styles.title, { color: isDarkMode ? '#fff' : '#000' }]} numberOfLines={1}>{title}</Text>
+            <Text style={[styles.dateTime, { color: isDarkMode ? '#fff' : '#000' }]}>{formatDate(dateTime || '')}</Text>
+            <View style={styles.rowContainer}>
+              <View style={styles.locationContainer}>
+                <Ionicons name="location-sharp" size={25} color="#555" />
+                <Text style={[styles.location, { color: isDarkMode ? '#fff' : '#000' }]}>{location}</Text>
+              </View>
+              <TouchableOpacity onPress={onFavoritePress}>
+                <Ionicons
+                  name={isFavorite ? "heart" : "heart-outline"}
+                  size={30}
+                  color={isFavorite ? "red" : "#888"}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </>
+      )}
     </TouchableOpacity>
   );
 };
-
 
 const styles = StyleSheet.create({
   cardContainer: {

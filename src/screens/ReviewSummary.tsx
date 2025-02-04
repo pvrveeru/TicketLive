@@ -52,9 +52,9 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
   const [loading, setLoading] = useState(true);
   const [charges, setCharges] = useState<ChargesData | null>(null);
   const [eventDetails, setEventDetails] = useState<EventDetailsData | null>(null);
-const formatDate = (dateString: string) => {
-        return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
-      };
+  const formatDate = (dateString: string) => {
+    return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
+  };
 
   useEffect(() => {
     const fetchEventDetails = async () => {
@@ -124,8 +124,8 @@ const formatDate = (dateString: string) => {
       // console.log('Booking result:', result);
       setLoading(false);
       setModalVisible(true);
-    } catch (error) {
-      console.error('Error during booking:', error);
+    } catch (error: any) {
+      console.error('Error during booking:', error.message);
       Alert.alert('Failed to create booking. Please try again.');
     }
   };
@@ -135,87 +135,87 @@ const formatDate = (dateString: string) => {
     setModalVisible(false);
     navigation.navigate('BottomBar', { screen: 'Tickets' });
   };
-  // console.log('charges in review screen', charges);
+  console.log('charges in review screen', charges);
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon name="arrow-back" size={30} color={isDarkMode ? '#fff' : '#333'} />
         </TouchableOpacity>
-        <Text style={styles.headerText}>Review Summary</Text>
+        <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Review Summary</Text>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.eventDetailsContainer}>
+        <View style={[styles.eventDetailsContainer, { backgroundColor: isDarkMode ? 'gray' : '#fff' }]}>
           <Image source={{ uri: eventDetails?.thumbUrl }} style={styles.eventImage} />
           <View>
-            <Text style={styles.eventTitle}>{eventDetails?.title}</Text>
-            <Text style={styles.eventDate}>{formatDate(eventDetails?.eventDate || '')}</Text>
-            <Text style={styles.eventLocation}>{eventDetails?.location}</Text>
+            <Text style={[styles.eventTitle, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.title}</Text>
+            <Text style={[styles.eventDate, { color: isDarkMode ? '#fff' : '#000' }]}>{formatDate(eventDetails?.eventDate || '')}</Text>
+            <Text style={[styles.eventLocation, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.location}</Text>
           </View>
         </View>
 
-        <View style={styles.contactInfoContainer}>
-          <Text style={styles.infoTitle}>Contact Information</Text>
+        <View style={[styles.contactInfoContainer, { backgroundColor: isDarkMode ? 'gray' : '#fff' }]}>
+          <Text style={[styles.infoTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Contact Information</Text>
           <View style={styles.contactRow}>
-            <Text style={styles.value}>Full Name:</Text>
-            <Text style={styles.label}>
+            <Text style={[styles.value, { color: isDarkMode ? '#fff' : '#000' }]}>Full Name:</Text>
+            <Text style={[styles.label, { color: isDarkMode ? '#fff' : '#000' }]}>
               {formData.firstName} {formData.lastName}
             </Text>
           </View>
           <View style={styles.contactRow}>
-            <Text style={styles.value}>Phone:</Text>
-            <Text style={styles.label}>{formData.phone}</Text>
+            <Text style={[styles.value, { color: isDarkMode ? '#fff' : '#000' }]}>Phone:</Text>
+            <Text style={[styles.label, { color: isDarkMode ? '#fff' : '#000' }]}>{formData.phone}</Text>
           </View>
           <View style={styles.contactRow}>
-            <Text style={styles.value}>Email:</Text>
-            <Text style={styles.label}>{formData.email}</Text>
+            <Text style={[styles.value, { color: isDarkMode ? '#fff' : '#000' }]}>Email:</Text>
+            <Text style={[styles.label, { color: isDarkMode ? '#fff' : '#000' }]}>{formData.email}</Text>
           </View>
         </View>
-        <View style={styles.ticketDetailsContainer}>
+        <View style={[styles.ticketDetailsContainer, { backgroundColor: isDarkMode ? 'gray' : '#fff' }]}>
           <Text style={styles.infoTitle}>Ticket Details</Text>
           {/* {eventBookingDetails?.zoneNames.map((zone: string, index: number) => (
             <View key={index} style={styles.ticketRow}>
-              <Text style={styles.value}>Zone:</Text>
-              <Text style={styles.label}>{zone}</Text>
+              <Text style={[styles.value, { color: isDarkMode ? '#fff' : '#000' }]}>Zone:</Text>
+              <Text style={[styles.label, { color: isDarkMode ? '#fff' : '#000' }]}>{zone}</Text>
             </View>
           ))} */}
 
           {eventBookingDetails?.noOfTickets.map((ticket: number, index: number) => (
             <View key={index} style={styles.ticketRow}>
-              <Text style={styles.value}>Seats ({eventBookingDetails?.selectedClass[index]}):</Text>
-              <Text style={styles.label}>{ticket}</Text>
+              <Text style={[styles.value, { color: isDarkMode ? '#fff' : '#000' }]}>Seats ({eventBookingDetails?.selectedClass[index]}):</Text>
+              <Text style={[styles.label, { color: isDarkMode ? '#fff' : '#000' }]}>{ticket}</Text>
             </View>
           ))}
 
           {eventBookingDetails?.prices.map((price: number, index: number) => (
             <View key={index} style={styles.ticketRow}>
-              <Text style={styles.value}>Price:</Text>
-              <Text style={styles.label}>₹{price.toFixed(2)}</Text>
+              <Text style={[styles.value, { color: isDarkMode ? '#fff' : '#000' }]}>Price:</Text>
+              <Text style={[styles.label, { color: isDarkMode ? '#fff' : '#000' }]}>₹{price.toFixed(2)}</Text>
             </View>
           ))}
           <View style={styles.horizontalLine} />
           <View style={styles.ticketRow}>
-            <Text style={styles.value}>Base Price:</Text>
-            <Text style={styles.label}>₹{eventBookingDetails?.totalAmount}</Text>
+            <Text style={[styles.value, { color: isDarkMode ? '#fff' : '#000' }]}>Base Price:</Text>
+            <Text style={[styles.label, { color: isDarkMode ? '#fff' : '#000' }]}>₹{eventBookingDetails?.totalAmount}</Text>
           </View>
           {charges && (
 
             <>
               <View style={styles.horizontalLine} />
               <View style={styles.ticketRow}>
-                <Text style={styles.value}>Convenience Fee:</Text>
-                <Text style={styles.label}>₹{convenienceFee}</Text>
+                <Text style={[styles.value, { color: isDarkMode ? '#fff' : '#000' }]}>Convenience Fee ({charges?.convenienceFee || 0}%):</Text>
+                <Text style={[styles.label, { color: isDarkMode ? '#fff' : '#000' }]}>₹{convenienceFee.toFixed(2)}</Text>
               </View>
               <View style={styles.ticketRow}>
-                <Text style={styles.value}>GST ({charges?.gstPercentage || 0}%):</Text>
-                <Text style={styles.label}>₹{gstAmount.toFixed(2)}</Text>
+                <Text style={[styles.value, { color: isDarkMode ? '#fff' : '#000' }]}>GST ({charges?.gstPercentage || 0}%):</Text>
+                <Text style={[styles.label, { color: isDarkMode ? '#fff' : '#000' }]}>₹{gstAmount.toFixed(2)}</Text>
               </View>
             </>
           )}
           <View style={styles.horizontalLine} />
           <View style={styles.ticketRow}>
-            <Text style={styles.value}>Total Price:</Text>
-            <Text style={styles.label}>₹{totalAmountWithCharges}</Text>
+            <Text style={[styles.value, { color: isDarkMode ? '#fff' : '#000' }]}>Total Price:</Text>
+            <Text style={[styles.label, { color: isDarkMode ? '#fff' : '#000' }]}>₹{totalAmountWithCharges}</Text>
           </View>
         </View>
 
@@ -233,12 +233,12 @@ const formatDate = (dateString: string) => {
         onViewTicket={handleViewTicket}
       />
       <Dialog isVisible={loading}>
-          {/* <Dialog.Loading /> */}
-          <ActivityIndicator
-              size="large"
-              color={COLORS.red}
-            />
-        </Dialog>
+        {/* <Dialog.Loading /> */}
+        <ActivityIndicator
+          size="large"
+          color={COLORS.red}
+        />
+      </Dialog>
     </View>
   );
 };

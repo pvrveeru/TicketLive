@@ -98,6 +98,7 @@ const HomeScreen: React.FC = () => {
 
   const [favorites, setFavorites] = useState<{ [key: number]: boolean }>({});
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const getUserId = async () => {
@@ -162,6 +163,7 @@ const HomeScreen: React.FC = () => {
   }, []);
 
   const fetchEventData = async (fetchFunction: Function, setEvents: Function) => {
+    setLoading(true);
     try {
       const data = await fetchFunction(auserId, 10);
       const eventList = data.result || [];
@@ -177,8 +179,11 @@ const HomeScreen: React.FC = () => {
       }));
     } catch (error) {
       console.error('Error fetching events:', error);
+    } finally {
+      setLoading(false);
     }
   };
+
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
@@ -238,7 +243,7 @@ const HomeScreen: React.FC = () => {
   const renderEventSection = (title: string, events: any[], type: string) => (
     <View style={styles.section}>
       <View style={styles.headerRow}>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={[styles.title, { color: isDarkMode ? '#fff' : '#000' }]}>{title}</Text>
         <TouchableOpacity onPress={() => navigateToExplore(type)} style={styles.seeallbtn}>
           <Text style={styles.seeallbtntxt}>See All</Text>
         </TouchableOpacity>
@@ -256,6 +261,7 @@ const HomeScreen: React.FC = () => {
             isFavorite={favorites[item.eventId] || false}
             onFavoritePress={() => toggleFavorite(item.eventId)}
             onPress={() => handleEventPress(item.eventId)}
+            loading={loading}
           />
         )}
 

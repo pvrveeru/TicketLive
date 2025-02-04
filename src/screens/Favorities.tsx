@@ -8,6 +8,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 import Header from '../components/Header';
+import SkeletonLoader from '../components/SkeletonLoading';
 
 interface Events {
   event: any;
@@ -42,6 +43,7 @@ const FavoritiesScreen: React.FC = () => {
   const [favoriteEvents, setFavoriteEvents] = useState<Events[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleProfilePress = () => {
     navigation.navigate('BottomBar', { screen: 'Profile' });
@@ -80,6 +82,7 @@ const FavoritiesScreen: React.FC = () => {
   );
 
   const fetchFavoriteEvents = async () => {
+    setLoading(true);
     try {
       if (userId) {
         const events = await getAllFavouriteEvents(userId);
@@ -89,6 +92,8 @@ const FavoritiesScreen: React.FC = () => {
     } catch (error) {
       console.error('Error fetching favorite events:', error);
       setIsRefreshing(false);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -146,17 +151,20 @@ const FavoritiesScreen: React.FC = () => {
   };
 
   return (
-    <><Header
-      title={'Favorities'}
-      profileImageUrl={userData?.profileImageUrl}
-      profileImage={require('../../assests/images/icon.png')}
-      onNotificationPress={handleNotificationPress} /><View style={[styles.main, isDarkMode ? styles.darkBackground : styles.lightBackground]}>
+    <>
+      <Header
+        title={'Favorities'}
+        profileImageUrl={userData?.profileImageUrl}
+        profileImage={require('../../assests/images/icon.png')}
+        onNotificationPress={handleNotificationPress} 
+        onProfilePress={handleProfilePress}/>
+      <View style={[styles.main, isDarkMode ? styles.darkBackground : styles.lightBackground]}>
         <ScrollView
           contentContainerStyle={styles.container}
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={fetchFavoriteEvents} />}
         >
-          {Array.isArray(favoriteEvents) && favoriteEvents.length === 0 ? (
+          {/* {Array.isArray(favoriteEvents) && favoriteEvents.length === 0 ? (
             <Text style={[styles.noResultsText, { color: isDarkMode ? '#fff' : '#000' }]}>
               No favorite events found.
             </Text>
@@ -168,9 +176,22 @@ const FavoritiesScreen: React.FC = () => {
                 Error loading events.
               </Text>
             )
+          )} */}
+          {loading ? (
+            Array.from({ length: 5 }).map((_, index) => (
+              <View key={index} style={{marginBottom: 10}}>
+                <SkeletonLoader width="100%" height={200} borderRadius={10} />
+              </View>
+
+            ))
+          ) : favoriteEvents.length === 0 ? (
+            <Text style={[styles.noResultsText, { color: isDarkMode ? '#fff' : '#000' }]}>No favorite events found.</Text>
+          ) : (
+            favoriteEvents.map((event) => renderEventItem(event))
           )}
         </ScrollView>
-      </View></>
+      </View>
+    </>
   );
 };
 

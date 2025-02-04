@@ -50,7 +50,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
     const phoneNumber = userData?.phoneNumber;
 
     const { eventBookingDetails, eventId, ismanual } = route.params as RouteParams;
-    console.log('ismanual', ismanual);
+    // console.log('ismanual', ismanual);
     const [formData, setFormData] = useState<FormData>({
         firstName: userData?.firstName || "",
         lastName: userData?.lastName || "",

@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { COLORS } from "../styles/globalstyles";
+import { useTheme } from "../Theme/ThemeContext";
 
 interface HeaderProps {
     profileImageUrl?: string;
@@ -18,25 +19,25 @@ const Header: React.FC<HeaderProps> = ({
     profileImageUrl,
     profileImage,
     userName,
-    isDarkMode = false,
     Welcome,
     onProfilePress,
     onNotificationPress,
     title,
 }) => {
+    const { isDarkMode } = useTheme();
 
     return (
-        <View style={styles.header}>
-                <TouchableOpacity onPress={onProfilePress} style={styles.profile}>
-                    {profileImageUrl ? (
-                        <Image
-                            source={{ uri: profileImageUrl }}
-                            style={styles.profileImage}
-                        />
-                    ) : (
-                        <Image source={profileImage} style={styles.profileImage} />
-                    )}
-                </TouchableOpacity>
+        <View style={[styles.header, { backgroundColor: isDarkMode ? '#000' : '#fff', borderBottomColor: isDarkMode ? 'gray' : '#000' }]}>
+            <TouchableOpacity onPress={onProfilePress} style={styles.profile}>
+                {profileImageUrl ? (
+                    <Image
+                        source={{ uri: profileImageUrl }}
+                        style={styles.profileImage}
+                    />
+                ) : (
+                    <Image source={profileImage} style={styles.profileImage} />
+                )}
+            </TouchableOpacity>
             {title && <Text style={[styles.name, isDarkMode ? styles.darkText : styles.lightText]}>{title}</Text>}
 
             {onNotificationPress && (

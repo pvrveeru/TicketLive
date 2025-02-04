@@ -24,6 +24,7 @@ api.interceptors.request.use(
   async config => {
     try {
       const token = await getBearerToken();
+      console.log('token', token);
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -76,7 +77,7 @@ export const createBooking = async (bookingData: any) => {
     const response = await api.post('bookings', bookingData);
     return response.data;
   } catch (error: any) {
-    console.log('error fetching bookings', error)
+    console.log('error create bookings', error.message)
     throw error;
   }
 };
@@ -120,6 +121,7 @@ export const fetchFeaturedEvents = async (userId: number, limit: number = 10, of
       params: {
         userId,
         isFeatured: true,
+        status: "Published",
         limit,
         offset
       }
@@ -137,6 +139,7 @@ export const fetchPopularEvents = async (userId: number, limit: number = 10, off
       params: {
         userId,
         isPopular: true,
+        status: "Published",
         limit,
         offset
       }

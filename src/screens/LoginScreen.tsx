@@ -18,6 +18,7 @@ import { useDispatch } from 'react-redux';
 import { getOtpData, MobileNumber } from '../Redux/Actions';
 import { createUser } from '../services/Apiservices';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../Theme/ThemeContext';
 
 type RootStackParamList = {
   Login: undefined;
@@ -26,6 +27,7 @@ type RootStackParamList = {
 
 
 const LoginScreen: React.FC = () => {
+  const { isDarkMode } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const dispatch = useDispatch();
   const Logo = require('../../assests/images/ticketliv_logo.png');
@@ -73,21 +75,22 @@ const LoginScreen: React.FC = () => {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.innerContainer}>
           <Image source={Logo} style={styles.logo} />
-          <Text style={styles.title}>Login to Your Account</Text>
+          <Text style={[styles.title, { color: isDarkMode ? '#fff' : '#000' }]}>Login to Your Account</Text>
           <View style={styles.inputContainer}>
             <Icon name="mobile-phone" size={30} color="#ccc" style={styles.phoneIcon} />
             <TextInput
-              style={styles.input}
+              style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]}
               placeholder="Phone Number"
               keyboardType="phone-pad"
               maxLength={10}
               value={phoneNumber}
+              placeholderTextColor={isDarkMode ? '#fff' : '#000'}
               onChangeText={handleInputChange}
             />
           </View>
@@ -104,7 +107,7 @@ const LoginScreen: React.FC = () => {
 
           <View style={styles.orContainer}>
             <View style={styles.line} />
-            <Text style={styles.orText}>or continue with</Text>
+            <Text style={[styles.orText, { color: isDarkMode ? '#fff' : '#000' }]}>or continue with</Text>
             <View style={styles.line} />
           </View>
 
@@ -118,7 +121,7 @@ const LoginScreen: React.FC = () => {
           </View>
         </View>
       </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+    </KeyboardAvoidingView >
   );
 };
 

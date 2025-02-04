@@ -7,9 +7,10 @@ import {
   ScrollView,
   ActivityIndicator,
   TouchableOpacity,
+  Linking,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { getEventById, markEventAsDeleteFavorite, markEventAsFavorite } from '../services/Apiservices';
+import { getBookingsByUserId, getEventById, markEventAsDeleteFavorite, markEventAsFavorite } from '../services/Apiservices';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -21,6 +22,8 @@ import MapView, { Marker } from 'react-native-maps';
 import moment from 'moment';
 import CustomCarousel from '../components/CustomCarousel';
 import { useSelector } from 'react-redux';
+import SeeMoreText from '../components/SeeMoreText';
+import { GetLocation, RequestLocationPermission } from '../components/RequestLocationPermission';
 
 
 interface Category {
@@ -76,11 +79,13 @@ interface EventDetailsData {
   isFavorite?: boolean;
   galleryImages?: string[];
   seatingDetails?: SeatingDetail[];
+  tnc: string;
+  noOfTicketsBookedByYou: number;
 }
 
 
 type RootStackParamList = {
-  BookEventScreen: { eventId: number, layoutImage: string };
+  BookEventScreen: { eventId: number, layoutImage: string, maxTickets: number, noOfTickets: number };
   FullMapScreen: {
     latitude: number;
     longitude: number;
@@ -131,6 +136,18 @@ const EventDetails: React.FC = () => {
     fetchEventDetails();
   }, [eventId]);
 
+  useEffect(() => {
+    fetchBookings();
+  }, []);
+
+  const fetchBookings = async () => {
+    try {
+      const data = await getBookingsByUserId(userId.toString());
+      // console.log('data.bookings', data.bookings);
+    } catch (error) {
+      console.error('error fetching bookings', error);
+    }
+  };
   const toggleFavorite = async () => {
     try {
       if (isFavorite) {
@@ -166,12 +183,14 @@ const EventDetails: React.FC = () => {
 
   const handleBookEvent = () => {
     const layoutImage = eventDetails?.layoutImageUrl || '';
-    navigation.navigate('BookEventScreen', { eventId, layoutImage });
+    const maxTickets = eventDetails?.maxTicketAllowed || 0;
+    const noOfTickets = eventDetails?.noOfTicketsBookedByYou || 0;
+    navigation.navigate('BookEventScreen', { eventId, layoutImage, maxTickets, noOfTickets });
   };
   const handleBackPress = () => {
-    navigation.goBack(); // Go back to the previous screen
+    navigation.goBack();
   };
-  // console.log('eventDetails', eventDetails);
+  console.log('eventDetails', eventDetails);
 
   const handleMarkerPress = () => {
     navigation.navigate('FullMapScreen', {
@@ -181,7 +200,27 @@ const EventDetails: React.FC = () => {
       location: eventDetails?.location ?? 'Unknown Location',
     });
   };
-  
+
+  const mobilecalling = () => {
+    Linking.openURL(`tel:${'+91' + 9949220002}`);
+  };
+
+  const navigateToEmail = () => {
+    const email = "support@ticketliv.com";
+    const subject = "Support Request";
+    const body = "Hello, I need help with...";
+
+    const mailtoURL = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    Linking.openURL(mailtoURL).catch((err) =>
+      console.error("Failed to open email client", err)
+    );
+  };
+
+  const handleViewDirections = async () => {
+    await GetLocation();
+  };
+
   return (
     <>
       <ScrollView style={[styles.container, isDarkMode ? styles.dark : styles.light]}>
@@ -199,21 +238,17 @@ const EventDetails: React.FC = () => {
         ) : (
           <Image source={require('../../assests/images/altimg.jpg')} style={styles.eventImage} />
         )}
-        {/* <View style={styles.header2}>
-          <Text style={styles.organizer}>By {eventDetails.artistName}</Text>
-          <Text style={styles.eventName}>{eventDetails.title}</Text>
-        </View> */}
         <View style={styles.detailsContainer}>
           <View style={[styles.row, styles.spaceBetween]}>
             <View style={styles.row}>
               <FontAwesome name="clock-o" size={20} color="gray" />
-              <Text style={styles.text}>
+              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>
                 {moment(eventDetails?.eventDate).format('HH:mm:ss')}
               </Text>
             </View>
             <View style={styles.row}>
               <Ionicons name="calendar-outline" size={20} color="gray" />
-              <Text style={styles.text}>
+              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>
                 {moment(eventDetails?.eventDate).format('DD/MM/YYYY')}
               </Text>
             </View>
@@ -224,16 +259,16 @@ const EventDetails: React.FC = () => {
 
           <View style={styles.row}>
             <Ionicons name="location-outline" size={20} color="gray" />
-            <Text style={styles.text}>{eventDetails?.location}</Text>
+            <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.location}</Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
             <View style={styles.row}>
-              <Text style={styles.text}>Langauage:</Text>
-              <Text style={styles.text}>{eventDetails?.language}</Text>
+              <Ionicons name="language-outline" size={20} color="gray" />
+              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.language}</Text>
             </View>
             <View style={styles.row}>
-              <Text style={styles.text}>Duration:</Text>
-              <Text style={styles.text}>{eventDetails?.duration}</Text>
+              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>Duration:</Text>
+              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.duration}</Text>
             </View>
           </View>
         </View>
@@ -241,49 +276,82 @@ const EventDetails: React.FC = () => {
 
           <View style={styles.row}>
             <MaterialIcons name="group" size={20} color="gray" />
-            <Text style={styles.text}>
+            <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>
               {eventDetails?.favoritesCount} Interested
             </Text>
           </View>
-          <TouchableOpacity style={styles.iconButton}>
+          <TouchableOpacity style={styles.iconButton} onPress={mobilecalling}>
             <Ionicons name="call-outline" size={24} color="white" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton}>
+          <TouchableOpacity style={styles.iconButton} onPress={navigateToEmail}>
             <Ionicons name="mail-outline" size={24} color="white" />
           </TouchableOpacity>
         </View>
-        <Text style={styles.sectionTitle}>About Event</Text>
-        <Text style={styles.description}>{eventDetails?.description}</Text>
-        <Text style={styles.sectionTitle}>Location</Text>
-        <MapView
-          style={styles.map}
-          initialRegion={{
-            latitude: parseFloat(eventDetails?.latitude ?? '0'),
-            longitude: parseFloat(eventDetails?.longitude ?? '0'),
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-        >
-          <Marker
-            coordinate={{
+        <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>About Event</Text>
+        <SeeMoreText text={eventDetails?.description ?? ""} maxLength={40} />
+
+        <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Location</Text>
+        <View>
+          <MapView
+            style={styles.map}
+            initialRegion={{
               latitude: parseFloat(eventDetails?.latitude ?? '0'),
               longitude: parseFloat(eventDetails?.longitude ?? '0'),
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
             }}
-            title={eventDetails?.title}
-            description={eventDetails?.location}
-            onPress={handleMarkerPress}
-          />
-        </MapView>
-
-        <TouchableOpacity style={styles.bookButton} onPress={handleBookEvent}>
+          >
+            <Marker
+              coordinate={{
+                latitude: parseFloat(eventDetails?.latitude ?? '0'),
+                longitude: parseFloat(eventDetails?.longitude ?? '0'),
+              }}
+              title={eventDetails?.title}
+              description={eventDetails?.location}
+              onPress={handleMarkerPress}
+            />
+          </MapView>
+          <TouchableOpacity
+            style={{
+              position: 'absolute',
+              bottom: 20,
+              right: 20,
+              backgroundColor: '#ff5722',
+              padding: 12,
+              borderRadius: 50,
+              elevation: 5,
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
+            onPress={handleViewDirections}
+          >
+            <Ionicons name="navigate-outline" size={24} color="white" />
+            <Text style={{ color: 'white', marginLeft: 5 }}>View Directions</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Terms & Conditions</Text>
+        <SeeMoreText text={eventDetails?.tnc ?? ""} maxLength={70} />
+        <TouchableOpacity
+          style={[
+            styles.bookButton,
+            eventDetails?.noOfTicketsBookedByYou === eventDetails?.maxTicketAllowed && styles.disabledButton,
+          ]}
+          onPress={handleBookEvent}
+          disabled={eventDetails?.noOfTicketsBookedByYou === eventDetails?.maxTicketAllowed}
+        >
           <Text style={styles.bookButtonText}>Book Event</Text>
         </TouchableOpacity>
+
       </ScrollView>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  disabledButton: {
+    backgroundColor: 'gray',
+    opacity: 0.6,
+  },
   map: {
     height: 150,
     marginHorizontal: 20,
@@ -378,7 +446,7 @@ const styles = StyleSheet.create({
   },
   iconButton: {
     backgroundColor: '#c11c84',
-    padding: 10,
+    padding: 8,
     borderRadius: 50,
     alignItems: 'center',
   },

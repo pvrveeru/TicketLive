@@ -101,23 +101,23 @@ const EditProfileScreen: React.FC = () => {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, isDarkMode ? styles.darkBackground : styles.lightBackground]}>
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon name="arrow-back" size={30} color={isDarkMode ? '#fff' : '#333'} />
         </TouchableOpacity>
-        <Text style={styles.header}>Edit Profile</Text>
+        <Text style={isDarkMode ? styles.darkheader : styles.header}>Edit Profile</Text>
       </View>
 
-      <TextInput style={styles.input} value={firstName} onChangeText={setFirstName} placeholder="First Name" />
-      <TextInput style={styles.input} value={lastName} onChangeText={setLastName} placeholder="Last Name" />
-      <TextInput style={styles.input} value={emailId || ''} onChangeText={setEmailId} placeholder="Email ID" keyboardType="email-address" />
-      <TextInput style={styles.input} value={phoneNumber} onChangeText={setPhoneNumber} placeholder="Phone Number" keyboardType="phone-pad" />
-      <TextInput style={styles.input} value={dateOfBirth} onChangeText={setDateOfBirth} placeholder="Date of Birth (YYYY-MM-DD)" />
-      <TextInput style={styles.input} value={gender} onChangeText={setGender} placeholder="Gender" />
-      <TextInput style={styles.input} value={address || ''} onChangeText={setAddress} placeholder="Address" />
-      <TextInput style={styles.input} value={city || ''} onChangeText={setCity} placeholder="City" />
-      <TextInput style={styles.input} value={state || ''} onChangeText={setState} placeholder="State" />
+      <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={firstName} onChangeText={setFirstName} placeholder="First Name" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
+      <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={lastName} onChangeText={setLastName} placeholder="Last Name" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
+      <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={emailId || ''} onChangeText={setEmailId} placeholder="Email ID" keyboardType="email-address" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
+      <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={phoneNumber} onChangeText={setPhoneNumber} placeholder="Phone Number" keyboardType="phone-pad" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
+      <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={dateOfBirth} onChangeText={setDateOfBirth} placeholder="Date of Birth (YYYY-MM-DD)" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
+      <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={gender} onChangeText={setGender} placeholder="Gender" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
+      <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={address || ''} onChangeText={setAddress} placeholder="Address" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
+      <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={city || ''} onChangeText={setCity} placeholder="City" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
+      <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={state || ''} onChangeText={setState} placeholder="State" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
 
       <TouchableOpacity onPress={handleSaveChanges} style={styles.button}>
         <Text style={styles.btntext}>Update</Text>
@@ -130,7 +130,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#fff',
+  },
+  darkBackground: {
+    backgroundColor: '#121212',
+  },
+  lightBackground: {
+    backgroundColor: '#FFFFFF',
   },
   headerContainer: {
     flexDirection: 'row',
@@ -147,6 +152,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: 'black',
+  },
+  darkheader: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: 'white',
   },
   input: {
     borderWidth: 1,
