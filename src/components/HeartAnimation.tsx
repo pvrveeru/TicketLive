@@ -42,7 +42,7 @@ const HeartAnimation: React.FC<HeartAnimationProps> = ({ isLiked, onAnimationCom
     <TouchableOpacity onPress={handleHeartClick}>
       <LottieView
         ref={animationRef}
-        source={require('../../assests/lottie/like.json')}
+        source={require('../../assets/lottie/like.json')}
         autoPlay={false}
         loop={false}
         style={styles.lottieStyle}

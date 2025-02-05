@@ -45,7 +45,7 @@ interface CategorySelectorProps {
 }
 
 const CategorySelector: React.FC<CategorySelectorProps> = ({ categories, cevents }) => {
-  const AltImg = require('../../assests/images/altimg.jpg');
+  const AltImg = require('../../assets/images/altimg.jpg');
   const { isDarkMode } = useTheme();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [filteredEvents, setFilteredEvents] = useState(cevents);

@@ -30,9 +30,9 @@ const LoginScreen: React.FC = () => {
   const { isDarkMode } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const dispatch = useDispatch();
-  const Logo = require('../../assests/images/ticketliv_logo.png');
-  const Facebook = require('../../assests/images/facebook.png');
-  const Google = require('../../assests/images/google.png');
+  const Logo = require('../../assets/images/ticketliv_logo.png');
+  const Facebook = require('../../assets/images/facebook.png');
+  const Google = require('../../assets/images/google.png');
   const [phoneNumber, setPhoneNumber] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 

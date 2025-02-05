@@ -38,7 +38,7 @@ const FavoritiesScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { isDarkMode } = useTheme();
   const userData = useSelector((state: RootState) => state.userData);
-  const profileImage = require('../../assests/images/icon.png');
+  const profileImage = require('../../assets/images/icon.png');
   const profileImageUrl = userData?.profileImageUrl;
   const [favoriteEvents, setFavoriteEvents] = useState<Events[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
@@ -130,7 +130,7 @@ const FavoritiesScreen: React.FC = () => {
           {eventDetails.thumbUrl ? (
             <Image source={{ uri: eventDetails.thumbUrl }} style={styles.eventImage} />
           ) : (
-            <Image source={require('../../assests/images/altimg.jpg')} style={styles.eventImage} />
+            <Image source={require('../../assets/images/altimg.jpg')} style={styles.eventImage} />
           )}
           <Text style={[styles.eventTitle, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails.title}</Text>
           <Text style={[styles.eventType, { color: isDarkMode ? '#fff' : '#000' }]}>
@@ -155,7 +155,7 @@ const FavoritiesScreen: React.FC = () => {
       <Header
         title={'Favorities'}
         profileImageUrl={userData?.profileImageUrl}
-        profileImage={require('../../assests/images/icon.png')}
+        profileImage={require('../../assets/images/icon.png')}
         onNotificationPress={handleNotificationPress} 
         onProfilePress={handleProfilePress}/>
       <View style={[styles.main, isDarkMode ? styles.darkBackground : styles.lightBackground]}>

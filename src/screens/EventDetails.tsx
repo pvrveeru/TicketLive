@@ -291,7 +291,7 @@ const EventDetails: React.FC = () => {
             onBackPress={handleBackPress}
           />
         ) : (
-          <Image source={require('../../assests/images/altimg.jpg')} style={styles.eventImage} />
+          <Image source={require('../../assets/images/altimg.jpg')} style={styles.eventImage} />
         )}
         <View style={styles.detailsContainer}>
           <View style={[styles.row, styles.spaceBetween]}>

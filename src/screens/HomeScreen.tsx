@@ -92,7 +92,7 @@ const HomeScreen: React.FC = () => {
   const [manualEvents, setManualEvents] = useState<EventData[]>([]);
   const [auserId, setUserId] = useState<number | null>(null)
   const userData = useSelector((state: RootState) => state.userData);
-  const profileImage = require('../../assests/images/icon.png');
+  const profileImage = require('../../assets/images/icon.png');
   const profileImageUrl = userData?.profileImageUrl;
   const userName = userData?.firstName;
 

@@ -30,7 +30,7 @@ const OtpVerificationScreen: React.FC = () => {
   const { isDarkMode } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const dispatch = useDispatch();
-  const Logo = require('../../assests/images/ticketliv_logo.png');
+  const Logo = require('../../assets/images/ticketliv_logo.png');
   // const { phoneNumber } = route.params;
   const mobileNumber = useSelector((state: RootState) => state.mobile);
   const otpCode = useSelector((state: RootState) => state.otpCode);

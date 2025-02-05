@@ -29,7 +29,7 @@ const EventCard: React.FC<EventCardProps> = ({
   loading,
 }) => {
   const { isDarkMode } = useTheme();
-  const AltImg = require('../../assests/images/altimg.jpg');
+  const AltImg = require('../../assets/images/altimg.jpg');
 
   const formatDate = (dateString: string) => {
     return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');

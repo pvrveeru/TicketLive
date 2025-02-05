@@ -82,7 +82,7 @@ const ExploreScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { type } = route.params || { type: '' };
   const userData = useSelector((state: RootState) => state.userData);
-  const profileImage = require('../../assests/images/icon.png');
+  const profileImage = require('../../assets/images/icon.png');
   const profileImageUrl = userData?.profileImageUrl;
   const [events, setEvents] = useState<EventData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -306,7 +306,7 @@ const ExploreScreen = () => {
       <Header
         title={'Explore Events'}
         profileImageUrl={userData?.profileImageUrl}
-        profileImage={require('../../assests/images/icon.png')}
+        profileImage={require('../../assets/images/icon.png')}
         onNotificationPress={handleNotificationPress} 
         onProfilePress={handleProfilePress}/>
       <View style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>

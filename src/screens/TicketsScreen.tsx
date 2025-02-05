@@ -73,7 +73,7 @@ const TicketsScreen = () => {
   const [selectedTab, setSelectedTab] = useState<string>('Upcoming');
   const userData = useSelector((state: RootState) => state.userData);
   const userId = userData.userId;
-  const profileImage = require('../../assests/images/icon.png');
+  const profileImage = require('../../assets/images/icon.png');
   const profileImageUrl = userData?.profileImageUrl;
   const formatDate = (dateString: string) => {
     return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
@@ -155,7 +155,7 @@ const TicketsScreen = () => {
       <Header
         title={'My Tickets'}
         profileImageUrl={userData?.profileImageUrl}
-        profileImage={require('../../assests/images/icon.png')}
+        profileImage={require('../../assets/images/icon.png')}
         onNotificationPress={handleNotificationPress}
         onProfilePress={handleProfilePress} />
       <View style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>

@@ -45,7 +45,7 @@ const TicketDetails = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const Logo = require('../../assests/images/ticketliv_logo.png');
+  const Logo = require('../../assets/images/ticketliv_logo.png');
 
   useEffect(() => {
     const fetchTickets = async () => {
