@@ -23,7 +23,26 @@ import moment from 'moment';
 import CustomCarousel from '../components/CustomCarousel';
 import { useSelector } from 'react-redux';
 import SeeMoreText from '../components/SeeMoreText';
-import { GetLocation, RequestLocationPermission } from '../components/RequestLocationPermission';
+import Geolocation from '@react-native-community/geolocation';
+import { PermissionsAndroid, Platform, Alert } from 'react-native';
+import { Dialog } from '@rneui/themed';
+
+const requestLocationPermission = async () => {
+  if (Platform.OS === 'android') {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+        title: 'Location Permission',
+        message: 'This app needs access to your location to show directions.',
+        buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
+      }
+    );
+    return granted === PermissionsAndroid.RESULTS.GRANTED;
+  }
+  return true;
+};
 
 
 interface Category {
@@ -119,7 +138,7 @@ const EventDetails: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
-
+  const [locationLoading, setLocationLoading] = useState(false);
   useEffect(() => {
     const fetchEventDetails = async () => {
       try {
@@ -190,7 +209,7 @@ const EventDetails: React.FC = () => {
   const handleBackPress = () => {
     navigation.goBack();
   };
-  console.log('eventDetails', eventDetails);
+  // console.log('eventDetails', eventDetails);
 
   const handleMarkerPress = () => {
     navigation.navigate('FullMapScreen', {
@@ -218,7 +237,43 @@ const EventDetails: React.FC = () => {
   };
 
   const handleViewDirections = async () => {
-    await GetLocation();
+    const hasPermission = await requestLocationPermission();
+    setLocationLoading(true);
+    console.log('hasPermission', hasPermission);
+    if (!hasPermission) {
+      Alert.alert('Permission Denied', 'Location permission is required to show directions.');
+      return;
+    }
+
+    Geolocation.getCurrentPosition(
+      position => {
+        const { latitude, longitude } = position.coords;
+        console.log('latitude, longitude', latitude, longitude);
+        setLocationLoading(false);
+        openMaps(eventDetails?.latitude, eventDetails?.longitude)
+      },
+      error => {
+        console.error('Error fetching location', error);
+        Alert.alert('Error', 'Unable to fetch current location. Please try again.');
+      },
+      { enableHighAccuracy: true, timeout: 30000, maximumAge: 10000 }
+    );
+  };
+
+  const openMaps = (lat: string | undefined, lng: string | undefined): void => {
+    const scheme = Platform.select({
+      ios: 'maps://0,0?q=',
+      android: 'geo:0,0?q=',
+    });
+    const latLng = `${lat},${lng}`;
+    const url = Platform.select({
+      ios: `${scheme}@${latLng}`,
+      android: `${scheme}${latLng}`,
+    });
+
+    if (url) {
+      Linking.openURL(url);
+    }
   };
 
   return (
@@ -314,7 +369,7 @@ const EventDetails: React.FC = () => {
           <TouchableOpacity
             style={{
               position: 'absolute',
-              bottom: 20,
+              bottom: 10,
               right: 20,
               backgroundColor: '#ff5722',
               padding: 12,
@@ -343,6 +398,14 @@ const EventDetails: React.FC = () => {
         </TouchableOpacity>
 
       </ScrollView>
+      <Dialog isVisible={locationLoading}>
+        {/* <Dialog.Loading /> */}
+        <ActivityIndicator
+          size="large"
+          color={COLORS.red}
+        />
+        <Text style={{ color: isDarkMode ? '#fff' : '#000', textAlign: 'center' }}>Fetching...</Text>
+      </Dialog>
     </>
   );
 };

@@ -52,15 +52,17 @@ const BottomBar = () => {
 
     return (
         <Tab.Navigator
+            initialRouteName="Home"
             screenOptions={({ route }) => ({
                 tabBarIcon: ({ focused, color, size }) =>
                     getTabBarIcon(route.name, focused, color, size),
-                tabBarActiveTintColor: isDarkMode ? '#EF412B' : '#EF412B', // Active icon color
-                tabBarInactiveTintColor: isDarkMode ? '#A6A6A6' : '#26276C', // Inactive icon color
+                tabBarActiveTintColor: isDarkMode ? '#EF412B' : '#EF412B',
+                tabBarInactiveTintColor: isDarkMode ? '#A6A6A6' : '#26276C',
                 tabBarStyle: {
-                    backgroundColor: isDarkMode ? '#333' : '#FFF', // Background color of the tab bar
+                    backgroundColor: isDarkMode ? '#333' : '#FFF',
                 },
                 headerShown: false,
+                tabBarHideOnKeyboard: true,
             })}
         >
             <Tab.Screen name="Home" component={HomeScreen} />

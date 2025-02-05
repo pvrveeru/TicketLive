@@ -281,7 +281,7 @@ const HomeScreen: React.FC = () => {
           )}
           <View>
             <Text style={isDarkMode ? styles.darkText : styles.welcome}>Welcome</Text>
-            <Text style={[styles.name, isDarkMode ? styles.darkText : styles.lightText]}>{userName}</Text>
+            <Text style={[styles.name, isDarkMode ? styles.darkText : styles.lightText]}>{userName ? userName : null}</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity style={styles.notificationIcon} onPress={handleNotificationPress}>

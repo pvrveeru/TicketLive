@@ -245,7 +245,7 @@ const ExploreScreen = () => {
         {item?.map((event, idx) => (
           <TouchableOpacity
             key={event.id || idx}
-            style={[styles.eventCard, { backgroundColor: isDarkMode ? 'gray' : '#f9f9ff9' }]}
+            style={[styles.eventCard, { backgroundColor: isDarkMode ? 'gray' : '#f9f9f9' }]}
             onPress={() => handleEventPress(event?.eventId)}
           >
             <Image source={{ uri: event?.thumbUrl }} style={styles.eventImage} />
@@ -366,7 +366,7 @@ const ExploreScreen = () => {
                 </View>
               ))}
             </ScrollView>
-          ) : filteredEvents.length === 0 ? (
+          ) : filteredEvents?.length === 0 ? (
             <Text style={[styles.noResultsText, { color: isDarkMode ? '#fff' : '#000' }]}>No events found.</Text>
           ) : (
             <FlatList

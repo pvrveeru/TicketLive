@@ -47,8 +47,8 @@ export const createUser = async (phoneNumber: string) => {
   try {
     const response = await axios.post(avdurl1 + 'users', { phoneNumber });
     return response.data.data;
-  } catch (error) {
-    console.log('Error creating user:', error);
+  } catch (error: any) {
+    console.log('Error creating user:', error.response?.data.message);
     throw error;
   }
 };

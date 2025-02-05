@@ -73,6 +73,8 @@ const ProfileScreen = () => {
           text: 'OK',
           onPress: async () => {
             try {
+              await AsyncStorage.setItem('isLoggedIn', 'false');
+              await AsyncStorage.removeItem('jwtToken');
               await AsyncStorage.removeItem('userData');
               dispatch(getUserData([]));
               Alert.alert('Logged out', 'You have been logged out successfully.');
