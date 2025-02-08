@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
 import { fetchEvents, fetchFeaturedEvents, fetchManualEvents, fetchPopularEvents, getAllEventCategories, markEventAsDeleteFavorite, markEventAsFavorite } from '../services/Apiservices';
 import { RouteProp, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -81,9 +81,8 @@ const ExploreScreen = () => {
   const route = useRoute<ExploreScreenRouteProps>();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { type } = route.params || { type: '' };
+  const [eventType, setEventType] = useState<string | null>(type);
   const userData = useSelector((state: RootState) => state.userData);
-  const profileImage = require('../../assets/images/icon.png');
-  const profileImageUrl = userData?.profileImageUrl;
   const [events, setEvents] = useState<EventData[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [searchKeyword, setSearchKeyword] = useState<string>('');
@@ -92,7 +91,8 @@ const ExploreScreen = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [skloading, setSkLoading] = useState<boolean>(false);
-
+  const [refreshing, setRefreshing] = useState<boolean>(false);
+  console.log('eventType', eventType);
   useEffect(() => {
     const getUserId = async () => {
       try {
@@ -112,7 +112,15 @@ const ExploreScreen = () => {
   useEffect(() => {
     AllCatageories();
   }, [])
+  useEffect(() => {
+    if (type) {
+      setEventType(type);
+    } else {
+      setEventType(null); // Reset eventType if type is null
+    }
+  }, [type]);
 
+  console.log('auserId, type, eventType', auserId, type, eventType)
   const loadByType = async () => {
     setLoading(true);
     setSkLoading(true);
@@ -127,17 +135,14 @@ const ExploreScreen = () => {
           sortOrder: 'asc',
           limit: 10,
           offset: 0,
+          status: "Published",
         });
       } else {
-        if (type === 'Featured') {
+        if (eventType === 'Featured') {
           console.log('Featured API is calling');
           data = await fetchFeaturedEvents(auserId, 10);
           if (!data.result) setNoEventsMessage('No featured events found');
-        } else if (type === 'Manual') {
-          console.log('Manual API is calling');
-          data = await fetchManualEvents(auserId, 10);
-          if (!data.result) setNoEventsMessage('No manual events found');
-        } else if (type === 'Popular') {
+        } else if (eventType === 'Popular') {
           console.log('Popular API is calling');
           data = await fetchPopularEvents(auserId, 10);
           if (!data.result) setNoEventsMessage('No popular events found');
@@ -155,25 +160,32 @@ const ExploreScreen = () => {
         }
       }
       setEvents(data.result);
-    } catch (err) {
-      console.log('Failed to load events', err);
+    } catch (err: any) {
+      console.log('Failed to load events', err.message);
       setNoEventsMessage('Error loading events');
     } finally {
       setLoading(false);
       setSkLoading(false);
     }
   };
+  const onRefresh = async () => {
+    setRefreshing(true);
+    setEventType(null); // Set eventType to null
+    await loadByType(); // Call the function to load all events
+    setRefreshing(false); // Reset refreshing state
+  };
+
 
   useEffect(() => {
     loadByType();
-  }, [searchKeyword, type, auserId]);
+  }, [searchKeyword, type, auserId, eventType]);
 
   useFocusEffect(
     React.useCallback(() => {
       if (auserId !== null) {
         loadByType();
       }
-    }, [searchKeyword, type, auserId])
+    }, [searchKeyword, type, auserId, eventType])
   );
 
   const AllCatageories = async () => {
@@ -184,7 +196,7 @@ const ExploreScreen = () => {
     if (eventId) {
       navigation.navigate('EventDetails', { eventId });
     } else {
-      console.warn('Event ID is undefined');
+      console.log('Event ID is undefined');
     }
   };
 
@@ -213,14 +225,11 @@ const ExploreScreen = () => {
 
         if (isCurrentlyFavorite) {
           await markEventAsDeleteFavorite(auserId, eventId);
-          console.log(`Unliked event ID: ${eventId}`);
         } else {
           await markEventAsFavorite({ userId: auserId, eventId });
-          console.log(`Liked event ID: ${eventId}`);
         }
       }
     } catch (error) {
-      console.error('Error toggling favorite:', error);
       setEvents((prevFavorites) =>
         prevFavorites.map((event) =>
           event.eventId === eventId
@@ -245,13 +254,13 @@ const ExploreScreen = () => {
         {item?.map((event, idx) => (
           <TouchableOpacity
             key={event.id || idx}
-            style={[styles.eventCard, { backgroundColor: isDarkMode ? 'gray' : '#f9f9f9' }]}
+            style={[styles.eventCard, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#f9f9f9' }]}
             onPress={() => handleEventPress(event?.eventId)}
           >
             <Image source={{ uri: event?.thumbUrl }} style={styles.eventImage} />
             <View style={styles.eventDetails}>
-              <Text style={[styles.eventTitle, { color: isDarkMode ? '#fff' : '#000' }]}>{event?.title}</Text>
-              <Text style={[styles.eventDescription, { color: isDarkMode ? '#fff' : '#000' }]}>{event?.location}</Text>
+              <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.title}</Text>
+              <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.location}</Text>
               <Text style={styles.eventDate}>{formatDate(event?.eventDate || '')}</Text>
               <TouchableOpacity
                 onPress={() => {
@@ -307,8 +316,8 @@ const ExploreScreen = () => {
         title={'Explore Events'}
         profileImageUrl={userData?.profileImageUrl}
         profileImage={require('../../assets/images/icon.png')}
-        onNotificationPress={handleNotificationPress} 
-        onProfilePress={handleProfilePress}/>
+        onNotificationPress={handleNotificationPress}
+        onProfilePress={handleProfilePress} />
       <View style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>
         <View style={styles.header}>
           <View style={styles.searchContainer}>
@@ -319,7 +328,7 @@ const ExploreScreen = () => {
               value={searchKeyword}
               onChangeText={setSearchKeyword} />
           </View>
-          <Text style={[styles.eventCount, { color: isDarkMode ? '#fff' : '#000' }]}>{type} Events found: {filteredEvents?.length ? filteredEvents?.length : events?.length}</Text>
+          <Text style={[styles.eventCount, { color: isDarkMode ? '#fff' : '#000' }]}>{eventType} Events found: {filteredEvents?.length ? filteredEvents?.length : events?.length}</Text>
         </View>
         <View>
           <ScrollView contentContainerStyle={styles.buttonContainer} horizontal>
@@ -372,7 +381,13 @@ const ExploreScreen = () => {
             <FlatList
               data={transformDataToRows(filteredEvents)}
               renderItem={renderEventRow}
-              keyExtractor={(item, index) => index.toString()} />
+              keyExtractor={(item, index) => index.toString()}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh} // Call the onRefresh function
+                />
+              } />
           )}
         </View>
       </View >

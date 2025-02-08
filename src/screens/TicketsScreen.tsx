@@ -126,13 +126,13 @@ const TicketsScreen = () => {
     const eventDate = event?.eventDate || 'No Date';
     return (
       <>
-        <View style={[styles.bookingItem, { backgroundColor: isDarkMode ? 'gray' : '#fff' }]}>
+        <View style={[styles.bookingItem, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#fff' }]}>
           <View style={{ flexDirection: 'row', alignItems: 'center', columnGap: 10 }}>
             <Image source={{ uri: event?.thumbUrl }} style={{ width: 100, height: 100 }} />
             <View>
-              <Text style={[styles.title, { color: isDarkMode ? '#fff' : '#000' }]}>{eventTitle}</Text>
-              <Text style={[styles.detail, { color: isDarkMode ? '#fff' : '#000' }]}>{formatDate(eventDate)}</Text>
-              <Text style={[styles.detail, { color: isDarkMode ? '#fff' : '#000' }]}>{paymentStatus}</Text>
+              <Text style={[styles.title, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventTitle}</Text>
+              <Text style={[styles.detail, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{formatDate(eventDate)}</Text>
+              <Text style={[styles.detail, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{paymentStatus}</Text>
             </View>
           </View>
           <View style={styles.buttons}>

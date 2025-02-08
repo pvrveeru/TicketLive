@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
   seeMore: {
     color: COLORS.red,
     fontWeight: "bold",
+    top: 5,
   },
 });
 

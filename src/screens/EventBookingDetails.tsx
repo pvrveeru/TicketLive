@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '../styles/globalstyles';
 import { useTheme } from '../Theme/ThemeContext';
 import { useSelector } from 'react-redux';
-import { createUserEvent } from '../services/Apiservices';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 interface FormData {
     firstName: string;
@@ -115,6 +115,26 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
             });
         }
     };
+
+    const renderGenderDropdown = () => (
+        <ScrollView style={styles.dropdownList}>
+            {genderOptions.map((gender, index) => (
+                <TouchableOpacity
+                    key={index.toString()} // Use index as key, but ideally use a unique identifier if available
+                    style={styles.dropdownItem}
+                    onPress={() => handleSelectGender(gender)}
+                >
+                    <Text style={[styles.dropdownItemText, { color: isDarkMode ? '#fff' : '#000' }]}>
+                        {gender}
+                    </Text>
+                    {formData.gender === gender && (
+                        <Icon name="checkmark" size={30} color="green" style={styles.checkIcon} />
+                    )}
+                </TouchableOpacity>
+            ))}
+        </ScrollView>
+    );
+
     return (
         <KeyboardAvoidingView
             style={{ flex: 1, backgroundColor: isDarkMode ? '#333' : '#fff' }}
@@ -162,22 +182,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                     <Text style={[styles.dropdownText, { color: isDarkMode ? '#fff' : '#000' }]}>{formData.gender}</Text>
                     <Icon name={showDropdown ? 'chevron-up' : 'chevron-down'} size={20} color={isDarkMode ? '#fff' : '#333'} />
                 </TouchableOpacity>
-                {showDropdown && (
-                    <View style={styles.dropdownList}>
-                        <FlatList
-                            data={genderOptions}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity
-                                    style={styles.dropdownItem}
-                                    onPress={() => handleSelectGender(item)}
-                                >
-                                    <Text style={[styles.dropdownItemText, { color: isDarkMode ? '#fff' : '#000' }]}>{item}</Text>
-                                </TouchableOpacity>
-                            )}
-                        />
-                    </View>
-                )}
+                {showDropdown && renderGenderDropdown()}
 
                 <TouchableOpacity style={
                     styles.input} onPress={() => setShowDatePicker(true)}>
@@ -260,7 +265,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                 />
                 {errors.state ? <Text style={styles.errorText}>{errors.state}</Text> : null}
 
-                <View style={styles.checkboxContainer}>
+                {/* <View style={styles.checkboxContainer}>
                     <TouchableOpacity
                         onPress={() => setFormData({ ...formData, termsAccepted: !formData.termsAccepted })}
                     >
@@ -269,8 +274,23 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                         </Text>
                     </TouchableOpacity>
                     {errors.termsAccepted ? <Text style={styles.errorText}>{errors.termsAccepted}</Text> : null}
+                </View> */}
+                <View style={styles.checkboxContainer}>
+                    <TouchableOpacity
+                        onPress={() => setFormData({ ...formData, termsAccepted: !formData.termsAccepted })}
+                        style={styles.checkbox}
+                    >
+                        <FontAwesome
+                            name={formData.termsAccepted ? 'check-square' : 'square-o'}
+                            size={24}
+                            color={isDarkMode ? '#fff' : '#000'}
+                        />
+                    </TouchableOpacity>
+                    <Text style={[styles.checkboxText, { color: isDarkMode ? '#fff' : '#000' }]}>
+                        I accept the Terms of Service
+                    </Text>
+                    {errors.termsAccepted && <Text style={styles.errorText}>{errors.termsAccepted}</Text>}
                 </View>
-
                 <TouchableOpacity
                     style={[styles.button, !formData.termsAccepted && styles.disabledButton]}
                     onPress={handleSubmit}
@@ -341,19 +361,32 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     dropdownList: {
-        borderColor: '#ccc',
+        borderColor: 'black',
         borderWidth: 1,
-        borderRadius: 5,
-        marginBottom: 15,
+        borderRadius: 20,
+        maxHeight: 150,
+        marginBottom: 10,
     },
     dropdownItem: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         padding: 10,
     },
     dropdownItemText: {
         fontSize: 16,
+        fontWeight: 'bold',
+    },
+    checkIcon: {
+        marginLeft: 10,
+        fontWeight: 'bold',
     },
     checkboxContainer: {
-        marginBottom: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 10,
+    },
+    checkbox: {
+        marginRight: 8,
     },
     checkboxText: {
         fontSize: 16,

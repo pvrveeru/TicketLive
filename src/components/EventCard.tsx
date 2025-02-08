@@ -39,7 +39,7 @@ const EventCard: React.FC<EventCardProps> = ({
     <TouchableOpacity style={styles.cardContainer} onPress={onPress}>
       {loading ? (
         <>
-          <SkeletonLoader width="100%" height={200} borderRadius={10} />
+          <SkeletonLoader width="100%" height={150} borderRadius={10} />
           <View style={styles.content}>
             <SkeletonLoader width="80%" height={20} borderRadius={4} />
             <SkeletonLoader width="60%" height={15} borderRadius={4} style={{ marginVertical: 5 }} />
@@ -61,13 +61,13 @@ const EventCard: React.FC<EventCardProps> = ({
           ) : (
             <Image source={AltImg} style={styles.image} />
           )}
-          <View style={[styles.content, { backgroundColor: isDarkMode ? 'gray' : '#fff' }]}>
-            <Text style={[styles.title, { color: isDarkMode ? '#fff' : '#000' }]} numberOfLines={1}>{title}</Text>
-            <Text style={[styles.dateTime, { color: isDarkMode ? '#fff' : '#000' }]}>{formatDate(dateTime || '')}</Text>
+          <View style={[styles.content, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#fff' }]}>
+            <Text style={[styles.title, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]} numberOfLines={1}>{title}</Text>
+            <Text style={[styles.dateTime, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{formatDate(dateTime || '')}</Text>
             <View style={styles.rowContainer}>
               <View style={styles.locationContainer}>
                 <Ionicons name="location-sharp" size={25} color="#555" />
-                <Text style={[styles.location, { color: isDarkMode ? '#fff' : '#000' }]}>{location}</Text>
+                <Text style={[styles.location, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{location}</Text>
               </View>
               <TouchableOpacity onPress={onFavoritePress}>
                 <Ionicons

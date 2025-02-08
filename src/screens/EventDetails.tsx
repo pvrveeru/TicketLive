@@ -253,8 +253,9 @@ const EventDetails: React.FC = () => {
         openMaps(eventDetails?.latitude, eventDetails?.longitude)
       },
       error => {
-        console.error('Error fetching location', error);
+        console.log('Error fetching location', error);
         Alert.alert('Error', 'Unable to fetch current location. Please try again.');
+        setLocationLoading(false);
       },
       { enableHighAccuracy: true, timeout: 30000, maximumAge: 10000 }
     );
@@ -285,7 +286,7 @@ const EventDetails: React.FC = () => {
             interval={3000}
             height={300}
             containerStyle={{ marginBottom: 20 }}
-            imageStyle={{ borderRadius: 10 }}
+            imageStyle={{ borderRadius: 20 }}
             artistName={eventDetails?.artistName}
             eventTitle={eventDetails?.title}
             onBackPress={handleBackPress}
@@ -322,28 +323,29 @@ const EventDetails: React.FC = () => {
               <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.language}</Text>
             </View>
             <View style={styles.row}>
-              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>Duration:</Text>
+              <FontAwesome name="clock-o" size={20} color="gray" />
               <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.duration}</Text>
             </View>
           </View>
         </View>
         <View style={styles.actionButtons}>
-
           <View style={styles.row}>
             <MaterialIcons name="group" size={20} color="gray" />
             <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>
               {eventDetails?.favoritesCount} Interested
             </Text>
           </View>
-          <TouchableOpacity style={styles.iconButton} onPress={mobilecalling}>
-            <Ionicons name="call-outline" size={24} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton} onPress={navigateToEmail}>
-            <Ionicons name="mail-outline" size={24} color="white" />
-          </TouchableOpacity>
+          <View style={{flexDirection: 'row', columnGap: 20}}>
+            <TouchableOpacity style={styles.iconButton} onPress={mobilecalling}>
+              <Ionicons name="call-outline" size={24} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton} onPress={navigateToEmail}>
+              <Ionicons name="mail-outline" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
         </View>
         <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>About Event</Text>
-        <SeeMoreText text={eventDetails?.description ?? ""} maxLength={40} />
+        <SeeMoreText text={eventDetails?.description ?? ""} maxLength={30} />
 
         <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Location</Text>
         <View>
@@ -366,7 +368,7 @@ const EventDetails: React.FC = () => {
               onPress={handleMarkerPress}
             />
           </MapView>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={{
               position: 'absolute',
               bottom: 10,
@@ -382,7 +384,7 @@ const EventDetails: React.FC = () => {
           >
             <Ionicons name="navigate-outline" size={24} color="white" />
             <Text style={{ color: 'white', marginLeft: 5 }}>View Directions</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Terms & Conditions</Text>
         <SeeMoreText text={eventDetails?.tnc ?? ""} maxLength={70} />
@@ -404,7 +406,7 @@ const EventDetails: React.FC = () => {
           size="large"
           color={COLORS.red}
         />
-        <Text style={{ color: isDarkMode ? '#fff' : '#000', textAlign: 'center' }}>Fetching...</Text>
+        <Text style={{ color: isDarkMode ? '#000' : '#000', textAlign: 'center' }}>Fetching...</Text>
       </Dialog>
     </>
   );
@@ -504,8 +506,9 @@ const styles = StyleSheet.create({
   },
   actionButtons: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     marginVertical: 20,
+    marginHorizontal: 25,
   },
   iconButton: {
     backgroundColor: '#c11c84',

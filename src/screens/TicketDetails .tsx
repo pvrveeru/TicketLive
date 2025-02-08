@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../Theme/ThemeContext';
 import Share from 'react-native-share';
 import moment from 'moment';
+import { COLORS } from '../styles/globalstyles';
 
 type RootStackParamList = {
   TicketDetails: { bookingId: number };
@@ -47,6 +48,16 @@ const TicketDetails = () => {
   const [error, setError] = useState<string | null>(null);
   const Logo = require('../../assets/images/ticketliv_logo.png');
 
+  const formatDate = (dateString: string) => {
+    const date = moment.utc(dateString);
+
+    if (!date.isValid()) {
+      return 'Invalid Date';
+    }
+
+    return date.local().format('MM-DD-YY : h:mm A');
+  };
+  
   useEffect(() => {
     const fetchTickets = async () => {
       try {
@@ -65,66 +76,243 @@ const TicketDetails = () => {
     fetchTickets();
   }, [bookingId]);
 
+  // const handleDownloadTicket = async (ticket: Ticket) => {
+  //   const basePrice = parseFloat(ticket?.price);
+  //   const convenienceFee = basePrice * (ticket?.conveniencefee / 100);
+  //   const gst = basePrice * (ticket?.gstpercentage / 100);
+  //   const totalPrice = basePrice + convenienceFee + gst;
+
+  //   try {
+  //     let ticketHtml = `
+  //       <h1>Ticket Details</h1>
+  //       <img src="${Logo}" style="width:150px;"/> 
+  //       <h2>Ticket ID: ${ticket.ticketid}</h2>
+  //       <p><strong>Event:</strong> ${ticket.title}</p>
+  //       <p><strong>Date and Hour:</strong> ${ticket.eventdate}</p>
+  //       <p><strong>Location:</strong> ${ticket.eventlocation}</p>
+  //     `;
+  //     if (ticket?.price) {
+  //       ticketHtml += `<p><strong>Base Price:</strong> ${basePrice.toFixed(2)}</p>`;
+  //     }
+
+  //     if (ticket?.conveniencefee) {
+  //       ticketHtml += `<p><strong>Convenience Fee:</strong> ${convenienceFee.toFixed(2)}</p>`;
+  //     }
+
+  //     if (ticket?.gstpercentage) {
+  //       ticketHtml += `<p><strong>GST:</strong> ${gst.toFixed(2)}</p>`;
+  //     }
+
+  //     if (ticket?.price && ticket?.conveniencefee && ticket?.gstpercentage) {
+  //       ticketHtml += `<p><strong>Total Price:</strong> ${totalPrice.toFixed(2)}</p>`;
+  //     }
+
+  //     ticketHtml += ticket.qrcode
+  //       ? `<img src="${ticket.qrcode}" style="width:100px; height:100px;"/>`
+  //       : '<p>No QR Code available</p>';
+
+  //     const options = {
+  //       html: ticketHtml,
+  //       fileName: `TicketLiv_Tickets`,
+  //       directory: 'Documents',
+  //     };
+
+  //     const file = await RNHTMLtoPDF.convert(options);
+
+  //     let downloadsDir;
+  //     if (Platform.OS === 'ios') {
+  //       downloadsDir = `${RNFS.DocumentDirectoryPath}/Ticketliv_Tickets.pdf`;
+  //     } else {
+  //       downloadsDir = `${RNFS.DownloadDirectoryPath}/Ticketliv_Tickets.pdf`;
+  //     }
+
+  //     await RNFS.moveFile(file.filePath, downloadsDir);
+
+  //     Alert.alert('All tickets downloaded successfully!', `The PDF has been saved to:\n${downloadsDir}`);
+  //     return downloadsDir;
+  //   } catch (error) {
+  //     console.error('Error downloading tickets:', error);
+  //     Alert.alert('Failed to download tickets. Please try again.');
+  //   }
+  // };
+
+
+  // const shareTicketPDF = async (ticket: Ticket) => {
+  //   try {
+  //     const basePrice = parseFloat(ticket?.price);
+  //     const convenienceFee = basePrice * (ticket?.conveniencefee / 100);
+  //     const gst = basePrice * (ticket?.gstpercentage / 100);
+  //     const totalPrice = basePrice + convenienceFee + gst;
+
+  //     let ticketHtml = `
+  //       <h1>Ticket Details</h1>
+  //       <img src="${Logo}" style="width:150px;"/> 
+  //       <h2>Ticket ID: ${ticket.ticketid}</h2>
+  //       <p><strong>Event:</strong> ${ticket.title}</p>
+  //       <p><strong>Date and Hour:</strong> ${ticket.eventdate}</p>
+  //       <p><strong>Location:</strong> ${ticket.eventlocation}</p>
+  //       <p><strong>Base Price:</strong> ${basePrice.toFixed(2)}</p>
+  //       <p><strong>Convenience Fee:</strong> ${convenienceFee.toFixed(2)}</p>
+  //       <p><strong>GST:</strong> ${gst.toFixed(2)}</p>
+  //       <p><strong>Total Price:</strong> ${totalPrice.toFixed(2)}</p>
+  //     `;
+  //     ticketHtml += ticket.qrcode
+  //       ? `<img src="${ticket.qrcode}" style="width: 120px; height: 120px; background-color: #e0e0e0; display: flex; justify-content: center; align-items: center; border-radius: 8px; border: 1px solid #ddd;"/>`
+  //       : '<p>No QR Code available</p>';
+
+
+  //     const options = {
+  //       html: ticketHtml,
+  //       fileName: `Ticket_${ticket.ticketid}`,
+  //       directory: 'Documents',
+  //     };
+
+  //     const file = await RNHTMLtoPDF.convert(options);
+  //     await Share.open({
+  //       title: 'Share Ticket',
+  //       url: `file://${file.filePath}`,
+  //       type: 'application/pdf',
+  //     });
+  //   } catch (error) {
+  //     console.log('Error sharing ticket:', error);
+  //     Alert.alert('Failed to share ticket. Please try again.');
+  //   }
+  // };
   const handleDownloadTicket = async (ticket: Ticket) => {
     const basePrice = parseFloat(ticket?.price);
     const convenienceFee = basePrice * (ticket?.conveniencefee / 100);
     const gst = basePrice * (ticket?.gstpercentage / 100);
     const totalPrice = basePrice + convenienceFee + gst;
-
+  
     try {
       let ticketHtml = `
-        <h1>Ticket Details</h1>
-        <img src="${Logo}" style="width:150px;"/> 
-        <h2>Ticket ID: ${ticket.ticketid}</h2>
-        <p><strong>Event:</strong> ${ticket.title}</p>
-        <p><strong>Date and Hour:</strong> ${ticket.eventdate}</p>
-        <p><strong>Location:</strong> ${ticket.eventlocation}</p>
+        <div style="
+          width: 380px;
+          padding: 20px;
+          border: 1px solid #ccc;
+          border-radius: 10px;
+          font-family: Arial, sans-serif;
+          background: #fff;
+          text-align: left;
+          box-sizing: border-box;
+        ">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <div style="
+              width: 120px;
+              height: 120px;
+              margin: 0 auto;
+              background: #e0e0e0;
+              border-radius: 10px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            ">
+              <p>QR Code</p>
+            </div>
+          </div>
+          <div style="width: 100%;">
+            <div style="
+              display: flex; 
+              flex-direction: row; 
+              justify-content: space-between;
+              border-bottom: 1px solid #f0f0f0;
+            ">
+              <p style="font-weight: bold; font-size: 14px; color: #555; flex: 1;">Event</p>
+              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">${ticket.title}</p>
+            </div>
+            <div style="
+              display: flex; 
+              flex-direction: row; 
+              justify-content: space-between;
+              border-bottom: 1px solid #f0f0f0;
+            ">
+              <p style="font-weight: bold; font-size: 14px; color: #555; flex: 1;">Date & Time</p>
+              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">${ticket.eventdate}</p>
+            </div>
+            <div style="
+              display: flex; 
+              flex-direction: row; 
+              justify-content: space-between;
+              border-bottom: 1px solid #f0f0f0;
+            ">
+              <p style="font-weight: bold; font-size: 14px; color: #555; flex: 1;">Location</p>
+              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">${ticket.eventlocation}</p>
+            </div>
+            <div style="
+              display: flex; 
+              flex-direction: row; 
+              justify-content: space-between; 
+              border-bottom: 1px solid #f0f0f0;
+            ">
+              <p style="font-weight: bold; font-size: 14px; color: #555; flex: 1;">Ticket No</p>
+              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">${ticket.ticketid}</p>
+            </div>
+            <div style="
+              display: flex; 
+              flex-direction: row; 
+              justify-content: space-between;
+              border-bottom: 1px solid #f0f0f0;
+            ">
+              <p style="font-weight: bold; font-size: 14px; color: #555; flex: 1;">Base Price</p>
+              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">₹${basePrice.toFixed(2)}</p>
+            </div>
+            <div style="
+              display: flex; 
+              flex-direction: row; 
+              justify-content: space-between;
+              border-bottom: 1px solid #f0f0f0;
+            ">
+              <p style="font-weight: bold; font-size: 14px; color: #555; flex: 1;">Convenience Fee (${ticket.conveniencefee}%)</p>
+              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">₹${convenienceFee.toFixed(2)}</p>
+            </div>
+            <div style="
+              display: flex; 
+              flex-direction: row; 
+              justify-content: space-between;
+              border-bottom: 1px solid #f0f0f0;
+            ">
+              <p style="font-weight: bold; font-size: 14px; color: #555; flex: 1;">GST (${ticket.gstpercentage}%)</p>
+              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">₹${gst.toFixed(2)}</p>
+            </div>
+            <div style="
+              display: flex; 
+              flex-direction: row; 
+              justify-content: space-between;
+            ">
+              <p style="font-weight: bold; font-size: 16px; color: #555; flex: 1;">Total Price</p>
+              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">₹${totalPrice.toFixed(2)}</p>
+            </div>
+          </div>
+        </div>
       `;
-      if (ticket?.price) {
-        ticketHtml += `<p><strong>Base Price:</strong> ${basePrice.toFixed(2)}</p>`;
-      }
-
-      if (ticket?.conveniencefee) {
-        ticketHtml += `<p><strong>Convenience Fee:</strong> ${convenienceFee.toFixed(2)}</p>`;
-      }
-
-      if (ticket?.gstpercentage) {
-        ticketHtml += `<p><strong>GST:</strong> ${gst.toFixed(2)}</p>`;
-      }
-
-      if (ticket?.price && ticket?.conveniencefee && ticket?.gstpercentage) {
-        ticketHtml += `<p><strong>Total Price:</strong> ${totalPrice.toFixed(2)}</p>`;
-      }
-
-      ticketHtml += ticket.qrcode
-        ? `<img src="${ticket.qrcode}" style="width:100px; height:100px;"/>`
-        : '<p>No QR Code available</p>';
-
+  
       const options = {
         html: ticketHtml,
-        fileName: `TicketLiv_Tickets`,
+        fileName: `Ticket_${ticket.ticketid}`,
         directory: 'Documents',
+        height: 500, // Adjusted height for ticket size
+        width: 300, // Exact ticket width
       };
-
+  
       const file = await RNHTMLtoPDF.convert(options);
-
+  
+      // Save to Downloads folder
       let downloadsDir;
       if (Platform.OS === 'ios') {
-        downloadsDir = `${RNFS.DocumentDirectoryPath}/Ticketliv_Tickets.pdf`;
+        downloadsDir = `${RNFS.DocumentDirectoryPath}/Ticket_${ticket.ticketid}.pdf`;
       } else {
-        downloadsDir = `${RNFS.DownloadDirectoryPath}/Ticketliv_Tickets.pdf`;
+        downloadsDir = `${RNFS.DownloadDirectoryPath}/Ticket_${ticket.ticketid}.pdf`;
       }
-
+  
       await RNFS.moveFile(file.filePath, downloadsDir);
-
-      Alert.alert('All tickets downloaded successfully!', `The PDF has been saved to:\n${downloadsDir}`);
+  
+      Alert.alert('Download Successful!', `The ticket has been saved to:\n${downloadsDir}`);
       return downloadsDir;
     } catch (error) {
-      console.error('Error downloading tickets:', error);
-      Alert.alert('Failed to download tickets. Please try again.');
+      console.error('Error downloading ticket:', error);
+      Alert.alert('Failed to download ticket. Please try again.');
     }
   };
-
 
   const shareTicketPDF = async (ticket: Ticket) => {
     try {
@@ -134,26 +322,112 @@ const TicketDetails = () => {
       const totalPrice = basePrice + convenienceFee + gst;
 
       let ticketHtml = `
-        <h1>Ticket Details</h1>
-        <img src="${Logo}" style="width:150px;"/> 
-        <h2>Ticket ID: ${ticket.ticketid}</h2>
-        <p><strong>Event:</strong> ${ticket.title}</p>
-        <p><strong>Date and Hour:</strong> ${ticket.eventdate}</p>
-        <p><strong>Location:</strong> ${ticket.eventlocation}</p>
-        <p><strong>Base Price:</strong> ${basePrice.toFixed(2)}</p>
-        <p><strong>Convenience Fee:</strong> ${convenienceFee.toFixed(2)}</p>
-        <p><strong>GST:</strong> ${gst.toFixed(2)}</p>
-        <p><strong>Total Price:</strong> ${totalPrice.toFixed(2)}</p>
+        <div style="
+          width: 380px;
+          padding: 20px;
+          border: 1px solid #ccc;
+          border-radius: 10px;
+          font-family: Arial, sans-serif;
+          background: #fff;
+          text-align: left;
+          box-sizing: border-box;
+        ">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <div style="
+              width: 120px;
+              height: 120px;
+              margin: 0 auto;
+              background: #e0e0e0;
+              border-radius: 10px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            ">
+              <p>QR Code</p>
+            </div>
+          </div>
+          <div style="width: 100%;">
+            <div style="
+              display: flex; 
+              flex-direction: row; 
+              justify-content: space-between;
+              border-bottom: 1px solid #f0f0f0;
+            ">
+              <p style="font-weight: bold; font-size: 14px; color: #555; flex: 1;">Event</p>
+              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">${ticket.title}</p>
+            </div>
+            <div style="
+              display: flex; 
+              flex-direction: row; 
+              justify-content: space-between;
+              border-bottom: 1px solid #f0f0f0;
+            ">
+              <p style="font-weight: bold; font-size: 14px; color: #555; flex: 1;">Date & Time</p>
+              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">${formatDate(ticket.eventdate)}</p>
+            </div>
+            <div style="
+              display: flex; 
+              flex-direction: row; 
+              justify-content: space-between;
+              border-bottom: 1px solid #f0f0f0;
+            ">
+              <p style="font-weight: bold; font-size: 14px; color: #555; flex: 1;">Location</p>
+              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">${ticket.eventlocation}</p>
+            </div>
+            <div style="
+              display: flex; 
+              flex-direction: row; 
+              justify-content: space-between; 
+              border-bottom: 1px solid #f0f0f0;
+            ">
+              <p style="font-weight: bold; font-size: 14px; color: #555; flex: 1;">Ticket No</p>
+              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">${ticket.ticketid}</p>
+            </div>
+            <div style="
+              display: flex; 
+              flex-direction: row; 
+              justify-content: space-between;
+              border-bottom: 1px solid #f0f0f0;
+            ">
+              <p style="font-weight: bold; font-size: 14px; color: #555; flex: 1;">Base Price</p>
+              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">₹${basePrice.toFixed(2)}</p>
+            </div>
+            <div style="
+              display: flex; 
+              flex-direction: row; 
+              justify-content: space-between;
+              border-bottom: 1px solid #f0f0f0;
+            ">
+              <p style="font-weight: bold; font-size: 14px; color: #555; flex: 1;">Convenience Fee (${ticket.conveniencefee}%)</p>
+              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">₹${convenienceFee.toFixed(2)}</p>
+            </div>
+            <div style="
+              display: flex; 
+              flex-direction: row; 
+              justify-content: space-between;
+              border-bottom: 1px solid #f0f0f0;
+            ">
+              <p style="font-weight: bold; font-size: 14px; color: #555; flex: 1;">GST (${ticket.gstpercentage}%)</p>
+              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">₹${gst.toFixed(2)}</p>
+            </div>
+            <div style="
+              display: flex; 
+              flex-direction: row; 
+              justify-content: space-between;
+            ">
+              <p style="font-weight: bold; font-size: 16px; color: #555; flex: 1;">Total Price</p>
+              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">₹${totalPrice.toFixed(2)}</p>
+            </div>
+          </div>
+        </div>
       `;
-      ticketHtml += ticket.qrcode
-        ? `<img src="${ticket.qrcode}" style="width: 120px; height: 120px; background-color: #e0e0e0; display: flex; justify-content: center; align-items: center; border-radius: 8px; border: 1px solid #ddd;"/>`
-        : '<p>No QR Code available</p>';
-
 
       const options = {
         html: ticketHtml,
         fileName: `Ticket_${ticket.ticketid}`,
         directory: 'Documents',
+        width: 300, // Set the width to match the div
+        height: 500, // Approximate height
       };
 
       const file = await RNHTMLtoPDF.convert(options);
@@ -166,16 +440,6 @@ const TicketDetails = () => {
       console.log('Error sharing ticket:', error);
       Alert.alert('Failed to share ticket. Please try again.');
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = moment.utc(dateString);
-
-    if (!date.isValid()) {
-      return 'Invalid Date';
-    }
-
-    return date.local().format('MM-DD-YY : h:mm A');
   };
 
   if (isLoading) {
@@ -228,10 +492,10 @@ const TicketDetails = () => {
         //         console.log('Convenience Fee Percentage:', ticket?.conveniencefee);
         // console.log('GST Percentage:', ticket?.gstpercentage);
         return (
-          <View key={index} style={[styles.ticketCard, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>
+          <View key={index} style={[styles.ticketCard, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#fff' }]}>
             <View style={styles.qrContainer}>
               <TouchableOpacity style={styles.share} onPress={() => shareTicketPDF(ticket)}>
-                <Icon name="share-social-outline" size={30} color={isDarkMode ? '#fff' : '#333'} />
+                <Icon name="share-social-outline" size={30} color={isDarkMode ? COLORS.darkTextColor : '#333'} />
               </TouchableOpacity>
               {ticket.qrcode ? (
                 <Image source={{ uri: ticket.qrcode }} style={styles.qrCode} />
@@ -242,44 +506,44 @@ const TicketDetails = () => {
               )}
             </View>
             <View style={styles.tableContainer}>
-              <View style={styles.tableRow}>
-                <Text style={[styles.tableHeader, { color: isDarkMode ? '#fff' : '#000' }]}>Event</Text>
-                <Text style={[styles.tableCell, { color: isDarkMode ? '#fff' : '#000' }]}>{ticket.title}</Text>
+              <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#fofofo'}]}>
+                <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Event</Text>
+                <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{ticket.title}</Text>
               </View>
-              <View style={styles.tableRow}>
-                <Text style={[styles.tableHeader, { color: isDarkMode ? '#fff' : '#000' }]}>Date & Time</Text>
-                <Text style={[styles.tableCell, { color: isDarkMode ? '#fff' : '#000' }]}>{formatDate(ticket.eventdate || '')}</Text>
+              <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#fofofo'}]}>
+                <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Date & Time</Text>
+                <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{formatDate(ticket.eventdate || '')}</Text>
               </View>
-              <View style={styles.tableRow}>
-                <Text style={[styles.tableHeader, { color: isDarkMode ? '#fff' : '#000' }]}>Location</Text>
-                <Text style={[styles.tableCell, { color: isDarkMode ? '#fff' : '#000' }]}>{ticket.eventlocation}</Text>
+              <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#fofofo'}]}>
+                <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Location</Text>
+                <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{ticket.eventlocation}</Text>
               </View>
-              <View style={styles.tableRow}>
-                <Text style={[styles.tableHeader, { color: isDarkMode ? '#fff' : '#000' }]}>Ticket No</Text>
-                <Text style={[styles.tableCell, { color: isDarkMode ? '#fff' : '#000' }]}>{ticket.ticketid}</Text>
+              <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#fofofo'}]}>
+                <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Ticket No</Text>
+                <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{ticket.ticketid}</Text>
               </View>
               {ticket?.price && (
-                <View style={styles.tableRow}>
-                  <Text style={[styles.tableHeader, { color: isDarkMode ? '#fff' : '#000' }]}>Base Price</Text>
-                  <Text style={[styles.tableCell, { color: isDarkMode ? '#fff' : '#000' }]}>{basePrice.toFixed(2)}</Text>
+                <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#fofofo'}]}>
+                  <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Base Price</Text>
+                  <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{basePrice.toFixed(2)}</Text>
                 </View>
               )}
               {ticket?.conveniencefee && (
-                <View style={styles.tableRow}>
-                  <Text style={[styles.tableHeader, { color: isDarkMode ? '#fff' : '#000' }]}>Convenience Fee ({ticket?.conveniencefee || 0}%):</Text>
-                  <Text style={[styles.tableCell, { color: isDarkMode ? '#fff' : '#000' }]}>{convenienceFee.toFixed(2)}</Text>
+                <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#fofofo'}]}>
+                  <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Convenience Fee ({ticket?.conveniencefee || 0}%):</Text>
+                  <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{convenienceFee.toFixed(2)}</Text>
                 </View>
               )}
               {ticket?.gstpercentage && (
-                <View style={styles.tableRow}>
-                  <Text style={[styles.tableHeader, { color: isDarkMode ? '#fff' : '#000' }]}>GST ({ticket?.gstpercentage || 0}%)</Text>
-                  <Text style={[styles.tableCell, { color: isDarkMode ? '#fff' : '#000' }]}>{gst.toFixed(2)}</Text>
+                <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#fofofo'}]}>
+                  <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>GST ({ticket?.gstpercentage || 0}%)</Text>
+                  <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{gst.toFixed(2)}</Text>
                 </View>
               )}
               {ticket?.price && ticket?.conveniencefee && ticket?.gstpercentage && (
-                <View style={styles.tableRow}>
-                  <Text style={[styles.tableHeader, { color: isDarkMode ? '#fff' : '#000' }]}>Total Price</Text>
-                  <Text style={[styles.tableCell, { color: isDarkMode ? '#fff' : '#000' }]}>{totalPrice.toFixed(2)}</Text>
+                <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#fofofo'}]}>
+                  <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Total Price</Text>
+                  <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{totalPrice.toFixed(2)}</Text>
                 </View>
               )}
 

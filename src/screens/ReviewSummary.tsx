@@ -145,33 +145,33 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
         <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Review Summary</Text>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={[styles.eventDetailsContainer, { backgroundColor: isDarkMode ? 'gray' : '#fff' }]}>
+        <View style={[styles.eventDetailsContainer, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#fff' }]}>
           <Image source={{ uri: eventDetails?.thumbUrl }} style={styles.eventImage} />
           <View>
-            <Text style={[styles.eventTitle, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.title}</Text>
-            <Text style={[styles.eventDate, { color: isDarkMode ? '#fff' : '#000' }]}>{formatDate(eventDetails?.eventDate || '')}</Text>
-            <Text style={[styles.eventLocation, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.location}</Text>
+            <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails?.title}</Text>
+            <Text style={[styles.eventDate, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{formatDate(eventDetails?.eventDate || '')}</Text>
+            <Text style={[styles.eventLocation, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails?.location}</Text>
           </View>
         </View>
 
-        <View style={[styles.contactInfoContainer, { backgroundColor: isDarkMode ? 'gray' : '#fff' }]}>
-          <Text style={[styles.infoTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Contact Information</Text>
+        <View style={[styles.contactInfoContainer, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#fff' }]}>
+          <Text style={[styles.infoTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Contact Information</Text>
           <View style={styles.contactRow}>
-            <Text style={[styles.value, { color: isDarkMode ? '#fff' : '#000' }]}>Full Name:</Text>
-            <Text style={[styles.label, { color: isDarkMode ? '#fff' : '#000' }]}>
+            <Text style={[styles.value, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Full Name:</Text>
+            <Text style={[styles.label, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>
               {formData.firstName} {formData.lastName}
             </Text>
           </View>
           <View style={styles.contactRow}>
-            <Text style={[styles.value, { color: isDarkMode ? '#fff' : '#000' }]}>Phone:</Text>
-            <Text style={[styles.label, { color: isDarkMode ? '#fff' : '#000' }]}>{formData.phone}</Text>
+            <Text style={[styles.value, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Phone:</Text>
+            <Text style={[styles.label, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{formData.phone}</Text>
           </View>
           <View style={styles.contactRow}>
-            <Text style={[styles.value, { color: isDarkMode ? '#fff' : '#000' }]}>Email:</Text>
-            <Text style={[styles.label, { color: isDarkMode ? '#fff' : '#000' }]}>{formData.email}</Text>
+            <Text style={[styles.value, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Email:</Text>
+            <Text style={[styles.label, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{formData.email}</Text>
           </View>
         </View>
-        <View style={[styles.ticketDetailsContainer, { backgroundColor: isDarkMode ? 'gray' : '#fff' }]}>
+        <View style={[styles.ticketDetailsContainer, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#fff' }]}>
           <Text style={styles.infoTitle}>Ticket Details</Text>
           {/* {eventBookingDetails?.zoneNames.map((zone: string, index: number) => (
             <View key={index} style={styles.ticketRow}>
@@ -182,40 +182,40 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
 
           {eventBookingDetails?.noOfTickets.map((ticket: number, index: number) => (
             <View key={index} style={styles.ticketRow}>
-              <Text style={[styles.value, { color: isDarkMode ? '#fff' : '#000' }]}>Seats ({eventBookingDetails?.selectedClass[index]}):</Text>
-              <Text style={[styles.label, { color: isDarkMode ? '#fff' : '#000' }]}>{ticket}</Text>
+              <Text style={[styles.value, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Seats ({eventBookingDetails?.selectedClass[index]}):</Text>
+              <Text style={[styles.label, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{ticket}</Text>
             </View>
           ))}
 
           {eventBookingDetails?.prices.map((price: number, index: number) => (
             <View key={index} style={styles.ticketRow}>
-              <Text style={[styles.value, { color: isDarkMode ? '#fff' : '#000' }]}>Price:</Text>
-              <Text style={[styles.label, { color: isDarkMode ? '#fff' : '#000' }]}>₹{price.toFixed(2)}</Text>
+              <Text style={[styles.value, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Price:</Text>
+              <Text style={[styles.label, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>₹{price.toFixed(2)}</Text>
             </View>
           ))}
           <View style={styles.horizontalLine} />
           <View style={styles.ticketRow}>
-            <Text style={[styles.value, { color: isDarkMode ? '#fff' : '#000' }]}>Base Price:</Text>
-            <Text style={[styles.label, { color: isDarkMode ? '#fff' : '#000' }]}>₹{eventBookingDetails?.totalAmount}</Text>
+            <Text style={[styles.value, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Base Price:</Text>
+            <Text style={[styles.label, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>₹{eventBookingDetails?.totalAmount}</Text>
           </View>
           {charges && (
 
             <>
               <View style={styles.horizontalLine} />
               <View style={styles.ticketRow}>
-                <Text style={[styles.value, { color: isDarkMode ? '#fff' : '#000' }]}>Convenience Fee ({charges?.convenienceFee || 0}%):</Text>
-                <Text style={[styles.label, { color: isDarkMode ? '#fff' : '#000' }]}>₹{convenienceFee.toFixed(2)}</Text>
+                <Text style={[styles.value, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Convenience Fee ({charges?.convenienceFee || 0}%):</Text>
+                <Text style={[styles.label, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>₹{convenienceFee.toFixed(2)}</Text>
               </View>
               <View style={styles.ticketRow}>
-                <Text style={[styles.value, { color: isDarkMode ? '#fff' : '#000' }]}>GST ({charges?.gstPercentage || 0}%):</Text>
-                <Text style={[styles.label, { color: isDarkMode ? '#fff' : '#000' }]}>₹{gstAmount.toFixed(2)}</Text>
+                <Text style={[styles.value, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>GST ({charges?.gstPercentage || 0}%):</Text>
+                <Text style={[styles.label, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>₹{gstAmount.toFixed(2)}</Text>
               </View>
             </>
           )}
           <View style={styles.horizontalLine} />
           <View style={styles.ticketRow}>
-            <Text style={[styles.value, { color: isDarkMode ? '#fff' : '#000' }]}>Total Price:</Text>
-            <Text style={[styles.label, { color: isDarkMode ? '#fff' : '#000' }]}>₹{totalAmountWithCharges}</Text>
+            <Text style={[styles.value, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Total Price:</Text>
+            <Text style={[styles.label, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>₹{totalAmountWithCharges}</Text>
           </View>
         </View>
 

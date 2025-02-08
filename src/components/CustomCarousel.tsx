@@ -1,8 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ViewStyle } from 'react-native';
-import { ImageStyle } from 'react-native';
-import { StyleProp } from 'react-native';
-import { ScrollView, Image, StyleSheet, View, Dimensions, Text, TouchableOpacity } from 'react-native';
+import { ViewStyle, ImageStyle, StyleProp, ScrollView, Image, StyleSheet, View, Dimensions, Text, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 interface CustomCarouselProps {
@@ -28,7 +25,6 @@ const CustomCarousel: React.FC<CustomCarouselProps> = ({
 }) => {
   const scrollViewRef = useRef<ScrollView>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-
   const screenWidth = Dimensions.get('window').width;
   const displayArtistName = artistName || 'Unknown Artist';
   const displayEventTitle = eventTitle || 'Untitled Event';
@@ -61,10 +57,14 @@ const CustomCarousel: React.FC<CustomCarouselProps> = ({
         contentContainerStyle={{ alignItems: 'center' }}
       >
         {images.map((imageUrl, index) => (
-          <View key={index} style={{ width: screenWidth, height }}>
+          <View key={index} style={[styles.imageContainer, { width: screenWidth, height }]}>
             <Image
               source={{ uri: imageUrl }}
-              style={[styles.image, { width: screenWidth, height }, imageStyle]}
+              style={[
+                styles.image,
+                { width: screenWidth * 0.95, height: height, borderRadius: 20 },
+                imageStyle
+              ]}
             />
             <View style={styles.overlay}>
               <Text style={styles.artistText}>{`By ${displayArtistName}`}</Text>
@@ -86,18 +86,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
   },
+  imageContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
   image: {
     resizeMode: 'cover',
+    borderRadius: 20,
   },
   overlay: {
     position: 'absolute',
     bottom: 10,
-    right: 0,
+    right: 10,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     padding: 10,
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
-    width: 200,
+    borderRadius: 10,
+    width: '50%',
   },
   artistText: {
     color: 'white',

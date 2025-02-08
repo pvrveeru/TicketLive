@@ -9,6 +9,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 import Header from '../components/Header';
 import SkeletonLoader from '../components/SkeletonLoading';
+import { COLORS } from '../styles/globalstyles';
 
 interface Events {
   event: any;
@@ -123,7 +124,7 @@ const FavoritiesScreen: React.FC = () => {
     return (
       <TouchableOpacity
         key={item.eventId}
-        style={[styles.eventContainer, { backgroundColor: isDarkMode ? 'gray' : '#fff' }]}
+        style={[styles.eventContainer, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#fff' }]}
         onPress={() => handleEventPress(eventDetails.eventId)}
       >
         <View style={styles.eventDetails}>
@@ -132,8 +133,8 @@ const FavoritiesScreen: React.FC = () => {
           ) : (
             <Image source={require('../../assets/images/altimg.jpg')} style={styles.eventImage} />
           )}
-          <Text style={[styles.eventTitle, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails.title}</Text>
-          <Text style={[styles.eventType, { color: isDarkMode ? '#fff' : '#000' }]}>
+          <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.title}</Text>
+          <Text style={[styles.eventType, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>
             {eventDetails.location}
           </Text>
           <View style={styles.eventFooter}>

@@ -24,7 +24,7 @@ api.interceptors.request.use(
   async config => {
     try {
       const token = await getBearerToken();
-      console.log('token', token);
+      // console.log('token', token);
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -49,7 +49,7 @@ export const createUser = async (phoneNumber: string) => {
     return response.data.data;
   } catch (error: any) {
     console.log('Error creating user:', error.response?.data.message);
-    throw error;
+    throw error.message;
   }
 };
 
@@ -57,9 +57,9 @@ export const createUserEvent = async (userPayload: any) => {
   try {
     const response = await axios.post(avdurl1 + 'users', userPayload);
     return response.data.data;
-  } catch (error) {
-    console.log('Error creating user:', error);
-    throw error;
+  } catch (error: any) {
+    console.log('Error creating user:', error.message);
+    throw error.message;
   }
 };
 
@@ -74,11 +74,11 @@ export const validateOtp = async (phoneNumber: string, otpCode: string) => {
 
 export const createBooking = async (bookingData: any) => {
   try {
-    const response = await api.post('bookings', bookingData);
+    const response = await api.post('/bookings', bookingData);
     return response.data;
   } catch (error: any) {
     console.log('error create bookings', error.message)
-    throw error;
+    throw error.message;
   }
 };
 
@@ -89,7 +89,7 @@ export const getAllEvents = async () => {
     return response.data;
   } catch (error: any) {
     console.log('Error fetching events:', error.message);
-    throw error;
+    throw error.message;
   }
 };
 
@@ -97,21 +97,21 @@ export const getAllEventCategories = async () => {
   try {
     const response = await api.get('/event-category');
     return response.data.data.categories;
-  } catch (error) {
-    console.log('Error fetching catageories:', error);
-    throw error;
+  } catch (error: any) {
+    console.log('Error fetching catageories:', error.message);
+    throw error.message;
   }
 };
 
 // Function to fetch all events
 export const fetchEvents = async (params = {}) => {
   try {
-    const response = await api.get('events', { params });
+    const response = await api.get('/events', { params });
 
     return response.data.data;
   } catch (error: any) {
     console.log("Error fetching events:", error.message);
-    throw error;
+    throw error.message;
   }
 };
 
@@ -129,13 +129,13 @@ export const fetchFeaturedEvents = async (userId: number, limit: number = 10, of
     return response.data.data;
   } catch (error: any) {
     console.log('Error fetching featured events:', error.message);
-    throw error;
+    throw error.message;
   }
 };
 
 export const fetchPopularEvents = async (userId: number, limit: number = 10, offset: number = 0) => {
   try {
-    const response = await api.get('events', {
+    const response = await api.get('/events', {
       params: {
         userId,
         isPopular: true,
@@ -147,7 +147,7 @@ export const fetchPopularEvents = async (userId: number, limit: number = 10, off
     return response.data.data;
   } catch (error: any) {
     console.log('Error fetching popular events:', error.message);
-    throw error;
+    throw error.message;
   }
 };
 
@@ -164,7 +164,7 @@ export const fetchManualEvents = async (userId: number, limit: number = 10, offs
     return response.data.data;
   } catch (error: any) {
     console.log('Error fetching manual events:', error.message);
-    throw error;
+    throw error.message;
   }
 };
 
@@ -173,9 +173,9 @@ export const getEventById = async (eventId: number) => {
   try {
     const response = await api.get(`/events/${eventId}`);
     return response.data;
-  } catch (error) {
-    console.log('Error fetching event details:', error);
-    throw error;
+  } catch (error:any) {
+    console.log('Error fetching event details:', error.message);
+    throw error.message;
   }
 };
 
@@ -183,9 +183,9 @@ export const getSeatingOptionsByEventId = async (eventId: number) => {
   try {
     const response = await api.get(avdurl1 + `seating-options/event/${eventId}`);
     return response.data.data;
-  } catch (error) {
-    console.log('Failed to fetch seating options', error);
-    throw error;
+  } catch (error: any) {
+    console.log('Failed to fetch seating options', error.message);
+    throw error.message;
   }
 };
 
@@ -193,9 +193,9 @@ export const getAllFavouriteEvents = async (userId: number) => {
   try {
     const response = await api.get(`/favorites/user/${userId}`);
     return response.data.data;
-  } catch (error) {
-    console.log('Error fetching favorites:', error);
-    throw error;
+  } catch (error:any) {
+    console.log('Error fetching favorites:', error.message);
+    throw error.message;
   }
 };
 
@@ -220,9 +220,9 @@ export const getTicketsByBookingId = async (bookingId: number) => {
   try {
     const response = await api.get(avdurl1 + `tickets/booking/${bookingId}`);
     return response.data.data;
-  } catch (error) {
-    console.log('Error fetching tickets:', error);
-    throw error;
+  } catch (error: any) {
+    console.log('Error fetching tickets:', error.message);
+    throw error.message;
   }
 };
 
@@ -232,7 +232,7 @@ export const getNotificationsByUserId = async (userId: string) => {
     const response = await api.get(avdurl1 + `/notifications/user/${userId}`);
     return response.data.data;
   } catch (error: any) {
-    console.log('Error fetching notifications:', error);
+    console.log('Error fetching notifications:', error.message);
     throw new Error(error?.response?.data?.message || 'Failed to fetch notifications');
   }
 };
@@ -241,8 +241,8 @@ export const fetchBannerImages = async () => {
   try {
     const response = await api.get(avdurl1 + 'uploads/bannerImages');
     return response.data.images;
-  } catch (error) {
-    console.log('Error fetching banner images:', error);
+  } catch (error: any) {
+    console.log('Error fetching banner images:', error.message);
     return null;
   }
 };
@@ -251,9 +251,9 @@ export const fetchUserById = async (id: number) => {
   try {
     const response = await api.get(`/users/${id}`);
     return response.data.data;
-  } catch (error) {
-    console.log('Error fetching user by ID:', error);
-    throw error;
+  } catch (error: any) {
+    console.log('Error fetching user by ID:', error.message);
+    throw error.message;
   }
 };
 
@@ -263,9 +263,9 @@ export const getChargesByEventId = async (
   try {
     const response = await api.get(`/charges/event/${eventId}`);
     return response.data.data;
-  } catch (error) {
-    console.log('Error fetching user by ID:', error);
-    throw error;
+  } catch (error: any) {
+    console.log('Error fetching user by ID:', error.message);
+    throw error.message;
   }
 };
 
@@ -273,9 +273,9 @@ export const markEventAsFavorite = async (body: any) => {
   try {
     const response = await api.post('/favorites', body);
     return response.data;
-  } catch (error) {
-    console.log('Error marking event as favorite:', error);
-    throw error;
+  } catch (error: any) {
+    console.log('Error marking event as favorite:', error.message);
+    throw error.message;
   }
 };
 
@@ -284,8 +284,8 @@ export const markEventAsDeleteFavorite = async (userId: number, eventId: number)
     const response = await api.delete(`/favorites/user/${userId}/event/${eventId}`);
     return response.data.data;
   } catch (error: any) {
-    console.log('Error marking event as favorite delete:', error);
-    throw error;
+    console.log('Error marking event as favorite delete:', error.message);
+    throw error.message;
   }
 };
 
@@ -293,9 +293,9 @@ export const updateUserNotifications = async (userId: number, notificationsEnabl
   try {
     const response = await api.put(avdurl1 + `users/${userId}`, { notificationsEnabled });
     return response.data.data;
-  } catch (error) {
-    console.log('Error updating notifications:', error);
-    throw error;
+  } catch (error: any) {
+    console.log('Error updating notifications:', error.message);
+    throw error.message;
   }
 };
 
@@ -303,9 +303,9 @@ export const updateUserProfile = async (userId: any, userDetails: any) => {
   try {
     const response = await api.put(`/users/${userId}`, userDetails);
     return response.data.data;
-  } catch (error) {
-    console.log('Error updating userdetails:', error);
-    throw error;
+  } catch (error: any) {
+    console.log('Error updating userdetails:', error.message);
+    throw error.message;
   }
 };
 export const uploadUserProfile = async (userId: number, body: FormData) => {
@@ -319,7 +319,7 @@ export const uploadUserProfile = async (userId: number, body: FormData) => {
     return response.data.urls;
   } catch (error:any) {
     console.log('Error uploading user profile:', error);
-    throw error;
+    throw error.message;
   }
 };
 

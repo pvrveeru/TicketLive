@@ -91,6 +91,7 @@ const HomeScreen: React.FC = () => {
   const [popularEvents, setPopularEvents] = useState<EventData[]>([]);
   const [manualEvents, setManualEvents] = useState<EventData[]>([]);
   const [auserId, setUserId] = useState<number | null>(null)
+  const [eventType, setEventType] = useState<string | null>(null);
   const userData = useSelector((state: RootState) => state.userData);
   const profileImage = require('../../assets/images/icon.png');
   const profileImageUrl = userData?.profileImageUrl;
@@ -138,6 +139,7 @@ const HomeScreen: React.FC = () => {
       }
     }, [auserId])
   );
+
 
   useFocusEffect(
     React.useCallback(() => {
@@ -199,10 +201,19 @@ const HomeScreen: React.FC = () => {
     }
   };
 
+  // const navigateToExplore = (type: string) => {
+  //   navigation.navigate('Explore', { type: type });
+  // };
   const navigateToExplore = (type: string) => {
+    setEventType(type);
     navigation.navigate('Explore', { type: type });
   };
-
+  useFocusEffect(
+    React.useCallback(() => {
+      setEventType(null);
+    }, [])
+  );
+  console.log('eventType in home screen', eventType);
   const handleProfilePress = () => {
     navigation.navigate('BottomBar', { screen: 'Profile' });
   };

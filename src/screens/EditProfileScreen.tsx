@@ -20,7 +20,7 @@ const EditProfileScreen: React.FC = () => {
   const { isDarkMode } = useTheme();
   const userData = useSelector((state: RootState) => state.userData);
   const navigation = useNavigation();
-
+  const genderOptions = ['Male', 'Female', 'Other'];
   const [loading, setLoading] = useState(true);
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
@@ -31,6 +31,7 @@ const EditProfileScreen: React.FC = () => {
   const [address, setAddress] = useState<string | null>(null);
   const [state, setState] = useState<string | null>(null);
   const [city, setCity] = useState<string | null>(null);
+  const [showGenderDropdown, setShowGenderDropdown] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -94,10 +95,34 @@ const EditProfileScreen: React.FC = () => {
   if (loading) {
     return (
       <View style={styles.loader}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color={COLORS.red} />
       </View>
     );
   }
+
+  const handleSelectGender = (selectedGender: string) => {
+    setGender(selectedGender);
+    setShowGenderDropdown(false); // Close the dropdown after selection
+  };
+
+  const renderGenderDropdown = () => (
+    <ScrollView style={styles.dropdownList}>
+      {genderOptions.map((option, index) => (
+        <TouchableOpacity
+          key={index.toString()}
+          style={styles.dropdownItem}
+          onPress={() => handleSelectGender(option)}
+        >
+          <Text style={[styles.dropdownItemText, { color: isDarkMode ? '#fff' : '#000' }]}>
+            {option}
+          </Text>
+          {gender === option && (
+            <Icon name="checkmark" size={20} color="green" style={styles.checkIcon} />
+          )}
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
+  );
 
   return (
     <ScrollView style={[styles.container, isDarkMode ? styles.darkBackground : styles.lightBackground]}>
@@ -113,7 +138,14 @@ const EditProfileScreen: React.FC = () => {
       <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={emailId || ''} onChangeText={setEmailId} placeholder="Email ID" keyboardType="email-address" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
       <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={phoneNumber} onChangeText={setPhoneNumber} placeholder="Phone Number" keyboardType="phone-pad" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
       <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={dateOfBirth} onChangeText={setDateOfBirth} placeholder="Date of Birth (YYYY-MM-DD)" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
-      <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={gender} onChangeText={setGender} placeholder="Gender" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
+      <TouchableOpacity
+        style={styles.dropdown}
+        onPress={() => setShowGenderDropdown(!showGenderDropdown)}
+      >
+        <Text style={[styles.dropdownText, { color: isDarkMode ? '#fff' : '#000' }]}>{gender || 'Select Gender'}</Text>
+        <Icon name={showGenderDropdown ? 'chevron-up' : 'chevron-down'} size={20} color={isDarkMode ? '#fff' : '#333'} />
+      </TouchableOpacity>
+      {showGenderDropdown && renderGenderDropdown()}
       <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={address || ''} onChangeText={setAddress} placeholder="Address" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
       <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={city || ''} onChangeText={setCity} placeholder="City" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
       <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={state || ''} onChangeText={setState} placeholder="State" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
@@ -129,6 +161,41 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+  },
+  dropdown: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    marginBottom: 15,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+},
+dropdownText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+},
+  dropdownList: {
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 20,
+    maxHeight: 150,
+    marginBottom: 10,
+  },
+  dropdownItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,
+  },
+  dropdownItemText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  checkIcon: {
+    marginLeft: 10,
+    fontWeight: 'bold',
   },
   darkBackground: {
     backgroundColor: '#121212',

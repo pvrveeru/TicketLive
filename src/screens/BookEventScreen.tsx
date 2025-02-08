@@ -266,10 +266,11 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     layoutImage: {
-        width: '100%',
+        width: '95%',
         height: 300,
         alignSelf: 'center',
         resizeMode: 'cover',
+        borderRadius: 20,
     },
     layoutText: {
         position: 'absolute',

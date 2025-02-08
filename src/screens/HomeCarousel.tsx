@@ -8,7 +8,6 @@ const HomeCarousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   const screenWidth = Dimensions.get('window').width;
-  const screenHeight = Dimensions.get('window').height;
 
   useEffect(() => {
     const getBannerImages = async () => {
@@ -44,14 +43,12 @@ const HomeCarousel: React.FC = () => {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         style={{ width: screenWidth }}
-        contentContainerStyle={{ alignItems: 'center' }}
+        contentContainerStyle={styles.scrollViewContent}
       >
         {bannerImages?.map((imageUrl, index) => (
-          <Image
-            key={index}
-            source={{ uri: imageUrl }}
-            style={[styles.image, { width: screenWidth }]}
-          />
+          <View key={index} style={[styles.imageWrapper, { width: screenWidth }]}>
+            <Image source={{ uri: imageUrl }} style={styles.image} />
+          </View>
         ))}
       </ScrollView>
     </View>
@@ -64,11 +61,21 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: "#ccc",
+  },
+  scrollViewContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  imageWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   image: {
-    height: '100%',
+    height: 180,
+    width: '90%',
+    borderRadius: 20,
     resizeMode: 'cover',
+    alignSelf: 'center',
   },
 });
 
