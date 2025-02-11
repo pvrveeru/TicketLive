@@ -88,15 +88,21 @@ const styles = StyleSheet.create({
   cardContainer: {
     width: 250,
     borderRadius: 10,
-    overflow: 'hidden',
+    overflow: 'hidden',  // Ensure shadow is not clipped
     backgroundColor: '#fff',
     marginRight: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 2,
     marginBottom: 10,
+    borderWidth: 1, // Add border
+    borderColor: '#efefef', // Light gray border
+
+    // iOS Shadow
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 }, // Adjust height for even shadow
+    shadowOpacity: 0.25,
+    shadowRadius: 3, // Increase for softer effect
+
+    // Android Shadow
+    elevation: 3, // Higher value for stronger shadow
   },
   image: {
     width: '100%',

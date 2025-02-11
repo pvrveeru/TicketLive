@@ -398,7 +398,7 @@ const ExploreScreen = () => {
 const styles = StyleSheet.create({
   noResultsText: {
     textAlign: 'center',
-    fontSize: 18,
+    fontSize: 14,
     color: 'gray',
   },
   buttonContainer: {
@@ -410,7 +410,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginRight: 10,
     borderRadius: 5,
-    height: 40,
+    height: 30,
     paddingHorizontal: 10,
     alignItems: 'center',
     justifyContent: 'center',
@@ -420,22 +420,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#EF412B',
     marginRight: 10,
     borderRadius: 5,
-    height: 40,
+    height: 30,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
   },
   buttonText: {
     color: '#000',
-    fontSize: 16,
+    fontSize: 12,
   },
   darkbuttontext: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 12,
   },
   selectedButtontxt: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 12,
   },
   favotites: {
     position: 'absolute',
@@ -458,16 +458,16 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    height: 50,
+    height: 40,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 5,
     paddingLeft: 10,
-    fontSize: 16,
+    fontSize: 13,
   },
   eventCount: {
     marginLeft: 10,
-    fontSize: 18,
+    fontSize: 14,
     color: '#000',
     fontWeight: 'bold',
   },
