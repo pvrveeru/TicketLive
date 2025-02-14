@@ -393,6 +393,7 @@ console.log('eventDetails?.tnc', eventDetails?.tnc);
         </View>
         <SeeMoreText text={eventDetails?.tnc ?? ''} maxLength={40} />
         <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Terms & Conditions</Text>
+        <SeeMoreText text={eventDetails?.tnc ?? ""} maxLength={40} />
       </ScrollView>
       <View style={{ backgroundColor: isDarkMode ? '#000' : '#fff' }}>
         <TouchableOpacity

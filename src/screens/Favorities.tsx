@@ -135,13 +135,13 @@ const FavoritiesScreen: React.FC = () => {
           ) : (
             <Image source={require('../../assets/images/altimg.jpg')} style={styles.eventImage} />
           )}
-          <View style={{ padding: 8 }}>
-            <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.title}</Text>
-            <Text style={styles.eventDate}>{formatDate(eventDetails.eventDate)}</Text>
-            <View style={styles.locationContainer}>
-              <Ionicons name="location-sharp" size={20} color="#555" />
-              <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.location}</Text>
-            </View>
+          <View style={{padding: 8, backgroundColor: "#efefef"}}>
+          <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.title}</Text>
+          <Text style={styles.eventDate}>{formatDate(eventDetails.eventDate)}</Text>
+          <View style={styles.locationContainer}>
+            <Ionicons name="location-sharp" size={20} color="#555" />
+            <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.location}</Text>
+          </View>
           </View>
           <TouchableOpacity
             style={styles.favotites}
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
   eventImage: {
     width: '100%',
     height: 150,
-    marginBottom: 10,
+    marginBottom: 0,
   },
   eventType: {
     color: 'gray',

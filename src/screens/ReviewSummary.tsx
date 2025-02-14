@@ -199,7 +199,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
               <Text style={[styles.value, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>
                 Seats ({eventBookingDetails?.selectedClass[index]})
               </Text>
-              <Text style={[styles.label, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>
+              <Text style={[styles.label, { color: isDarkMode ? COLORS.darkTextColor : '#000'}]}>
                 {ticket} x ₹{eventBookingDetails?.prices[index].toFixed(2)}
               </Text>
               <Text style={[styles.label, { color: isDarkMode ? COLORS.darkTextColor : '#000', fontWeight: 'bold' }]}>
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
   },
   horizontalLine: {
     height: 1,
-    backgroundColor: '#efefef',
+    backgroundColor: '#ccc',
     marginVertical: 10,
     width: '100%',
   },
