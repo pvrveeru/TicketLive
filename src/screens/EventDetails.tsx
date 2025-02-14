@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
@@ -281,7 +282,8 @@ const EventDetails: React.FC = () => {
 console.log('eventDetails?.tnc', eventDetails?.tnc);
   return (
     <>
-      <ScrollView style={[styles.container, isDarkMode ? styles.dark : styles.light]}>
+    <View style={[styles.container, isDarkMode ? styles.dark : styles.light]}>
+      <ScrollView>
         {eventDetails?.galleryImages && eventDetails?.galleryImages.length > 0 ? (
           <CustomCarousel
             images={eventDetails?.galleryImages}
@@ -391,9 +393,9 @@ console.log('eventDetails?.tnc', eventDetails?.tnc);
             <Ionicons name="navigate-outline" size={24} color="white" />
           </TouchableOpacity>
         </View>
-        <SeeMoreText text={eventDetails?.tnc ?? ''} maxLength={40} />
+        {/* <SeeMoreText text={eventDetails?.tnc ?? ''} maxLength={40} /> */}
         <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Terms & Conditions</Text>
-        <SeeMoreText text={eventDetails?.tnc ?? ""} maxLength={40} />
+        <SeeMoreText text={eventDetails?.tnc ?? ''} maxLength={40} />
       </ScrollView>
       <View style={{ backgroundColor: isDarkMode ? '#000' : '#fff' }}>
         <TouchableOpacity
@@ -406,6 +408,7 @@ console.log('eventDetails?.tnc', eventDetails?.tnc);
         >
           <Text style={styles.bookButtonText}>Book Event</Text>
         </TouchableOpacity>
+      </View>
       </View>
       <Dialog isVisible={locationLoading}>
         {/* <Dialog.Loading /> */}
@@ -472,8 +475,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     paddingTop: Platform.OS === 'ios' ? 50 : 20,
-    borderWidth: 2,
-    borderColor: 'red',
   },
   loader: {
     flex: 1,
