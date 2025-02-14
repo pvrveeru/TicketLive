@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import DatePicker from 'react-native-date-picker';
@@ -8,6 +9,7 @@ import { useTheme } from '../Theme/ThemeContext';
 import { useSelector } from 'react-redux';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { Keyboard } from 'react-native';
 
 interface FormData {
     firstName: string;
@@ -59,9 +61,14 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
     const phoneNumber = userData?.phoneNumber;
 
     const { eventBookingDetails, eventId, ismanual } = route.params as RouteParams;
-    console.log('noofticketslength', eventBookingDetails?.noOfTickets);
-    const noOfTicketsLength = eventBookingDetails?.noOfTickets;
-    console.log('noofTicketsLength', noOfTicketsLength);
+    // console.log('noofticketslength', eventBookingDetails?.noOfTickets);
+    const noOfTicketsLength = eventBookingDetails?.noOfTickets.reduce(
+        (acc: number, curr: number) => acc + curr,
+        0
+    ) ?? 0;
+
+    // console.log('Total Tickets:', noOfTicketsLength);
+
     const [formData, setFormData] = useState<FormData>({
         firstName: userData?.firstName || '',
         lastName: userData?.lastName || '',
@@ -139,7 +146,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                 bookingUsers: fields.map(field => ({
                     name: field.name,
                     email: field.email,
-                    phone: field.phone,
+                    phone: field.phone.startsWith('+91') ? field.phone : `+91${field.phone}`,
                 })),
                 eventBookingDetails,
                 eventId,
@@ -178,7 +185,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                     </TouchableOpacity>
                     <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Book Event</Text>
                 </View>
-                {!ismanual && (
+                {ismanual && (
                     <Text style={{ color: isDarkMode ? 'red' : 'red', fontSize: 12, marginTop: 10 }}>Please Give Me Valid Details</Text>
                 )}
                 <Text style={[styles.Contact, { color: isDarkMode ? '#fff' : '#000' }]}>Contact Information</Text>
@@ -299,7 +306,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                 <View style={[styles.addusers, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
                     <Text style={{ color: isDarkMode ? '#fff' : '#000', fontSize: 14, paddingBottom: 10 }}>Booking Users</Text>
                     <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={addField}>
-                        <MaterialIcons name="add-circle-outline" size={20} color="green" style={{paddingBottom: 10}}/>
+                        <MaterialIcons name="add-circle-outline" size={20} color="green" style={{ paddingBottom: 10 }} />
                         <Text style={{ fontSize: 14, paddingBottom: 10, marginLeft: 5, color: isDarkMode ? '#fff' : '#000' }}>Add</Text>
                     </TouchableOpacity>
                 </View>
@@ -330,16 +337,21 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                         />
                         <TextInput
                             style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]}
-                            placeholder="Phone"
-                            value={field.phone}
+                            placeholder="Phone Number"
+                            keyboardType="numeric"
                             placeholderTextColor={isDarkMode ? '#bbb' : '#555'}
+                            maxLength={10}
+                            value={fields[index].phone}
                             onChangeText={(text) => {
                                 const updatedFields = [...fields];
                                 updatedFields[index].phone = text;
                                 setFields(updatedFields);
+                                if (text.length === 10) {
+                                    Keyboard.dismiss();
+                                }
                             }}
-                            keyboardType="phone-pad"
                         />
+
                         {fields.length > 1 && (
                             <TouchableOpacity onPress={() => removeField(field.id)}>
                                 <Icon name="remove-circle-outline" size={30} color="red" />
@@ -369,7 +381,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                             color={isDarkMode ? '#fff' : '#000'}
                         />
                     </TouchableOpacity>
-                    <Text style={[styles.checkboxText, { color: isDarkMode ? '#fff' : '#000' }, ]}>
+                    <Text style={[styles.checkboxText, { color: isDarkMode ? '#fff' : '#000' },]}>
                         I accept the Terms of Service
                     </Text>
                     {errors.termsAccepted && <Text style={styles.errorText}>{errors.termsAccepted}</Text>}

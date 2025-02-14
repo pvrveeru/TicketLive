@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, RefreshControl } from 'react-native';
@@ -96,7 +97,7 @@ const FavoritiesScreen: React.FC = () => {
       console.error('Error fetching favorite events:', error);
       setIsRefreshing(false);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -148,7 +149,7 @@ const FavoritiesScreen: React.FC = () => {
             >
               <Icon name={isFavorite ? 'heart' : 'heart-outline'} size={30} color={isFavorite ? 'red' : '#000'} />
             </TouchableOpacity>
-          
+
         </View>
       </TouchableOpacity>
     );
@@ -160,7 +161,7 @@ const FavoritiesScreen: React.FC = () => {
         title={'Welcome TicketLive'}
         profileImageUrl={userData?.profileImageUrl}
         profileImage={require('../../assets/images/icon.png')}
-        onNotificationPress={handleNotificationPress} 
+        onNotificationPress={handleNotificationPress}
         onProfilePress={handleProfilePress}/>
       <View style={[styles.main, isDarkMode ? styles.darkBackground : styles.lightBackground]}>
         <ScrollView
@@ -242,8 +243,8 @@ const styles = StyleSheet.create({
   eventDetails: {
     padding: 0,
     borderRadius: 8,
-    borderWidth: 1, // Add border
-    borderColor: '#efefef', // Light gray border
+    // borderWidth: 1, // Add border
+    // borderColor: '#efefef', // Light gray border
   },
   eventImage: {
     width: '100%',

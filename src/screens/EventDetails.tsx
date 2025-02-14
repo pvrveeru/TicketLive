@@ -164,7 +164,7 @@ const EventDetails: React.FC = () => {
   const fetchBookings = async () => {
     try {
       const data = await getBookingsByUserId(userId.toString());
-      // console.log('data.bookings', data.bookings);
+      console.log('data.bookings', data.bookings);
     } catch (error) {
       console.error('error fetching bookings', error);
     }

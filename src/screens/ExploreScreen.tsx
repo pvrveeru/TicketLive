@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
@@ -142,11 +143,11 @@ const ExploreScreen = () => {
         if (eventType === 'Featured') {
           console.log('Featured API is calling');
           data = await fetchFeaturedEvents(auserId, 10);
-          if (!data.result) setNoEventsMessage('No featured events found');
+          if (!data.result) {setNoEventsMessage('No featured events found');}
         } else if (eventType === 'Popular') {
           console.log('Popular API is calling');
           data = await fetchPopularEvents(auserId, 10);
-          if (!data.result) setNoEventsMessage('No popular events found');
+          if (!data.result) {setNoEventsMessage('No popular events found');}
         } else {
           console.log('All Events API is calling');
           data = await fetchEvents({
@@ -155,9 +156,9 @@ const ExploreScreen = () => {
             sortOrder: 'asc',
             limit: 10,
             offset: 0,
-            status: "Published",
+            status: 'Published',
           });
-          if (!data.result) setNoEventsMessage('No events found');
+          if (!data.result) {setNoEventsMessage('No events found');}
         }
       }
       setEvents(data.result);
@@ -271,15 +272,15 @@ const ExploreScreen = () => {
                   if (event?.eventId !== undefined) {
                     toggleFavorite(event.eventId);
                   } else {
-                    console.warn("Event ID is undefined");
+                    console.warn('Event ID is undefined');
                   }
                 }}
                 style={styles.favotites}
               >
                 <Ionicons
-                  name={event?.isFavorite ? "heart" : "heart-outline"}
+                  name={event?.isFavorite ? 'heart' : 'heart-outline'}
                   size={30}
-                  color={event?.isFavorite ? "red" : "#000"}
+                  color={event?.isFavorite ? 'red' : '#000'}
                 />
               </TouchableOpacity>
 
@@ -371,7 +372,7 @@ const ExploreScreen = () => {
           </ScrollView>
         </View>
         {noEventsMessage && <Text style={styles.noEventsMessage}>{noEventsMessage}</Text>}
-        <View style={{ marginBottom: '10%' }}>
+        <View style={{ marginBottom: '35%' }}>
           {loading ? (
             <ScrollView>
               {Array.from({ length: 5 }).map((_, index) => (
@@ -493,7 +494,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   eventCard: {
-    flex: 1,
     marginHorizontal: 8,
     borderRadius: 5,
     backgroundColor: '#f9f9f9',

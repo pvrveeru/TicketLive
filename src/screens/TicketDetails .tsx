@@ -57,7 +57,7 @@ const TicketDetails = () => {
 
     return date.local().format('MM-DD-YY : h:mm A');
   };
-  
+
   useEffect(() => {
     const fetchTickets = async () => {
       try {
@@ -85,7 +85,7 @@ const TicketDetails = () => {
   //   try {
   //     let ticketHtml = `
   //       <h1>Ticket Details</h1>
-  //       <img src="${Logo}" style="width:150px;"/> 
+  //       <img src="${Logo}" style="width:150px;"/>
   //       <h2>Ticket ID: ${ticket.ticketid}</h2>
   //       <p><strong>Event:</strong> ${ticket.title}</p>
   //       <p><strong>Date and Hour:</strong> ${ticket.eventdate}</p>
@@ -146,7 +146,7 @@ const TicketDetails = () => {
 
   //     let ticketHtml = `
   //       <h1>Ticket Details</h1>
-  //       <img src="${Logo}" style="width:150px;"/> 
+  //       <img src="${Logo}" style="width:150px;"/>
   //       <h2>Ticket ID: ${ticket.ticketid}</h2>
   //       <p><strong>Event:</strong> ${ticket.title}</p>
   //       <p><strong>Date and Hour:</strong> ${ticket.eventdate}</p>
@@ -183,7 +183,7 @@ const TicketDetails = () => {
     const convenienceFee = basePrice * (ticket?.conveniencefee / 100);
     const gst = basePrice * (ticket?.gstpercentage / 100);
     const totalPrice = basePrice + convenienceFee + gst;
-  
+
     try {
       let ticketHtml = `
         <div style="
@@ -285,7 +285,7 @@ const TicketDetails = () => {
           </div>
         </div>
       `;
-  
+
       const options = {
         html: ticketHtml,
         fileName: `Ticket_${ticket.ticketid}`,
@@ -293,9 +293,9 @@ const TicketDetails = () => {
         height: 500, // Adjusted height for ticket size
         width: 300, // Exact ticket width
       };
-  
+
       const file = await RNHTMLtoPDF.convert(options);
-  
+
       // Save to Downloads folder
       let downloadsDir;
       if (Platform.OS === 'ios') {
@@ -303,9 +303,9 @@ const TicketDetails = () => {
       } else {
         downloadsDir = `${RNFS.DownloadDirectoryPath}/Ticket_${ticket.ticketid}.pdf`;
       }
-  
+
       await RNFS.moveFile(file.filePath, downloadsDir);
-  
+
       Alert.alert('Download Successful!', `The ticket has been saved to:\n${downloadsDir}`);
       return downloadsDir;
     } catch (error) {
@@ -506,42 +506,42 @@ const TicketDetails = () => {
               )}
             </View>
             <View style={styles.tableContainer}>
-              <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#efefef'}]}>
+              <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor : '#efefef'}]}>
                 <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Event</Text>
                 <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{ticket.title}</Text>
               </View>
-              <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#efefef'}]}>
+              <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor : '#efefef'}]}>
                 <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Date & Time</Text>
                 <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{formatDate(ticket.eventdate || '')}</Text>
               </View>
-              <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#efefef'}]}>
+              <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor : '#efefef'}]}>
                 <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Location</Text>
                 <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{ticket.eventlocation}</Text>
               </View>
-              <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#efefef'}]}>
+              <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor : '#efefef'}]}>
                 <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Ticket No</Text>
                 <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{ticket.ticketid}</Text>
               </View>
               {ticket?.price && (
-                <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#efefef'}]}>
+                <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor : '#efefef'}]}>
                   <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Base Price</Text>
                   <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{basePrice.toFixed(2)}</Text>
                 </View>
               )}
               {ticket?.conveniencefee && (
-                <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#efefef'}]}>
+                <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor : '#efefef'}]}>
                   <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Convenience Fee ({ticket?.conveniencefee || 0}%):</Text>
                   <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{convenienceFee.toFixed(2)}</Text>
                 </View>
               )}
               {ticket?.gstpercentage && (
-                <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#efefef'}]}>
+                <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor : '#efefef'}]}>
                   <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>GST ({ticket?.gstpercentage || 0}%)</Text>
                   <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{gst.toFixed(2)}</Text>
                 </View>
               )}
               {ticket?.price && ticket?.conveniencefee && ticket?.gstpercentage && (
-                <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#efefef'}]}>
+                <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor : '#efefef'}]}>
                   <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Total Price</Text>
                   <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{totalPrice.toFixed(2)}</Text>
                 </View>
@@ -640,7 +640,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 8,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.5,
     borderBottomColor: '#efefef',
   },
   tableHeader: {

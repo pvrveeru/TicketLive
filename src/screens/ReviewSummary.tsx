@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView, ActivityIndicator } from 'react-native';
 // import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -99,7 +100,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
     setLoading(true);
     const seatingDetails = eventBookingDetails?.seatingIds.map((id: any, index: number) => ({
       seatingId: id,
-      noOfTickets: eventBookingDetails?.noOfTickets[index]
+      noOfTickets: eventBookingDetails?.noOfTickets[index],
     }));
 
     const payload = {
@@ -135,7 +136,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
     setModalVisible(false);
     navigation.navigate('BottomBar', { screen: 'Tickets' });
   };
-  console.log('charges in review screen', charges);
+  // console.log('charges in review screen', charges);
   return (
     <View style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>
       <View style={styles.headerContainer}>
@@ -145,7 +146,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
         <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Review Summary</Text>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={[styles.eventDetailsContainer, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#fff' }]}>
+        <View style={[styles.eventDetailsContainer, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#efefef' }]}>
           <Image source={{ uri: eventDetails?.thumbUrl }} style={styles.eventImage} />
           <View>
             <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails?.title}</Text>
@@ -154,7 +155,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
           </View>
         </View>
 
-        <View style={[styles.contactInfoContainer, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#fff' }]}>
+        <View style={[styles.contactInfoContainer, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#efefef' }]}>
           <Text style={[styles.infoTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Contact Information</Text>
           <View style={styles.contactRow}>
             <Text style={[styles.value, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Full Name:</Text>
@@ -171,7 +172,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
             <Text style={[styles.label, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{formData.email}</Text>
           </View>
         </View>
-        <View style={[styles.ticketDetailsContainer, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#fff' }]}>
+        <View style={[styles.ticketDetailsContainer, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#efefef' }]}>
           <Text style={styles.infoTitle}>Ticket Details</Text>
           {/* {eventBookingDetails?.zoneNames.map((zone: string, index: number) => (
             <View key={index} style={styles.ticketRow}>
@@ -180,19 +181,33 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
             </View>
           ))} */}
 
-          {eventBookingDetails?.noOfTickets.map((ticket: number, index: number) => (
+          {/* {eventBookingDetails?.noOfTickets.map((ticket: number, index: number) => (
             <View key={index} style={styles.ticketRow}>
               <Text style={[styles.value, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Seats ({eventBookingDetails?.selectedClass[index]}):</Text>
               <Text style={[styles.label, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{ticket}</Text>
             </View>
-          ))}
+          ))} */}
 
-          {eventBookingDetails?.prices.map((price: number, index: number) => (
+          {/* {eventBookingDetails?.prices.map((price: number, index: number) => (
             <View key={index} style={styles.ticketRow}>
               <Text style={[styles.value, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Price:</Text>
               <Text style={[styles.label, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>₹{price.toFixed(2)}</Text>
             </View>
+          ))} */}
+          {eventBookingDetails?.noOfTickets.map((ticket: number, index: number) => (
+            <View key={index} style={[styles.ticketRow, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
+              <Text style={[styles.value, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>
+                Seats ({eventBookingDetails?.selectedClass[index]})
+              </Text>
+              <Text style={[styles.label, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>
+                {ticket} x ₹{eventBookingDetails?.prices[index].toFixed(2)}
+              </Text>
+              <Text style={[styles.label, { color: isDarkMode ? COLORS.darkTextColor : '#000', fontWeight: 'bold' }]}>
+                ₹{(ticket * eventBookingDetails?.prices[index]).toFixed(2)}
+              </Text>
+            </View>
           ))}
+
           <View style={styles.horizontalLine} />
           <View style={styles.ticketRow}>
             <Text style={[styles.value, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Base Price:</Text>

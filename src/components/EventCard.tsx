@@ -92,8 +92,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     marginRight: 15,
     marginBottom: 15,
-    borderWidth: 1, // Add border
-    borderColor: '#efefef', // Light gray border
+    // borderWidth: 1, // Add border
+    // borderColor: '#efefef', // Light gray border
 
     // iOS Shadow
     shadowColor: '#000',

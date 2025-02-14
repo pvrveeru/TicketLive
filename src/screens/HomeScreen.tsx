@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
@@ -148,7 +149,7 @@ const HomeScreen: React.FC = () => {
       if (auserId !== null) {
         fetchEventData(fetchFeaturedEvents, setFeaturedEvents);
         fetchEventData(fetchPopularEvents, setPopularEvents);
-        fetchEventData(fetchManualEvents, setManualEvents);
+        // fetchEventData(fetchManualEvents, setManualEvents);
       }
     }, [auserId])
   );
@@ -163,7 +164,7 @@ const HomeScreen: React.FC = () => {
     // Fetch events on mount
     fetchEventData(fetchFeaturedEvents, setFeaturedEvents);
     fetchEventData(fetchPopularEvents, setPopularEvents);
-    fetchEventData(fetchManualEvents, setManualEvents);
+    // fetchEventData(fetchManualEvents, setManualEvents);
   }, []);
 
   const fetchEventData = async (fetchFunction: Function, setEvents: Function) => {
@@ -194,7 +195,7 @@ const HomeScreen: React.FC = () => {
       await Promise.all([
         fetchEventData(fetchFeaturedEvents, setFeaturedEvents),
         fetchEventData(fetchPopularEvents, setPopularEvents),
-        fetchEventData(fetchManualEvents, setManualEvents),
+        // fetchEventData(fetchManualEvents, setManualEvents),
       ]);
     } catch (error) {
       console.error('Error refreshing events:', error);
