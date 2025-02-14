@@ -135,7 +135,7 @@ const FavoritiesScreen: React.FC = () => {
           ) : (
             <Image source={require('../../assets/images/altimg.jpg')} style={styles.eventImage} />
           )}
-          <View style={{padding: 8}}>
+          <View style={{padding: 8, backgroundColor: "#efefef"}}>
           <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.title}</Text>
           <Text style={styles.eventDate}>{formatDate(eventDetails.eventDate)}</Text>
           <View style={styles.locationContainer}>
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
   eventImage: {
     width: '100%',
     height: 150,
-    marginBottom: 10,
+    marginBottom: 0,
   },
   eventType: {
     color: 'gray',
