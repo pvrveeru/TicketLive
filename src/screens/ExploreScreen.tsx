@@ -265,7 +265,7 @@ const ExploreScreen = () => {
               <Text style={styles.eventDate}>{formatDate(event?.eventDate || '')}</Text>
               <View style={styles.locationContainer}>
                               <Ionicons name="location-sharp" size={20} color="#555" />
-                              <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.location}</Text>
+                              <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.location}, {event?.city}</Text>
                               </View>
               <TouchableOpacity
                 onPress={() => {
@@ -516,6 +516,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#777',
     marginBottom: 10,
+    width: '80%',
   },
   eventDate: {
     marginTop: 4,

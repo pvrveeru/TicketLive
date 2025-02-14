@@ -140,7 +140,7 @@ const FavoritiesScreen: React.FC = () => {
           <Text style={styles.eventDate}>{formatDate(eventDetails.eventDate)}</Text>
           <View style={styles.locationContainer}>
             <Ionicons name="location-sharp" size={20} color="#555" />
-            <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.location}</Text>
+            <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.location}, {eventDetails.city}</Text>
           </View>
           </View>
           <TouchableOpacity
@@ -271,6 +271,8 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 14,
     color: '#777',
+    width: '80%',
+    marginBottom: 10,
   },
   eventDate: {
     marginTop: 4,
