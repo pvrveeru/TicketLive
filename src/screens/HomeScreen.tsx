@@ -286,7 +286,6 @@ const HomeScreen: React.FC = () => {
 
   return (
     <>
-    {/* home heDER */}
     <Header
      title={'Welcome TicketLive'}
     //  profileImageUrl={userData?.profileImageUrl}
