@@ -280,8 +280,8 @@ const EventDetails: React.FC = () => {
   // };
 
   return (
-    <>
-      <ScrollView style={[styles.container, isDarkMode ? styles.dark : styles.light]}>
+    <> <View style={[styles.container, isDarkMode ? styles.dark : styles.light]}>
+      <ScrollView>
         {eventDetails?.galleryImages && eventDetails?.galleryImages.length > 0 ? (
           <CustomCarousel
             images={eventDetails?.galleryImages}
@@ -348,7 +348,7 @@ const EventDetails: React.FC = () => {
           </View>
         </View>
         <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>About Event</Text>
-        <SeeMoreText text={eventDetails?.description ?? ""} maxLength={40} />
+        <SeeMoreText text={eventDetails?.description ?? ""} maxLength={70} />
 
         <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Location</Text>
         <View>
@@ -392,7 +392,7 @@ const EventDetails: React.FC = () => {
           </TouchableOpacity>
         </View>
         <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Terms & Conditions</Text>
-        <SeeMoreText text={eventDetails?.tnc ?? ""} maxLength={40} />
+        <SeeMoreText text={eventDetails?.tnc ?? ""} maxLength={70} />
       </ScrollView>
       <View style={{ backgroundColor: isDarkMode ? '#000' : '#fff' }}>
         <TouchableOpacity
@@ -405,7 +405,7 @@ const EventDetails: React.FC = () => {
         >
           <Text style={styles.bookButtonText}>Book Event</Text>
         </TouchableOpacity>
-      </View>
+      </View></View>
       <Dialog isVisible={locationLoading}>
         {/* <Dialog.Loading /> */}
         <ActivityIndicator
