@@ -57,9 +57,11 @@ const BottomBar = () => {
                 tabBarIcon: ({ focused, color, size }) =>
                     getTabBarIcon(route.name, focused, color, size),
                 tabBarActiveTintColor: isDarkMode ? '#EF412B' : '#EF412B',
-                tabBarInactiveTintColor: isDarkMode ? '#A6A6A6' : '#26276C',
+                tabBarInactiveTintColor: isDarkMode ? '#fff' : '#26276C',
                 tabBarStyle: {
-                    backgroundColor: isDarkMode ? '#333' : '#FFF',
+                    backgroundColor: isDarkMode ? '#000' : '#FFF',
+                    paddingTop: 5,
+                    height: 60,
                 },
                 headerShown: false,
                 tabBarHideOnKeyboard: true,
