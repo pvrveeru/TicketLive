@@ -8,7 +8,7 @@ interface SeeMoreTextProps {
   maxLength?: number;
 }
 
-const SeeMoreText: React.FC<SeeMoreTextProps> = ({ text, maxLength = 40 }) => {
+const SeeMoreText: React.FC<SeeMoreTextProps> = ({ text, maxLength = 70 }) => {
   const { isDarkMode } = useTheme();
   const [expanded, setExpanded] = useState(false);
 
