@@ -287,11 +287,9 @@ const HomeScreen: React.FC = () => {
   return (
     <>
     <Header
-     title={'Welcome TicketLive'}
-    //  profileImageUrl={userData?.profileImageUrl}
-     profileImage={require('../../assets/images/icon.png')}
-     onNotificationPress={handleNotificationPress}
-     onProfilePress={handleProfilePress}/>
+        profileImage={require('../../assets/images/ticketliv_logo.png')}
+        onNotificationPress={handleNotificationPress}
+        />
     <ScrollView style={[styles.container, isDarkMode ? styles.darkBackground : styles.lightBackground]}
       refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}>
       {/* <View style={styles.header}>

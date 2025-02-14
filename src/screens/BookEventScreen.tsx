@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
         flex: 1,
         // padding: 16,
         backgroundColor: '#f9f9f9',
-        paddingTop: Platform.OS === 'ios' ? 50 : 20,
+        paddingTop: Platform.OS === 'ios' ? 50 : 5,
     },
     header: {
         flexDirection: 'row',
@@ -349,14 +349,15 @@ const styles = StyleSheet.create({
         
     },
     zoneName: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold',
         color: '#000',
     },
     zonePrice: {
-        fontSize: 16,
+        fontSize: 14,
         color: '#333',
         marginTop: 4,
+        fontWeight: 'bold',
     },
     zoneCapacity: {
         fontSize: 14,
@@ -398,9 +399,9 @@ const styles = StyleSheet.create({
         backgroundColor: COLORS.red,
         padding: 16,
         alignItems: 'center',
-        borderRadius: 20,
-        marginBottom: 20,
-        width: '90%',
+        borderRadius: 0,
+        marginVertical: 5,
+        width: '100%',
         alignSelf: 'center',
     },
     continueButtonText: {

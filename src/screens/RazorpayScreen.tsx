@@ -25,7 +25,7 @@ const RazorpayScreen: React.FC<RazorpayProps> = ({
   const handlePayment = () => {
     const options = {
       description,
-      image: 'https://your-logo-url.com/logo.png',
+      image: 'https://admin.ticketliv.com/static/media/logo.f154181323fd2ec75c2d.png',
       currency,
       key: 'rzp_test_yourapikey', // Replace with your Razorpay Key ID
       amount: amount * 100, // Amount in paise

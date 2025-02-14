@@ -318,11 +318,9 @@ const ExploreScreen = () => {
   return (
     <>
       <Header
-        title={'Welcome TicketLive'}
-        profileImageUrl={userData?.profileImageUrl}
-        profileImage={require('../../assets/images/icon.png')}
+        profileImage={require('../../assets/images/ticketliv_logo.png')}
         onNotificationPress={handleNotificationPress}
-        onProfilePress={handleProfilePress} />
+        />
       <View style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>
         {/* <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Explore Events</Text> */}
         <View style={styles.header}>
@@ -480,11 +478,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     paddingLeft: 10,
-    fontSize: 12,
+    fontSize: 14,
   },
   eventCount: {
     marginLeft: 0,
-    fontSize: 12,
+    fontSize: 14,
     color: '#000',
     fontWeight: 'bold',
   },
@@ -499,6 +497,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9',
     overflow: 'hidden',
     elevation: 2,
+    width: '95%',
   },
   eventImage: {
     width: '100%',
@@ -509,18 +508,20 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   eventTitle: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   eventDescription: {
     marginTop: 4,
-    fontSize: 13,
+    fontSize: 14,
     color: '#777',
+    marginBottom: 10,
   },
   eventDate: {
     marginTop: 4,
-    fontSize: 12,
+    fontSize: 14,
     color: 'black',
+    fontWeight: 'bold',
   },
   noEventsMessage: {
     fontSize: 18,

@@ -426,10 +426,9 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     headerText: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
-        flex: 1,
-        textAlign: 'center',
+        marginLeft: 20,
     },
     input: {
         height: 40,
@@ -440,7 +439,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         justifyContent: 'center',
         color: 'black',
-        fontSize: 12,
+        fontSize: 14,
     },
     dobText: {
         fontSize: 16,
@@ -490,14 +489,14 @@ const styles = StyleSheet.create({
         marginRight: 8,
     },
     checkboxText: {
-        fontSize: 13,
+        fontSize: 14,
     },
     button: {
         backgroundColor: COLORS.red,
         paddingVertical: 12,
-        borderRadius: 20,
+        borderRadius: 0,
         alignItems: 'center',
-        marginHorizontal: 20,
+        marginHorizontal: 0,
         marginVertical: 5,
     },
     disabledButton: {

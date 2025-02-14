@@ -313,20 +313,21 @@ console.log('eventDetails?.tnc', eventDetails?.tnc);
               </Text>
             </View>
 
-            <View style={styles.row}>
-              <FontAwesome name="clock-o" size={20} color="gray" />
-              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.duration}</Text>
-            </View>
+            
           </View>
 
           <View style={styles.row}>
             <Ionicons name="location-outline" size={20} color="gray" />
-            <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.location}, {eventDetails?.city}, {eventDetails?.state}</Text>
+            <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000', flexWrap: 'wrap' }]}>{eventDetails?.location}, {eventDetails?.city}</Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
             <View style={styles.row}>
               <Ionicons name="language-outline" size={20} color="gray" />
               <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.language}</Text>
+            </View>
+            <View style={styles.row}>
+              <FontAwesome name="clock-o" size={20} color="gray" />
+              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.duration}</Text>
             </View>
           </View>
         </View>
@@ -350,7 +351,7 @@ console.log('eventDetails?.tnc', eventDetails?.tnc);
           </View>
         </View>
         <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>About Event</Text>
-        <SeeMoreText text={eventDetails?.description ?? ''} maxLength={70} />
+        <SeeMoreText text={eventDetails?.description ?? ''} maxLength={60} />
 
         <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Location</Text>
         <View>
@@ -395,7 +396,7 @@ console.log('eventDetails?.tnc', eventDetails?.tnc);
         </View>
         {/* <SeeMoreText text={eventDetails?.tnc ?? ''} maxLength={40} /> */}
         <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Terms & Conditions</Text>
-        <SeeMoreText text={eventDetails?.tnc ?? ''} maxLength={70} />
+        <SeeMoreText text={eventDetails?.tnc ?? ''} maxLength={60} />
       </ScrollView>
       <View style={{ backgroundColor: isDarkMode ? '#000' : '#fff' }}>
         <TouchableOpacity
@@ -461,8 +462,8 @@ const styles = StyleSheet.create({
     padding: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
-    marginHorizontal: 20,
+    borderRadius: 0,
+    marginHorizontal: 0,
     marginVertical: 5,
   },
   bookButtonText: {
@@ -473,7 +474,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingTop: Platform.OS === 'ios' ? 50 : 20,
+    paddingTop: Platform.OS === 'ios' ? 50 : 5,
   },
   loader: {
     flex: 1,
@@ -512,7 +513,7 @@ const styles = StyleSheet.create({
   },
   text: {
     marginLeft: 10,
-    fontSize: 13,
+    fontSize: 14,
     color: 'gray',
   },
   actionButtons: {
@@ -547,6 +548,7 @@ const styles = StyleSheet.create({
     color: 'gray',
     marginHorizontal: 20,
     lineHeight: 22,
+    
   },
   mapPlaceholder: {
     height: 150,

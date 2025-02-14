@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   location: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#555',
     marginLeft: 5,
     width: '80%',

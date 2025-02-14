@@ -158,11 +158,9 @@ const FavoritiesScreen: React.FC = () => {
   return (
     <>
       <Header
-        title={'Welcome TicketLive'}
-        profileImageUrl={userData?.profileImageUrl}
-        profileImage={require('../../assets/images/icon.png')}
+        profileImage={require('../../assets/images/ticketliv_logo.png')}
         onNotificationPress={handleNotificationPress}
-        onProfilePress={handleProfilePress} />
+        />
       <View style={[styles.main, isDarkMode ? styles.darkBackground : styles.lightBackground]}>
         <ScrollView
           contentContainerStyle={styles.container}
@@ -212,7 +210,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: 0,
   },
   darkBackground: {
     backgroundColor: '#121212',
@@ -261,7 +259,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   eventTitle: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   locationContainer: {
@@ -271,13 +269,14 @@ const styles = StyleSheet.create({
   },
   eventDescription: {
     marginTop: 4,
-    fontSize: 13,
+    fontSize: 14,
     color: '#777',
   },
   eventDate: {
     marginTop: 4,
-    fontSize: 12,
+    fontSize: 14,
     color: 'black',
+    fontWeight: 'bold',
   },
   favoriteIconContainer: {
     padding: 5,

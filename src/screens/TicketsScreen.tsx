@@ -153,12 +153,10 @@ const TicketsScreen = () => {
   // console.log('upcomingBookings', upcomingBookings);
   return (
     <>
-      <Header
-        title={'Welcome TicketLive'}
-        profileImageUrl={userData?.profileImageUrl}
-        profileImage={require('../../assets/images/icon.png')}
+       <Header
+        profileImage={require('../../assets/images/ticketliv_logo.png')}
         onNotificationPress={handleNotificationPress}
-        onProfilePress={handleProfilePress} />
+        />
       <View style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>
         <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>My Tickets</Text>
         <View style={styles.tabBar}>
@@ -209,7 +207,7 @@ const TicketsScreen = () => {
 
 const styles = StyleSheet.create({
   headerText: {
-    fontSize: 13,
+    fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
   },

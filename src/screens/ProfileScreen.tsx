@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     // paddingTop: 5,
-    paddingTop: Platform.OS === 'ios' ? 50 : 20,
+    paddingTop: Platform.OS === 'ios' ? 50 : 10,
     
   },
   profileTop: {
@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   headerTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
     marginTop: 10,
@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     flex: 1,
-    fontSize: 13,
+    fontSize: 15,
   },
   notificationSwitch: {
     marginLeft: 'auto',

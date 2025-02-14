@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     columnGap: 20,
   },
   headerText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   horizontalLine: {
