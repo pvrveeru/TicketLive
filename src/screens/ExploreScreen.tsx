@@ -241,7 +241,7 @@ const ExploreScreen = () => {
       );
     }
   };
-
+// searhpage
   const handleNotificationPress = () => {
     navigation.navigate('Notification');
   };
