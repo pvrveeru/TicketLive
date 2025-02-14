@@ -37,7 +37,7 @@ const HelpCenterScreen = () => {
 
       <Text style={[styles.subHeader, { color: isDarkMode ? '#fff' : '#000', textAlign: 'center' }]}>Contact Support</Text>
       <TouchableOpacity style={styles.supportButton}>
-        <Text style={[styles.supportText, { color: isDarkMode ? '#fff' : '#000' }]}>Email Us: support@eventapp.com</Text>
+        <Text style={[styles.supportText, { color: isDarkMode ? '#fff' : '#000' }]}>Email Us: support@ticketliv.com</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.supportButton}>
         <Text style={[styles.supportText, { color: isDarkMode ? '#fff' : '#000' }]}>Call Us: +91 98765 43210</Text>
