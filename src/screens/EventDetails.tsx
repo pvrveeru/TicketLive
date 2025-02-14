@@ -350,7 +350,7 @@ console.log('eventDetails?.tnc', eventDetails?.tnc);
           </View>
         </View>
         <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>About Event</Text>
-        <SeeMoreText text={eventDetails?.description ?? ''} maxLength={40} />
+        <SeeMoreText text={eventDetails?.description ?? ''} maxLength={70} />
 
         <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Location</Text>
         <View>
@@ -395,7 +395,7 @@ console.log('eventDetails?.tnc', eventDetails?.tnc);
         </View>
         {/* <SeeMoreText text={eventDetails?.tnc ?? ''} maxLength={40} /> */}
         <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Terms & Conditions</Text>
-        <SeeMoreText text={eventDetails?.tnc ?? ''} maxLength={40} />
+        <SeeMoreText text={eventDetails?.tnc ?? ''} maxLength={70} />
       </ScrollView>
       <View style={{ backgroundColor: isDarkMode ? '#000' : '#fff' }}>
         <TouchableOpacity
