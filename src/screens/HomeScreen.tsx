@@ -14,6 +14,7 @@ import { useTheme } from '../Theme/ThemeContext';
 import { COLORS } from '../styles/globalstyles';
 import HomeCarousel from './HomeCarousel';
 import { getUserData } from '../Redux/Actions';
+import Header from '../components/Header';
 
 
 type EventData = {
@@ -284,16 +285,23 @@ const HomeScreen: React.FC = () => {
   );
 
   return (
+    <>
+    <Header 
+     title={'Welcome TicketLive'}
+    //  profileImageUrl={userData?.profileImageUrl}
+     profileImage={require('../../assets/images/icon.png')}
+     onNotificationPress={handleNotificationPress}
+     onProfilePress={handleProfilePress}/>
     <ScrollView style={[styles.container, isDarkMode ? styles.darkBackground : styles.lightBackground]}
       refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <TouchableOpacity onPress={handleProfilePress} style={styles.profile}>
-          {/* {profileImageUrl ? (
+          {profileImageUrl ? (
             <Image source={{ uri: profileImageUrl }} style={styles.profileImage} />
           ) : (
            {userName ? userName : null}
             <Image source={profileImage} style={styles.profileImage} />
-          )} */}
+          )}
           <Image source={profileImage} style={styles.profileImage} />
           <View>
             <Text style={isDarkMode ? styles.darkText : styles.welcome}>Welcome</Text>
@@ -303,7 +311,7 @@ const HomeScreen: React.FC = () => {
         <TouchableOpacity style={styles.notificationIcon} onPress={handleNotificationPress}>
           <MaterialCommunityIcons name="bell-badge-outline" style={[styles.socialIcon, isDarkMode ? styles.darkIcon : styles.lightIcon]} />
         </TouchableOpacity>
-      </View>
+      </View> */}
       <HomeCarousel />
       <View style={{ marginBottom: 40 }}>
         {renderEventSection('Featured Events', featuredEvents, 'Featured')}
@@ -311,6 +319,7 @@ const HomeScreen: React.FC = () => {
         {/* {renderEventSection('Manual Events', manualEvents, 'Manual')} */}
       </View>
     </ScrollView>
+    </>
   );
 };
 

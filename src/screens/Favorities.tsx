@@ -112,9 +112,9 @@ const FavoritiesScreen: React.FC = () => {
     }
   };
 
- const formatDate = (dateString: string) => {
-     return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
-   };
+  const formatDate = (dateString: string) => {
+    return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
+  };
 
   const handleEventPress = (eventId: number) => {
     navigation.navigate('EventDetails', { eventId });
@@ -135,20 +135,20 @@ const FavoritiesScreen: React.FC = () => {
           ) : (
             <Image source={require('../../assets/images/altimg.jpg')} style={styles.eventImage} />
           )}
-          <View style={{padding: 8}}>
-          <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.title}</Text>
-          <Text style={styles.eventDate}>{formatDate(eventDetails.eventDate)}</Text>
-          <View style={styles.locationContainer}>
-            <Ionicons name="location-sharp" size={20} color="#555" />
-            <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.location}</Text>
+          <View style={{ padding: 8 }}>
+            <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.title}</Text>
+            <Text style={styles.eventDate}>{formatDate(eventDetails.eventDate)}</Text>
+            <View style={styles.locationContainer}>
+              <Ionicons name="location-sharp" size={20} color="#555" />
+              <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.location}</Text>
+            </View>
           </View>
-          </View>
-         <TouchableOpacity
-              style={styles.favotites}
-              onPress={() => handleRemoveFavorite(eventDetails.eventId)}
-            >
-              <Icon name={isFavorite ? 'heart' : 'heart-outline'} size={30} color={isFavorite ? 'red' : '#000'} />
-            </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.favotites}
+            onPress={() => handleRemoveFavorite(eventDetails.eventId)}
+          >
+            <Icon name={isFavorite ? 'heart' : 'heart-outline'} size={30} color={isFavorite ? 'red' : '#000'} />
+          </TouchableOpacity>
 
         </View>
       </TouchableOpacity>
@@ -162,7 +162,7 @@ const FavoritiesScreen: React.FC = () => {
         profileImageUrl={userData?.profileImageUrl}
         profileImage={require('../../assets/images/icon.png')}
         onNotificationPress={handleNotificationPress}
-        onProfilePress={handleProfilePress}/>
+        onProfilePress={handleProfilePress} />
       <View style={[styles.main, isDarkMode ? styles.darkBackground : styles.lightBackground]}>
         <ScrollView
           contentContainerStyle={styles.container}
@@ -185,7 +185,7 @@ const FavoritiesScreen: React.FC = () => {
           )} */}
           {loading ? (
             Array.from({ length: 5 }).map((_, index) => (
-              <View key={index} style={{marginBottom: 10}}>
+              <View key={index} style={{ marginBottom: 10 }}>
                 <SkeletonLoader width="100%" height={200} borderRadius={10} />
               </View>
 

@@ -227,14 +227,14 @@ const EventDetails: React.FC = () => {
   };
 
   const navigateToEmail = () => {
-    const email = "support@ticketliv.com";
-    const subject = "Support Request";
-    const body = "Hello, I need help with...";
+    const email = 'support@ticketliv.com';
+    const subject = 'Support Request';
+    const body = 'Hello, I need help with...';
 
     const mailtoURL = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
     Linking.openURL(mailtoURL).catch((err) =>
-      console.error("Failed to open email client", err)
+      console.error('Failed to open email client', err)
     );
   };
 
@@ -278,7 +278,7 @@ const EventDetails: React.FC = () => {
   //     Linking.openURL(url);
   //   }
   // };
-
+console.log('eventDetails?.tnc', eventDetails?.tnc);
   return (
     <>
       <ScrollView style={[styles.container, isDarkMode ? styles.dark : styles.light]}>
@@ -310,7 +310,7 @@ const EventDetails: React.FC = () => {
                 {moment(eventDetails?.eventDate).format('hh:mm A')}
               </Text>
             </View>
-            
+
             <View style={styles.row}>
               <FontAwesome name="clock-o" size={20} color="gray" />
               <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.duration}</Text>
@@ -343,12 +343,12 @@ const EventDetails: React.FC = () => {
               <Ionicons name="mail-outline" size={24} color="white" />
             </TouchableOpacity> */}
             <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
-              <Ionicons name={isFavorite ? "heart" : "heart-outline"} size={30} color={isFavorite ? "red" : "#888"} />
+              <Ionicons name={isFavorite ? 'heart' : 'heart-outline'} size={30} color={isFavorite ? 'red' : '#888'} />
             </TouchableOpacity>
           </View>
         </View>
         <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>About Event</Text>
-        <SeeMoreText text={eventDetails?.description ?? ""} maxLength={50} />
+        <SeeMoreText text={eventDetails?.description ?? ''} maxLength={40} />
 
         <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Location</Text>
         <View>
@@ -391,8 +391,8 @@ const EventDetails: React.FC = () => {
             <Ionicons name="navigate-outline" size={24} color="white" />
           </TouchableOpacity>
         </View>
+        <SeeMoreText text={eventDetails?.tnc ?? ''} maxLength={40} />
         <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Terms & Conditions</Text>
-        <SeeMoreText text={eventDetails?.tnc ?? ""} maxLength={70} />
       </ScrollView>
       <View style={{ backgroundColor: isDarkMode ? '#000' : '#fff' }}>
         <TouchableOpacity
@@ -471,6 +471,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     paddingTop: Platform.OS === 'ios' ? 50 : 20,
+    borderWidth: 2,
+    borderColor: 'red',
   },
   loader: {
     flex: 1,
