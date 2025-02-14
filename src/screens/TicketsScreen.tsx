@@ -209,7 +209,7 @@ const TicketsScreen = () => {
 
 const styles = StyleSheet.create({
   headerText: {
-    fontSize: 20,
+    fontSize: 13,
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -236,9 +236,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     shadowColor: '#000',
     shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 1 },
     shadowRadius: 4,
     elevation: 3,
+    borderWidth: 1, // Add border
+    borderColor: '#efefef', // Light gray border
   },
   title: {
     fontSize: 16,

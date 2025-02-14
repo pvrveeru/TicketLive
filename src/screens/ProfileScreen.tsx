@@ -235,7 +235,7 @@ const ProfileScreen = () => {
         }
       }}
     >
-      <Icon name={icon} size={24} color={isDarkMode ? '#fff' : '#333'} style={styles.optionIcon} />
+      <Icon name={icon} size={20} color={isDarkMode ? '#fff' : '#333'} style={styles.optionIcon} />
       <Text style={[styles.optionText, { color: isDarkMode ? '#fff' : '#333' }]}>{title}</Text>
       {index === 2 && (
         <CustomSwitch value={isNotificationsEnabled} onChange={() => openNotificationModal(!isNotificationsEnabled)} />
@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
     marginTop: 10,
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: 'bold',
     marginBottom: 10,
   },
@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 13,
   },
   notificationSwitch: {
     marginLeft: 'auto',
@@ -434,7 +434,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 14,
     marginBottom: 10,
   },
   modalButton: {
@@ -447,7 +447,7 @@ const styles = StyleSheet.create({
   },
   modalButtonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 14,
   },
 });
 

@@ -495,7 +495,7 @@ const TicketDetails = () => {
           <View key={index} style={[styles.ticketCard, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#fff' }]}>
             <View style={styles.qrContainer}>
               <TouchableOpacity style={styles.share} onPress={() => shareTicketPDF(ticket)}>
-                <Icon name="share-social-outline" size={30} color={isDarkMode ? COLORS.darkTextColor : '#333'} />
+                <Icon name="share-social-outline" size={20} color={isDarkMode ? COLORS.darkTextColor : '#333'} />
               </TouchableOpacity>
               {ticket.qrcode ? (
                 <Image source={{ uri: ticket.qrcode }} style={styles.qrCode} />
@@ -506,42 +506,42 @@ const TicketDetails = () => {
               )}
             </View>
             <View style={styles.tableContainer}>
-              <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#fofofo'}]}>
+              <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#efefef'}]}>
                 <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Event</Text>
                 <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{ticket.title}</Text>
               </View>
-              <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#fofofo'}]}>
+              <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#efefef'}]}>
                 <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Date & Time</Text>
                 <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{formatDate(ticket.eventdate || '')}</Text>
               </View>
-              <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#fofofo'}]}>
+              <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#efefef'}]}>
                 <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Location</Text>
                 <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{ticket.eventlocation}</Text>
               </View>
-              <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#fofofo'}]}>
+              <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#efefef'}]}>
                 <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Ticket No</Text>
                 <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{ticket.ticketid}</Text>
               </View>
               {ticket?.price && (
-                <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#fofofo'}]}>
+                <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#efefef'}]}>
                   <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Base Price</Text>
                   <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{basePrice.toFixed(2)}</Text>
                 </View>
               )}
               {ticket?.conveniencefee && (
-                <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#fofofo'}]}>
+                <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#efefef'}]}>
                   <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Convenience Fee ({ticket?.conveniencefee || 0}%):</Text>
                   <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{convenienceFee.toFixed(2)}</Text>
                 </View>
               )}
               {ticket?.gstpercentage && (
-                <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#fofofo'}]}>
+                <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#efefef'}]}>
                   <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>GST ({ticket?.gstpercentage || 0}%)</Text>
                   <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{gst.toFixed(2)}</Text>
                 </View>
               )}
               {ticket?.price && ticket?.conveniencefee && ticket?.gstpercentage && (
-                <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#fofofo'}]}>
+                <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor: '#efefef'}]}>
                   <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Total Price</Text>
                   <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{totalPrice.toFixed(2)}</Text>
                 </View>
@@ -566,10 +566,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 10,
-    paddingVertical: 20,
+    paddingVertical: 10,
   },
   headerText: {
-    fontSize: 22,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
   },
@@ -641,17 +641,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: '#efefef',
   },
   tableHeader: {
-    fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 13,
     color: '#555',
     flex: 1,
   },
   tableCell: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#333',
+    fontWeight: 'bold',
     flex: 2,
     textAlign: 'right', // Aligns content to the right for better readability
   },

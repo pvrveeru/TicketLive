@@ -66,7 +66,7 @@ const EventCard: React.FC<EventCardProps> = ({
             <Text style={[styles.dateTime, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{formatDate(dateTime || '')}</Text>
             <View style={styles.rowContainer}>
               <View style={styles.locationContainer}>
-                <Ionicons name="location-sharp" size={25} color="#555" />
+                <Ionicons name="location-sharp" size={20} color="#555" />
                 <Text style={[styles.location, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{location}</Text>
               </View>
               <TouchableOpacity onPress={onFavoritePress}>
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',  // Ensure shadow is not clipped
     backgroundColor: '#fff',
     marginRight: 15,
-    marginBottom: 10,
+    marginBottom: 15,
     borderWidth: 1, // Add border
     borderColor: '#efefef', // Light gray border
 
@@ -115,13 +115,13 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   title: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 5,
   },
   dateTime: {
-    fontSize: 16,
+    fontSize: 14,
     color: COLORS.red,
     marginBottom: 5,
     fontWeight: 'bold',
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   location: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#555',
     marginLeft: 5,
     width: '80%',

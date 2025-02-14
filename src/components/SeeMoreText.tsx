@@ -28,7 +28,7 @@ const SeeMoreText: React.FC<SeeMoreTextProps> = ({ text, maxLength = 70 }) => {
 
 const styles = StyleSheet.create({
   text: {
-    fontSize: 16,
+    fontSize: 13,
     color: "#333",
     lineHeight: 22,
     marginHorizontal: 20,

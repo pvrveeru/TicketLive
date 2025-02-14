@@ -27,7 +27,7 @@ const Header: React.FC<HeaderProps> = ({
     const { isDarkMode } = useTheme();
 
     return (
-        <View style={[styles.header, { backgroundColor: isDarkMode ? '#000' : '#fff', borderBottomColor: isDarkMode ? 'gray' : '#000' }]}>
+        <View style={[styles.header, { backgroundColor: isDarkMode ? '#000' : '#fff', borderBottomColor: isDarkMode ? '#efefef' : '#efefef' }]}>
             <TouchableOpacity onPress={onProfilePress} style={styles.profile}>
                 {/* {profileImageUrl ? (
                     <Image
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         backgroundColor: "#fff",
         borderBottomWidth: 1,
-        borderBottomColor: '#000',
+        borderBottomColor: '#efefef',
         padding: 10,
         marginTop: Platform.OS === 'ios' ? 50 : 0,
     },
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     },
     lightText: {
         color: "#000",
-        fontSize: 20,
+        fontSize: 16,
         fontWeight: 'bold',
     },
     notificationIcon: {

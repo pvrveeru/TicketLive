@@ -179,7 +179,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                     <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Book Event</Text>
                 </View>
                 {!ismanual && (
-                    <Text style={{ color: isDarkMode ? '#fff' : '#000', fontSize: 16, marginTop: 10 }}>Please Give Me Valid Details (or) Please carry the ticket for an event</Text>
+                    <Text style={{ color: isDarkMode ? 'red' : 'red', fontSize: 12, marginTop: 10 }}>Please Give Me Valid Details</Text>
                 )}
                 <Text style={[styles.Contact, { color: isDarkMode ? '#fff' : '#000' }]}>Contact Information</Text>
 
@@ -206,24 +206,24 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                 />
                 {errors.lastName ? <Text style={styles.errorText}>{errors.lastName}</Text> : null}
 
-                <TouchableOpacity
+                {/* <TouchableOpacity
                     style={styles.dropdown}
                     onPress={() => setShowDropdown(!showDropdown)}
                 >
                     <Text style={[styles.dropdownText, { color: isDarkMode ? '#fff' : '#000' }]}>{formData.gender}</Text>
                     <Icon name={showDropdown ? 'chevron-up' : 'chevron-down'} size={20} color={isDarkMode ? '#fff' : '#333'} />
                 </TouchableOpacity>
-                {showDropdown && renderGenderDropdown()}
+                {showDropdown && renderGenderDropdown()} */}
 
-                <TouchableOpacity style={
+                {/* <TouchableOpacity style={
                     styles.input} onPress={() => setShowDatePicker(true)}>
                     <Text style={[styles.dobText, { color: isDarkMode ? '#fff' : '#000' }]}>
                         {formData.dob ? formData.dob.toDateString() : 'Select Date of Birth'}
                     </Text>
                 </TouchableOpacity>
-                {errors.dob ? <Text style={styles.errorText}>{errors.dob}</Text> : null}
+                {errors.dob ? <Text style={styles.errorText}>{errors.dob}</Text> : null} */}
 
-                <DatePicker
+                {/* <DatePicker
                     modal
                     open={showDatePicker}
                     date={formData.dob || new Date()}
@@ -231,7 +231,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                     onConfirm={(selectedDate) => handleDateConfirm(selectedDate)}
                     onCancel={() => setShowDatePicker(false)}
                     maximumDate={new Date()}
-                />
+                /> */}
 
                 <TextInput
                     style={[
@@ -260,7 +260,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                 />
                 {errors.phone ? <Text style={styles.errorText}>{errors.phone}</Text> : null}
 
-                <TextInput
+                {/* <TextInput
                     style={[
                         styles.input,
                         { color: isDarkMode ? '#fff' : '#000' },
@@ -294,12 +294,13 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                     placeholderTextColor={isDarkMode ? '#bbb' : '#555'}
                     onChangeText={(text) => handleInputChange('state', text)}
                 />
-                {errors.state ? <Text style={styles.errorText}>{errors.state}</Text> : null}
+                {errors.state ? <Text style={styles.errorText}>{errors.state}</Text> : null} */}
+
                 <View style={[styles.addusers, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
-                    <Text style={{ color: isDarkMode ? '#fff' : '#000', fontSize: 16 }}>Booking Users</Text>
+                    <Text style={{ color: isDarkMode ? '#fff' : '#000', fontSize: 14, paddingBottom: 10 }}>Booking Users</Text>
                     <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={addField}>
-                        <MaterialIcons name="add-circle-outline" size={30} color="green" />
-                        <Text style={{ fontSize: 16, marginLeft: 5, color: isDarkMode ? '#fff' : '#000' }}>Add</Text>
+                        <MaterialIcons name="add-circle-outline" size={20} color="green" style={{paddingBottom: 10}}/>
+                        <Text style={{ fontSize: 14, paddingBottom: 10, marginLeft: 5, color: isDarkMode ? '#fff' : '#000' }}>Add</Text>
                     </TouchableOpacity>
                 </View>
                 {fields.map((field, index) => (
@@ -364,11 +365,11 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                     >
                         <FontAwesome
                             name={formData.termsAccepted ? 'check-square' : 'square-o'}
-                            size={24}
+                            size={20}
                             color={isDarkMode ? '#fff' : '#000'}
                         />
                     </TouchableOpacity>
-                    <Text style={[styles.checkboxText, { color: isDarkMode ? '#fff' : '#000' }]}>
+                    <Text style={[styles.checkboxText, { color: isDarkMode ? '#fff' : '#000' }, ]}>
                         I accept the Terms of Service
                     </Text>
                     {errors.termsAccepted && <Text style={styles.errorText}>{errors.termsAccepted}</Text>}
@@ -399,9 +400,9 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     Contact: {
-        fontSize: 20,
+        fontSize: 16,
         fontWeight: 'bold',
-        marginVertical: 20,
+        marginVertical: 10,
     },
     container: {
         flex: 1,
@@ -413,7 +414,7 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     headerText: {
-        fontSize: 24,
+        fontSize: 20,
         fontWeight: 'bold',
         flex: 1,
         textAlign: 'center',
@@ -427,7 +428,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         justifyContent: 'center',
         color: 'black',
-        fontWeight: 'bold',
+        fontSize: 12,
     },
     dobText: {
         fontSize: 16,
@@ -472,13 +473,12 @@ const styles = StyleSheet.create({
     checkboxContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginVertical: 10,
     },
     checkbox: {
         marginRight: 8,
     },
     checkboxText: {
-        fontSize: 16,
+        fontSize: 13,
     },
     button: {
         backgroundColor: COLORS.red,

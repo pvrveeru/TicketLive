@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     },
     backButton: {},
     headerTitle: {
-        fontSize: 20,
+        fontSize: 16,
         fontWeight: 'bold',
     },
     settingsButton: {},
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     },
     notificationText: {
         flex: 1,
-        fontSize: 16,
+        fontSize: 13,
     },
     list: {
         flex: 1,
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     },
     errorText: {
         color: 'red',
-        fontSize: 16,
+        fontSize: 13,
     },
     noNotificationsContainer: {
         flex: 1,
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     noNotificationsText: {
-        fontSize: 18,
+        fontSize: 13,
         fontWeight: 'bold',
         textAlign: 'center',
     },

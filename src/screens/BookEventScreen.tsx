@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
     backArrow: {
         position: 'absolute',
         top: 10,
-        left: 10,
+        left: 20,
         padding: 10,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         borderRadius: 50,
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         padding: 10,
         borderRadius: 5,
-        fontSize: 20,
+        fontSize: 14,
     },
     rowContainer: {
         flexDirection: "row",
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     headerText: {
-        fontSize: 24,
+        fontSize: 20,
         fontWeight: 'bold',
         flex: 1,
         textAlign: 'center',
@@ -331,9 +331,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     subTitle: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold',
-        margin: 16,
+        marginLeft: 16,
+        paddingBottom: 10,
+        
     },
     zoneCard: {
         padding: 16,
@@ -341,7 +343,10 @@ const styles = StyleSheet.create({
         marginBottom: 12,
         borderWidth: 1,
         borderColor: '#ccc',
-        margin: 16,
+        //margin: 16,
+        marginHorizontal: 16,
+       
+        
     },
     zoneName: {
         fontSize: 18,

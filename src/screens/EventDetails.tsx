@@ -298,32 +298,33 @@ const EventDetails: React.FC = () => {
         )}
         <View style={styles.detailsContainer}>
           <View style={[styles.row, styles.spaceBetween]}>
+          <View style={styles.row}>
+              <Ionicons name="calendar-outline" size={20} color="gray" />
+              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>
+                {moment(eventDetails?.eventDate).format('MMMM DD, YYYY')}
+              </Text>
+            </View>
             <View style={styles.row}>
               <FontAwesome name="clock-o" size={20} color="gray" />
               <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>
                 {moment(eventDetails?.eventDate).format('hh:mm A')}
               </Text>
             </View>
+            
             <View style={styles.row}>
-              <Ionicons name="calendar-outline" size={20} color="gray" />
-              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>
-                {moment(eventDetails?.eventDate).format('MMMM DD, YYYY')}
-              </Text>
+              <FontAwesome name="clock-o" size={20} color="gray" />
+              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.duration}</Text>
             </View>
           </View>
 
           <View style={styles.row}>
             <Ionicons name="location-outline" size={20} color="gray" />
-            <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.location}</Text>
+            <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.location}, {eventDetails?.city}, {eventDetails?.state}</Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
             <View style={styles.row}>
               <Ionicons name="language-outline" size={20} color="gray" />
               <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.language}</Text>
-            </View>
-            <View style={styles.row}>
-              <FontAwesome name="clock-o" size={20} color="gray" />
-              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.duration}</Text>
             </View>
           </View>
         </View>
@@ -347,7 +348,7 @@ const EventDetails: React.FC = () => {
           </View>
         </View>
         <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>About Event</Text>
-        <SeeMoreText text={eventDetails?.description ?? ""} maxLength={30} />
+        <SeeMoreText text={eventDetails?.description ?? ""} maxLength={50} />
 
         <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Location</Text>
         <View>
@@ -359,6 +360,9 @@ const EventDetails: React.FC = () => {
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             }}
+            scrollEnabled={false} // Disable scrolling
+            zoomEnabled={false} // Optional: Disable zooming
+            rotateEnabled={false} // Optional: Disable rotation
           >
             <Marker
               coordinate={{
@@ -370,23 +374,22 @@ const EventDetails: React.FC = () => {
               onPress={handleMarkerPress}
             />
           </MapView>
-          {/* <TouchableOpacity
+          <TouchableOpacity
             style={{
               position: 'absolute',
               bottom: 10,
-              right: 20,
+              right: 30,
               backgroundColor: '#ff5722',
-              padding: 12,
+              padding: 5,
               borderRadius: 50,
               elevation: 5,
               flexDirection: 'row',
               alignItems: 'center',
             }}
-            onPress={handleViewDirections}
+            //onPress={handleViewDirections}
           >
             <Ionicons name="navigate-outline" size={24} color="white" />
-            <Text style={{ color: 'white', marginLeft: 5 }}>View Directions</Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity>
         </View>
         <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Terms & Conditions</Text>
         <SeeMoreText text={eventDetails?.tnc ?? ""} maxLength={70} />
@@ -506,13 +509,13 @@ const styles = StyleSheet.create({
   },
   text: {
     marginLeft: 10,
-    fontSize: 16,
+    fontSize: 13,
     color: 'gray',
   },
   actionButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 20,
+    marginVertical: 10,
     marginHorizontal: 25,
   },
   iconButton: {
@@ -522,14 +525,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   heartButton: {
-    borderWidth: 1,
-    borderColor: '#c11c84',
-    padding: 5,
-    borderRadius: 50,
+    // borderWidth: 1,
+    // borderColor: '#c11c84',
+    // padding: 5,
+    // borderRadius: 50,
     alignItems: 'center',
+    position: 'absolute',
+    right: 0,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     marginHorizontal: 20,
     marginVertical: 10,
@@ -546,7 +551,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
+    borderRadius: 0,
   },
 });
 

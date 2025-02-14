@@ -256,12 +256,12 @@ const styles = StyleSheet.create({
     columnGap: 20,
   },
   headerText: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   horizontalLine: {
-    height: 2,
-    backgroundColor: '#ccc',
+    height: 1,
+    backgroundColor: '#efefef',
     marginVertical: 10,
     width: '100%',
   },

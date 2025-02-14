@@ -35,7 +35,7 @@ const HelpCenterScreen = () => {
         </Text>
       </View>
 
-      <Text style={[styles.subHeader, { color: isDarkMode ? '#fff' : '#000' }]}>Contact Support</Text>
+      <Text style={[styles.subHeader, { color: isDarkMode ? '#fff' : '#000', textAlign: 'center' }]}>Contact Support</Text>
       <TouchableOpacity style={styles.supportButton}>
         <Text style={[styles.supportText, { color: isDarkMode ? '#fff' : '#000' }]}>Email Us: support@eventapp.com</Text>
       </TouchableOpacity>
@@ -58,13 +58,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 15,
     backgroundColor: '#f8f8f8',
-    elevation: 3,
+    elevation: 2,
   },
   backButton: {
     marginRight: 15,
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
   },
   container: {
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   subHeader: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: 'bold',
     marginTop: 10,
     marginBottom: 10,
@@ -82,23 +82,23 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   question: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: 'bold',
     marginTop: 10,
   },
   answer: {
-    fontSize: 14,
+    fontSize: 11,
     color: '#555',
     marginBottom: 10,
+    marginTop: 5
   },
   supportButton: {
-    padding: 15,
+    padding: 5,
     borderRadius: 5,
-    marginVertical: 5,
     alignItems: 'center',
   },
   supportText: {
-    fontSize: 16,
+    fontSize: 13,
     color: '#000',
   },
 });

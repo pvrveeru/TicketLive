@@ -9,6 +9,7 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';
 import Header from '../components/Header';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import SkeletonLoader from '../components/SkeletonLoading';
 import { COLORS } from '../styles/globalstyles';
 import moment from 'moment';
@@ -133,19 +134,21 @@ const FavoritiesScreen: React.FC = () => {
           ) : (
             <Image source={require('../../assets/images/altimg.jpg')} style={styles.eventImage} />
           )}
+          <View style={{padding: 8}}>
           <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.title}</Text>
-          <Text style={[styles.eventType, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>
-            {eventDetails.location}
-          </Text>
-          <View style={styles.eventFooter}>
-            <Text style={styles.eventDate}>{formatDate(eventDetails.eventDate)}</Text>
-            <TouchableOpacity
-              style={styles.favoriteIconContainer}
+          <Text style={styles.eventDate}>{formatDate(eventDetails.eventDate)}</Text>
+          <View style={styles.locationContainer}>
+            <Ionicons name="location-sharp" size={20} color="#555" />
+            <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.location}</Text>
+          </View>
+          </View>
+         <TouchableOpacity
+              style={styles.favotites}
               onPress={() => handleRemoveFavorite(eventDetails.eventId)}
             >
               <Icon name={isFavorite ? 'heart' : 'heart-outline'} size={30} color={isFavorite ? 'red' : '#000'} />
             </TouchableOpacity>
-          </View>
+          
         </View>
       </TouchableOpacity>
     );
@@ -165,7 +168,7 @@ const FavoritiesScreen: React.FC = () => {
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={fetchFavoriteEvents} />}
         >
-          <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>My Favorities</Text>
+          {/* <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>My Favorities</Text> */}
           {/* {Array.isArray(favoriteEvents) && favoriteEvents.length === 0 ? (
             <Text style={[styles.noResultsText, { color: isDarkMode ? '#fff' : '#000' }]}>
               No favorite events found.
@@ -216,6 +219,12 @@ const styles = StyleSheet.create({
   lightBackground: {
     backgroundColor: '#FFFFFF',
   },
+  favotites: {
+    position: 'absolute',
+    // left: '85%',
+    bottom: 10,
+    right: 15,
+  },
   main: {
     flex: 1,
     padding: 15,
@@ -225,25 +234,21 @@ const styles = StyleSheet.create({
   },
   eventContainer: {
     backgroundColor: '#fff',
-    borderRadius: 8,
+    borderRadius: 10,
     overflow: 'hidden',
     elevation: 3,
     marginBottom: 15,
   },
   eventDetails: {
-    padding: 10,
+    padding: 0,
     borderRadius: 8,
+    borderWidth: 1, // Add border
+    borderColor: '#efefef', // Light gray border
   },
   eventImage: {
     width: '100%',
     height: 150,
-    borderRadius: 10,
     marginBottom: 10,
-  },
-  eventTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginTop: 10,
   },
   eventType: {
     color: 'gray',
@@ -254,12 +259,24 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 10,
   },
-  eventDate: {
-    width: '70%',
+  eventTitle: {
     fontSize: 14,
-    color: 'red',
     fontWeight: 'bold',
-    flexWrap: 'wrap',
+  },
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  eventDescription: {
+    marginTop: 4,
+    fontSize: 13,
+    color: '#777',
+  },
+  eventDate: {
+    marginTop: 4,
+    fontSize: 12,
+    color: 'black',
   },
   favoriteIconContainer: {
     padding: 5,

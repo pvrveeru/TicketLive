@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   backArrow: {
     position: 'absolute',
     top: 10,
-    left: 10,
+    left: 20,
     padding: 10,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     borderRadius: 50,

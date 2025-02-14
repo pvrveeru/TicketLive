@@ -175,8 +175,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
 },
 dropdownText: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 13,
 },
   dropdownList: {
     borderColor: 'black',
@@ -211,18 +210,18 @@ dropdownText: {
     columnGap: 30,
   },
   leftArrow: {
-    fontSize: 24,
+    fontSize: 20,
     marginRight: 8,
     color: '#000',
   },
   header: {
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
     color: 'black',
   },
   darkheader: {
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
     color: 'white',
@@ -233,7 +232,7 @@ dropdownText: {
     borderRadius: 8,
     padding: 10,
     marginBottom: 12,
-    fontSize: 16,
+    fontSize: 13,
   },
   loader: {
     flex: 1,
@@ -252,7 +251,7 @@ dropdownText: {
   },
   btntext: {
     color: 'white',
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });

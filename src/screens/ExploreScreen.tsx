@@ -261,8 +261,11 @@ const ExploreScreen = () => {
             <Image source={{ uri: event?.thumbUrl }} style={styles.eventImage} />
             <View style={styles.eventDetails}>
               <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.title}</Text>
-              <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.location}</Text>
               <Text style={styles.eventDate}>{formatDate(event?.eventDate || '')}</Text>
+              <View style={styles.locationContainer}>
+                              <Ionicons name="location-sharp" size={20} color="#555" />
+                              <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.location}</Text>
+                              </View>
               <TouchableOpacity
                 onPress={() => {
                   if (event?.eventId !== undefined) {
@@ -320,7 +323,7 @@ const ExploreScreen = () => {
         onNotificationPress={handleNotificationPress}
         onProfilePress={handleProfilePress} />
       <View style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>
-        <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Explore Events</Text>
+        {/* <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Explore Events</Text> */}
         <View style={styles.header}>
           <View style={styles.searchContainer}>
             <TextInput
@@ -368,7 +371,7 @@ const ExploreScreen = () => {
           </ScrollView>
         </View>
         {noEventsMessage && <Text style={styles.noEventsMessage}>{noEventsMessage}</Text>}
-        <View style={{ marginBottom: '50%' }}>
+        <View style={{ marginBottom: '10%' }}>
           {loading ? (
             <ScrollView>
               {Array.from({ length: 5 }).map((_, index) => (
@@ -399,7 +402,7 @@ const ExploreScreen = () => {
 
 const styles = StyleSheet.create({
   headerText: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 10,
@@ -408,6 +411,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 14,
     color: 'gray',
+  },
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -448,7 +456,7 @@ const styles = StyleSheet.create({
   favotites: {
     position: 'absolute',
     // left: '85%',
-    bottom: 0,
+    bottom: 10,
     right: 10,
   },
   container: {
@@ -466,16 +474,16 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    height: 40,
+    height: 35,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 5,
     paddingLeft: 10,
-    fontSize: 13,
+    fontSize: 12,
   },
   eventCount: {
-    marginLeft: 10,
-    fontSize: 14,
+    marginLeft: 0,
+    fontSize: 12,
     color: '#000',
     fontWeight: 'bold',
   },
@@ -501,19 +509,18 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   eventTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
   },
   eventDescription: {
     marginTop: 4,
-    fontSize: 14,
+    fontSize: 13,
     color: '#777',
   },
   eventDate: {
     marginTop: 4,
-    fontSize: 14,
+    fontSize: 12,
     color: 'black',
-    fontWeight: 'bold',
   },
   noEventsMessage: {
     fontSize: 18,
