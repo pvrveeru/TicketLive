@@ -231,7 +231,7 @@ const HomeScreen: React.FC = () => {
   };
 
   const toggleFavorite = async (eventId: number) => {
-    if (!auserId) return;
+    if (!auserId) {return;}
     const isCurrentlyFavorite = favorites[eventId] || false;
     setFavorites((prevFavorites) => {
       return {
@@ -286,7 +286,8 @@ const HomeScreen: React.FC = () => {
 
   return (
     <>
-    <Header 
+    {/* home heDER */}
+    <Header
      title={'Welcome TicketLive'}
     //  profileImageUrl={userData?.profileImageUrl}
      profileImage={require('../../assets/images/icon.png')}
@@ -363,7 +364,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginRight: 10,
     borderWidth: 1,
-    borderColor: "#ccc"
+    borderColor: '#ccc',
   },
   greeting: {
     fontSize: 16,
