@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity, Image, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -5,6 +6,8 @@ import { getSeatingOptionsByEventId } from '../services/Apiservices';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../Theme/ThemeContext';
 import SkeletonLoader from '../components/SkeletonLoading';
+import { Platform } from 'react-native';
+import { COLORS } from '../styles/globalstyles';
 
 interface RouteParams {
     eventId: number;
@@ -47,7 +50,7 @@ const BookEventScreen: React.FC = () => {
     const [quantity, setQuantity] = useState<{ [key: number]: number }>({});
     const [selectedZones, setSelectedZones] = useState<SeatingZone[]>([]);
     const [limitExceeded, setLimitExceeded] = useState<boolean>(false);
-    const [ismanual, setIsManual] = useState<boolean>(false)
+    const [ismanual, setIsManual] = useState<boolean>(false);
     const [skloading, setSkLoading] = useState<boolean>(true);
     // console.log('noOfTickets maxTickets', noOfTickets ,maxTickets);
     useEffect(() => {
@@ -308,6 +311,7 @@ const styles = StyleSheet.create({
         flex: 1,
         // padding: 16,
         backgroundColor: '#f9f9f9',
+        paddingTop: Platform.OS === 'ios' ? 50 : 20,
     },
     header: {
         flexDirection: 'row',
@@ -386,7 +390,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
     },
     continueButton: {
-        backgroundColor: '#ff6f61',
+        backgroundColor: COLORS.red,
         padding: 16,
         alignItems: 'center',
         borderRadius: 20,

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, RefreshControl } from 'react-native';
 import { useTheme } from '../Theme/ThemeContext';
@@ -10,7 +11,7 @@ import { useSelector } from 'react-redux';
 import Header from '../components/Header';
 import SkeletonLoader from '../components/SkeletonLoading';
 import { COLORS } from '../styles/globalstyles';
-
+import moment from 'moment';
 interface Events {
   event: any;
   eventId: number;
@@ -39,8 +40,8 @@ const FavoritiesScreen: React.FC = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { isDarkMode } = useTheme();
   const userData = useSelector((state: RootState) => state.userData);
-  const profileImage = require('../../assets/images/icon.png');
-  const profileImageUrl = userData?.profileImageUrl;
+  // const profileImage = require('../../assets/images/icon.png');
+  // const profileImageUrl = userData?.profileImageUrl;
   const [favoriteEvents, setFavoriteEvents] = useState<Events[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -109,10 +110,9 @@ const FavoritiesScreen: React.FC = () => {
     }
   };
 
-  const formatEventDateTime = (date: string) => {
-    const eventDate = new Date(date);
-    return eventDate.toLocaleString();
-  };
+ const formatDate = (dateString: string) => {
+     return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
+   };
 
   const handleEventPress = (eventId: number) => {
     navigation.navigate('EventDetails', { eventId });
@@ -138,7 +138,7 @@ const FavoritiesScreen: React.FC = () => {
             {eventDetails.location}
           </Text>
           <View style={styles.eventFooter}>
-            <Text style={styles.eventDate}>{formatEventDateTime(eventDetails.eventDate)}</Text>
+            <Text style={styles.eventDate}>{formatDate(eventDetails.eventDate)}</Text>
             <TouchableOpacity
               style={styles.favoriteIconContainer}
               onPress={() => handleRemoveFavorite(eventDetails.eventId)}
@@ -154,7 +154,7 @@ const FavoritiesScreen: React.FC = () => {
   return (
     <>
       <Header
-        title={'Favorities'}
+        title={'Welcome TicketLive'}
         profileImageUrl={userData?.profileImageUrl}
         profileImage={require('../../assets/images/icon.png')}
         onNotificationPress={handleNotificationPress} 
@@ -165,6 +165,7 @@ const FavoritiesScreen: React.FC = () => {
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={fetchFavoriteEvents} />}
         >
+          <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>My Favorities</Text>
           {/* {Array.isArray(favoriteEvents) && favoriteEvents.length === 0 ? (
             <Text style={[styles.noResultsText, { color: isDarkMode ? '#fff' : '#000' }]}>
               No favorite events found.
@@ -197,16 +198,17 @@ const FavoritiesScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
   },
   headerText: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
-    flex: 1,
     textAlign: 'center',
+    marginBottom: 10,
   },
   darkBackground: {
     backgroundColor: '#121212',

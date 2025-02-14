@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '../styles/globalstyles';
 import moment from 'moment';
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 150,
+    height: 170,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     resizeMode: 'cover',
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 5,

@@ -1,9 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
+import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { getBookingsByUserId } from '../services/Apiservices';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+// import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { COLORS } from '../styles/globalstyles';
 import { useTheme } from '../Theme/ThemeContext';
 import moment from 'moment';
@@ -73,8 +74,8 @@ const TicketsScreen = () => {
   const [selectedTab, setSelectedTab] = useState<string>('Upcoming');
   const userData = useSelector((state: RootState) => state.userData);
   const userId = userData.userId;
-  const profileImage = require('../../assets/images/icon.png');
-  const profileImageUrl = userData?.profileImageUrl;
+  // const profileImage = require('../../assets/images/icon.png');
+  // const profileImageUrl = userData?.profileImageUrl;
   const formatDate = (dateString: string) => {
     return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
   };
@@ -104,9 +105,9 @@ const TicketsScreen = () => {
     navigation.navigate('TicketDetails', { bookingId });
   };
 
-  const handleCancelBooking = (bookingId: number) => {
-    Alert.alert(`Cancel booking with ID: ${bookingId}`);
-  };
+  // const handleCancelBooking = (bookingId: number) => {
+  //   Alert.alert(`Cancel booking with ID: ${bookingId}`);
+  // };
 
   const handleNotificationPress = () => {
     navigation.navigate('Notification');
@@ -153,12 +154,13 @@ const TicketsScreen = () => {
   return (
     <>
       <Header
-        title={'My Tickets'}
+        title={'Welcome TicketLive'}
         profileImageUrl={userData?.profileImageUrl}
         profileImage={require('../../assets/images/icon.png')}
         onNotificationPress={handleNotificationPress}
         onProfilePress={handleProfilePress} />
       <View style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>
+        <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>My Tickets</Text>
         <View style={styles.tabBar}>
           {['Upcoming', 'Completed'].map((tab) => (
             <TouchableOpacity
@@ -206,6 +208,11 @@ const TicketsScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  headerText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
   emptyText: {
     fontSize: 16,
     textAlign: 'center',
@@ -277,8 +284,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginBottom: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#cfcfcf',
   },
   tabItem: {
     paddingVertical: 10,

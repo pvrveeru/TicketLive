@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useRef, useState } from 'react';
 import { ScrollView, Image, StyleSheet, View, Dimensions } from 'react-native';
 import { fetchBannerImages } from '../services/Apiservices';
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
   image: {
     height: 180,
     width: '90%',
-    borderRadius: 20,
+    borderRadius: 5,
     resizeMode: 'cover',
     alignSelf: 'center',
   },

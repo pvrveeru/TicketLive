@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, Button, StyleSheet, ScrollView, Image, TouchableOpacity, RefreshControl } from 'react-native';
+import { View, Text, FlatList, Button, StyleSheet, ScrollView, Image, TouchableOpacity, RefreshControl, Platform } from 'react-native';
 import { fetchFeaturedEvents, fetchManualEvents, fetchPopularEvents, fetchUserById, markEventAsDeleteFavorite, markEventAsFavorite } from '../services/Apiservices';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -90,12 +92,12 @@ const HomeScreen: React.FC = () => {
   const [featuredEvents, setFeaturedEvents] = useState<EventData[]>([]);
   const [popularEvents, setPopularEvents] = useState<EventData[]>([]);
   const [manualEvents, setManualEvents] = useState<EventData[]>([]);
-  const [auserId, setUserId] = useState<number | null>(null)
+  const [auserId, setUserId] = useState<number | null>(null);
   const [eventType, setEventType] = useState<string | null>(null);
-  const userData = useSelector((state: RootState) => state.userData);
+  // const userData = useSelector((state: RootState) => state.userData);
   const profileImage = require('../../assets/images/icon.png');
-  const profileImageUrl = userData?.profileImageUrl;
-  const userName = userData?.firstName;
+  // const profileImageUrl = userData?.profileImageUrl;
+  // const userName = userData?.firstName;
 
   const [favorites, setFavorites] = useState<{ [key: number]: boolean }>({});
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -213,7 +215,7 @@ const HomeScreen: React.FC = () => {
       setEventType(null);
     }, [])
   );
-  console.log('eventType in home screen', eventType);
+  // console.log('eventType in home screen', eventType);
   const handleProfilePress = () => {
     navigation.navigate('BottomBar', { screen: 'Profile' });
   };
@@ -285,14 +287,16 @@ const HomeScreen: React.FC = () => {
       refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}>
       <View style={styles.header}>
         <TouchableOpacity onPress={handleProfilePress} style={styles.profile}>
-          {profileImageUrl ? (
+          {/* {profileImageUrl ? (
             <Image source={{ uri: profileImageUrl }} style={styles.profileImage} />
           ) : (
+           {userName ? userName : null}
             <Image source={profileImage} style={styles.profileImage} />
-          )}
+          )} */}
+          <Image source={profileImage} style={styles.profileImage} />
           <View>
             <Text style={isDarkMode ? styles.darkText : styles.welcome}>Welcome</Text>
-            <Text style={[styles.name, isDarkMode ? styles.darkText : styles.lightText]}>{userName ? userName : null}</Text>
+            <Text style={[styles.name, isDarkMode ? styles.darkText : styles.lightText]}>Ticket Live</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity style={styles.notificationIcon} onPress={handleNotificationPress}>
@@ -326,6 +330,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    marginTop: Platform.OS === 'ios' ? 50 : 0,
   },
   darkBackground: {
     backgroundColor: '#121212',

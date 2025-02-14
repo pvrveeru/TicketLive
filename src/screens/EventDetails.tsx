@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import {
   Text,
@@ -236,46 +238,46 @@ const EventDetails: React.FC = () => {
     );
   };
 
-  const handleViewDirections = async () => {
-    const hasPermission = await requestLocationPermission();
-    setLocationLoading(true);
-    console.log('hasPermission', hasPermission);
-    if (!hasPermission) {
-      Alert.alert('Permission Denied', 'Location permission is required to show directions.');
-      return;
-    }
+  // const handleViewDirections = async () => {
+  //   const hasPermission = await requestLocationPermission();
+  //   setLocationLoading(true);
+  //   console.log('hasPermission', hasPermission);
+  //   if (!hasPermission) {
+  //     Alert.alert('Permission Denied', 'Location permission is required to show directions.');
+  //     return;
+  //   }
 
-    Geolocation.getCurrentPosition(
-      position => {
-        const { latitude, longitude } = position.coords;
-        console.log('latitude, longitude', latitude, longitude);
-        setLocationLoading(false);
-        openMaps(eventDetails?.latitude, eventDetails?.longitude)
-      },
-      error => {
-        console.log('Error fetching location', error);
-        Alert.alert('Error', 'Unable to fetch current location. Please try again.');
-        setLocationLoading(false);
-      },
-      { enableHighAccuracy: true, timeout: 30000, maximumAge: 10000 }
-    );
-  };
+  //   Geolocation.getCurrentPosition(
+  //     position => {
+  //       const { latitude, longitude } = position.coords;
+  //       console.log('latitude, longitude', latitude, longitude);
+  //       setLocationLoading(false);
+  //       openMaps(eventDetails?.latitude, eventDetails?.longitude)
+  //     },
+  //     error => {
+  //       console.log('Error fetching location', error);
+  //       Alert.alert('Error', 'Unable to fetch current location. Please try again.');
+  //       setLocationLoading(false);
+  //     },
+  //     { enableHighAccuracy: true, timeout: 30000, maximumAge: 10000 }
+  //   );
+  // };
 
-  const openMaps = (lat: string | undefined, lng: string | undefined): void => {
-    const scheme = Platform.select({
-      ios: 'maps://0,0?q=',
-      android: 'geo:0,0?q=',
-    });
-    const latLng = `${lat},${lng}`;
-    const url = Platform.select({
-      ios: `${scheme}@${latLng}`,
-      android: `${scheme}${latLng}`,
-    });
+  // const openMaps = (lat: string | undefined, lng: string | undefined): void => {
+  //   const scheme = Platform.select({
+  //     ios: 'maps://0,0?q=',
+  //     android: 'geo:0,0?q=',
+  //   });
+  //   const latLng = `${lat},${lng}`;
+  //   const url = Platform.select({
+  //     ios: `${scheme}@${latLng}`,
+  //     android: `${scheme}${latLng}`,
+  //   });
 
-    if (url) {
-      Linking.openURL(url);
-    }
-  };
+  //   if (url) {
+  //     Linking.openURL(url);
+  //   }
+  // };
 
   return (
     <>
@@ -299,18 +301,15 @@ const EventDetails: React.FC = () => {
             <View style={styles.row}>
               <FontAwesome name="clock-o" size={20} color="gray" />
               <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>
-                {moment(eventDetails?.eventDate).format('HH:mm:ss')}
+                {moment(eventDetails?.eventDate).format('hh:mm A')}
               </Text>
             </View>
             <View style={styles.row}>
               <Ionicons name="calendar-outline" size={20} color="gray" />
               <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>
-                {moment(eventDetails?.eventDate).format('DD/MM/YYYY')}
+                {moment(eventDetails?.eventDate).format('MMMM DD, YYYY')}
               </Text>
             </View>
-            <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
-              <Ionicons name={isFavorite ? "heart" : "heart-outline"} size={30} color={isFavorite ? "red" : "#888"} />
-            </TouchableOpacity>
           </View>
 
           <View style={styles.row}>
@@ -335,12 +334,15 @@ const EventDetails: React.FC = () => {
               {eventDetails?.favoritesCount} Interested
             </Text>
           </View>
-          <View style={{flexDirection: 'row', columnGap: 20}}>
-            <TouchableOpacity style={styles.iconButton} onPress={mobilecalling}>
+          <View style={{ flexDirection: 'row', columnGap: 20 }}>
+            {/* <TouchableOpacity style={styles.iconButton} onPress={mobilecalling}>
               <Ionicons name="call-outline" size={24} color="white" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconButton} onPress={navigateToEmail}>
               <Ionicons name="mail-outline" size={24} color="white" />
+            </TouchableOpacity> */}
+            <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
+              <Ionicons name={isFavorite ? "heart" : "heart-outline"} size={30} color={isFavorite ? "red" : "#888"} />
             </TouchableOpacity>
           </View>
         </View>
@@ -388,6 +390,8 @@ const EventDetails: React.FC = () => {
         </View>
         <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Terms & Conditions</Text>
         <SeeMoreText text={eventDetails?.tnc ?? ""} maxLength={70} />
+      </ScrollView>
+      <View style={{ backgroundColor: isDarkMode ? '#000' : '#fff' }}>
         <TouchableOpacity
           style={[
             styles.bookButton,
@@ -398,8 +402,7 @@ const EventDetails: React.FC = () => {
         >
           <Text style={styles.bookButtonText}>Book Event</Text>
         </TouchableOpacity>
-
-      </ScrollView>
+      </View>
       <Dialog isVisible={locationLoading}>
         {/* <Dialog.Loading /> */}
         <ActivityIndicator
@@ -453,7 +456,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
-    margin: 20,
+    marginHorizontal: 20,
+    marginVertical: 5,
   },
   bookButtonText: {
     color: 'white',
@@ -463,6 +467,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    paddingTop: Platform.OS === 'ios' ? 50 : 20,
   },
   loader: {
     flex: 1,

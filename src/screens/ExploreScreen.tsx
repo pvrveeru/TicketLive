@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, TextInput, TouchableOpacity, ScrollView, RefreshControl } from 'react-native';
-import { fetchEvents, fetchFeaturedEvents, fetchManualEvents, fetchPopularEvents, getAllEventCategories, markEventAsDeleteFavorite, markEventAsFavorite } from '../services/Apiservices';
+import { fetchEvents, fetchFeaturedEvents, fetchPopularEvents, getAllEventCategories, markEventAsDeleteFavorite, markEventAsFavorite } from '../services/Apiservices';
 import { RouteProp, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -90,9 +91,9 @@ const ExploreScreen = () => {
   const [noEventsMessage, setNoEventsMessage] = useState<string>('');
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const [skloading, setSkLoading] = useState<boolean>(false);
+  // const [skloading, setSkLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  console.log('eventType', eventType);
+  // console.log('eventType', eventType);
   useEffect(() => {
     const getUserId = async () => {
       try {
@@ -111,7 +112,7 @@ const ExploreScreen = () => {
 
   useEffect(() => {
     AllCatageories();
-  }, [])
+  }, []);
   useEffect(() => {
     if (type) {
       setEventType(type);
@@ -120,10 +121,10 @@ const ExploreScreen = () => {
     }
   }, [type]);
 
-  console.log('auserId, type, eventType', auserId, type, eventType)
+  // console.log('auserId, type, eventType', auserId, type, eventType)
   const loadByType = async () => {
     setLoading(true);
-    setSkLoading(true);
+    // setSkLoading(true);
     setNoEventsMessage('');
     try {
       let data;
@@ -135,7 +136,7 @@ const ExploreScreen = () => {
           sortOrder: 'asc',
           limit: 10,
           offset: 0,
-          status: "Published",
+          status: 'Published',
         });
       } else {
         if (eventType === 'Featured') {
@@ -165,14 +166,14 @@ const ExploreScreen = () => {
       setNoEventsMessage('Error loading events');
     } finally {
       setLoading(false);
-      setSkLoading(false);
+      // setSkLoading(false);
     }
   };
   const onRefresh = async () => {
     setRefreshing(true);
-    setEventType(null); // Set eventType to null
-    await loadByType(); // Call the function to load all events
-    setRefreshing(false); // Reset refreshing state
+    setEventType(null);
+    await loadByType();
+    setRefreshing(false);
   };
 
 
@@ -191,7 +192,7 @@ const ExploreScreen = () => {
   const AllCatageories = async () => {
     const result = await getAllEventCategories();
     setCategories(result);
-  }
+  };
   const handleEventPress = (eventId: number | undefined) => {
     if (eventId) {
       navigation.navigate('EventDetails', { eventId });
@@ -248,7 +249,7 @@ const ExploreScreen = () => {
     navigation.navigate('BottomBar', { screen: 'Profile' });
   };
 
-  const renderEventRow = ({ item, index }: { item: EventData[]; index: number }) => {
+  const renderEventRow = ({ item }: { item: EventData[]; index: number }) => {
     return (
       <View style={styles.eventRow}>
         {item?.map((event, idx) => (
@@ -289,8 +290,8 @@ const ExploreScreen = () => {
 
   const transformDataToRows = (data: EventData[]) => {
     const rows: EventData[][] = [];
-    for (let i = 0; i < data?.length; i += 2) {
-      rows.push(data.slice(i, i + 2));
+    for (let i = 0; i < data?.length; i += 1) {
+      rows.push(data.slice(i, i + 1));
     }
     return rows;
   };
@@ -313,12 +314,13 @@ const ExploreScreen = () => {
   return (
     <>
       <Header
-        title={'Explore Events'}
+        title={'Welcome TicketLive'}
         profileImageUrl={userData?.profileImageUrl}
         profileImage={require('../../assets/images/icon.png')}
         onNotificationPress={handleNotificationPress}
         onProfilePress={handleProfilePress} />
       <View style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>
+        <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Explore Events</Text>
         <View style={styles.header}>
           <View style={styles.searchContainer}>
             <TextInput
@@ -371,7 +373,7 @@ const ExploreScreen = () => {
             <ScrollView>
               {Array.from({ length: 5 }).map((_, index) => (
                 <View key={index} style={{ margin: 5 }}>
-                  <SkeletonLoader width="100%" height={120} borderRadius={10} />
+                  <SkeletonLoader width="100%" height={190} borderRadius={10} />
                 </View>
               ))}
             </ScrollView>
@@ -396,6 +398,12 @@ const ExploreScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  headerText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
   noResultsText: {
     textAlign: 'center',
     fontSize: 18,
@@ -439,9 +447,9 @@ const styles = StyleSheet.create({
   },
   favotites: {
     position: 'absolute',
-    left: '85%',
+    // left: '85%',
     bottom: 0,
-    right: 0,
+    right: 10,
   },
   container: {
     flex: 1,
@@ -479,14 +487,15 @@ const styles = StyleSheet.create({
   eventCard: {
     flex: 1,
     marginHorizontal: 8,
-    borderRadius: 8,
+    borderRadius: 5,
     backgroundColor: '#f9f9f9',
     overflow: 'hidden',
     elevation: 2,
   },
   eventImage: {
     width: '100%',
-    height: 120,
+    height: 140,
+    resizeMode: 'cover',
   },
   eventDetails: {
     padding: 8,
@@ -503,7 +512,7 @@ const styles = StyleSheet.create({
   eventDate: {
     marginTop: 4,
     fontSize: 14,
-    color: 'red',
+    color: 'black',
     fontWeight: 'bold',
   },
   noEventsMessage: {

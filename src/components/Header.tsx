@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, Image, TouchableOpacity, StyleSheet, Platform } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { COLORS } from "../styles/globalstyles";
 import { useTheme } from "../Theme/ThemeContext";
@@ -16,10 +16,10 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({
-    profileImageUrl,
+    // profileImageUrl,
     profileImage,
-    userName,
-    Welcome,
+    // userName,
+    // Welcome,
     onProfilePress,
     onNotificationPress,
     title,
@@ -29,14 +29,15 @@ const Header: React.FC<HeaderProps> = ({
     return (
         <View style={[styles.header, { backgroundColor: isDarkMode ? '#000' : '#fff', borderBottomColor: isDarkMode ? 'gray' : '#000' }]}>
             <TouchableOpacity onPress={onProfilePress} style={styles.profile}>
-                {profileImageUrl ? (
+                {/* {profileImageUrl ? (
                     <Image
                         source={{ uri: profileImageUrl }}
                         style={styles.profileImage}
                     />
                 ) : (
                     <Image source={profileImage} style={styles.profileImage} />
-                )}
+                )} */}
+                <Image source={profileImage} style={styles.profileImage} />
             </TouchableOpacity>
             {title && <Text style={[styles.name, isDarkMode ? styles.darkText : styles.lightText]}>{title}</Text>}
 
@@ -61,6 +62,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#000',
         padding: 10,
+        marginTop: Platform.OS === 'ios' ? 50 : 0,
     },
     profile: {
         flexDirection: "row",

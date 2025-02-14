@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Switch, Image, Modal, ScrollView, Button, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Modal, ScrollView, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../Theme/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
@@ -11,6 +11,7 @@ import { getUserData } from '../Redux/Actions';
 import { requestCameraPermission } from '../components/requestCameraPermission ';
 import CustomSwitch from '../components/CustomSwitch';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 
 interface ProfileOption {
   title: string;
@@ -208,9 +209,9 @@ const ProfileScreen = () => {
     }
   };
 
-  const handleCancelModal = () => {
-    setIsNModalVisible(false);
-  };
+  // const handleCancelModal = () => {
+  //   setIsNModalVisible(false);
+  // };
 
   const renderProfileOption = ({ title, icon }: ProfileOption, index: number) => (
     <TouchableOpacity
@@ -351,7 +352,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 16,
-    paddingTop: 5,
+    // paddingTop: 5,
+    paddingTop: Platform.OS === 'ios' ? 50 : 20,
+    
   },
   profileTop: {
     alignItems: 'center',
@@ -388,7 +391,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     marginTop: 10,
   },
-  supportSection: {},
+  supportSection: {
+    marginBottom: 20,
+  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -398,8 +403,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomWidth: 0.3,
+    borderBottomColor: '#efefef',
   },
   optionIcon: {
     marginRight: 10,

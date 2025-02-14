@@ -8,7 +8,7 @@ import {
   Alert,
   Keyboard,
 } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+// import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import OtpInput from './OtpInput';
 import AsyncStorage from '@react-native-async-storage/async-storage';

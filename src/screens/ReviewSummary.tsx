@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView, ActivityIndicator } from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+// import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { COLORS } from '../styles/globalstyles';
 import SuccessModal from '../components/SuccessModal';
 import { createBooking, getChargesByEventId, getEventById } from '../services/Apiservices';
@@ -121,7 +121,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
     console.log('Booking result payload:', payload);
     try {
       const result = await createBooking(payload);
-      // console.log('Booking result:', result);
+      console.log('Booking result:', result);
       setLoading(false);
       setModalVisible(true);
     } catch (error: any) {

@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   View,
   StyleSheet,
-  useColorScheme,
 } from 'react-native';
 import { useTheme } from '../Theme/ThemeContext';
 

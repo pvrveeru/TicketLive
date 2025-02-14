@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // import React from "react";
 // import { View, StyleSheet, ViewStyle } from "react-native";
 // import LinearGradient from "react-native-linear-gradient";

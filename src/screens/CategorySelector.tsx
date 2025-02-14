@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, TouchableOpacity, Text, StyleSheet, View, Image, Alert } from 'react-native';
+import { ScrollView, TouchableOpacity, Text, StyleSheet, View, Image } from 'react-native';
 import { COLORS } from '../styles/globalstyles';
 import { useTheme } from '../Theme/ThemeContext';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { markEventAsFavorite } from '../services/Apiservices';
+// import { markEventAsFavorite } from '../services/Apiservices';
 
 interface Events {
   ageLimit: string;

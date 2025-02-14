@@ -46,7 +46,7 @@ const TicketDetails = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const Logo = require('../../assets/images/ticketliv_logo.png');
+  // const Logo = require('../../assets/images/ticketliv_logo.png');
 
   const formatDate = (dateString: string) => {
     const date = moment.utc(dateString);
@@ -657,7 +657,7 @@ const styles = StyleSheet.create({
   },
 
   downloadButton: {
-    backgroundColor: '#ff6f61',
+    backgroundColor: COLORS.red,
     paddingVertical: 12,
     borderRadius: 8,
     marginTop: 20,
