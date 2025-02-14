@@ -411,7 +411,6 @@ console.log('eventDetails?.tnc', eventDetails?.tnc);
       </View>
       </View>
       <Dialog isVisible={locationLoading}>
-        {/* <Dialog.Loading /> */}
         <ActivityIndicator
           size="large"
           color={COLORS.red}
