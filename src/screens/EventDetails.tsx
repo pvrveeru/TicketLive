@@ -113,6 +113,7 @@ type RootStackParamList = {
     longitude: number;
     title: string;
     location: string;
+    city: string;
   };
 };
 
@@ -158,18 +159,6 @@ const EventDetails: React.FC = () => {
     fetchEventDetails();
   }, [eventId]);
 
-  useEffect(() => {
-    fetchBookings();
-  }, []);
-
-  const fetchBookings = async () => {
-    try {
-      const data = await getBookingsByUserId(userId.toString());
-      console.log('data.bookings', data.bookings);
-    } catch (error) {
-      console.error('error fetching bookings', error);
-    }
-  };
   const toggleFavorite = async () => {
     try {
       if (isFavorite) {
@@ -220,6 +209,7 @@ const EventDetails: React.FC = () => {
       longitude: parseFloat(eventDetails?.longitude ?? '0'),
       title: eventDetails?.title ?? 'Unknown Title',
       location: eventDetails?.location ?? 'Unknown Location',
+      city: eventDetails?.city ?? 'Unkonwn City',
     });
   };
 
@@ -279,7 +269,7 @@ const EventDetails: React.FC = () => {
   //     Linking.openURL(url);
   //   }
   // };
-console.log('eventDetails?.tnc', eventDetails?.tnc);
+// console.log('eventDetails?.tnc', eventDetails);
   return (
     <>
     <View style={[styles.container, isDarkMode ? styles.dark : styles.light]}>
@@ -311,22 +301,20 @@ console.log('eventDetails?.tnc', eventDetails?.tnc);
                 {moment(eventDetails?.eventDate).format('hh:mm A')}
               </Text>
             </View>
-
-            
           </View>
 
           <View style={styles.row}>
             <Ionicons name="location-outline" size={20} color="gray" />
-            <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000', flexWrap: 'wrap' }]}>{eventDetails?.location}</Text>
+            <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000', flexWrap: 'wrap' }]}>{eventDetails?.location}, {eventDetails?.city}</Text>
           </View>
-          <View style={[styles.row, {marginTop: 10, marginLeft: 15}]}>
+          {/* <View style={[styles.row, {marginTop: 10, marginLeft: 15}]}>
             <Ionicons name="" size={20} color="gray" />
             <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000', flexWrap: 'wrap' }]}>{eventDetails?.city}</Text>
-          </View>
+          </View> */}
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
             <View style={[styles.row]}>
               <Ionicons name="language-outline" size={20} color="gray" />
-              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000', }]}>{eventDetails?.language}</Text>
+              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.language}</Text>
             </View>
             <View style={styles.row}>
               <FontAwesome name="clock-o" size={20} color="gray" />
@@ -377,7 +365,6 @@ console.log('eventDetails?.tnc', eventDetails?.tnc);
               }}
               title={eventDetails?.title}
               description={eventDetails?.location}
-              onPress={handleMarkerPress}
             />
           </MapView>
           <TouchableOpacity
@@ -392,6 +379,7 @@ console.log('eventDetails?.tnc', eventDetails?.tnc);
               flexDirection: 'row',
               alignItems: 'center',
             }}
+            onPress={handleMarkerPress}
             //onPress={handleViewDirections}
           >
             <Ionicons name="navigate-outline" size={24} color="white" />
@@ -467,7 +455,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 10,
     marginHorizontal: 10,
-    marginTop: 10,
+    marginVertical: 10,
   },
   bookButtonText: {
     color: 'white',
@@ -551,7 +539,7 @@ const styles = StyleSheet.create({
     color: 'gray',
     marginHorizontal: 20,
     lineHeight: 22,
-    
+
   },
   mapPlaceholder: {
     height: 150,

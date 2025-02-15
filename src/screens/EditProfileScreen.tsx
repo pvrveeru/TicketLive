@@ -126,35 +126,37 @@ const EditProfileScreen: React.FC = () => {
   );
 
   return (
-    <ScrollView style={[styles.container, isDarkMode ? styles.darkBackground : styles.lightBackground]}>
+    <View style={[styles.container, isDarkMode ? styles.darkBackground : styles.lightBackground]}>
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon name="arrow-back" size={30} color={isDarkMode ? '#fff' : '#333'} />
         </TouchableOpacity>
         <Text style={isDarkMode ? styles.darkheader : styles.header}>Edit Profile</Text>
       </View>
-
-      <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={firstName} onChangeText={setFirstName} placeholder="First Name" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
-      <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={lastName} onChangeText={setLastName} placeholder="Last Name" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
-      <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={emailId || ''} onChangeText={setEmailId} placeholder="Email ID" keyboardType="email-address" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
-      <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={phoneNumber} onChangeText={setPhoneNumber} placeholder="Phone Number" keyboardType="phone-pad" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
-      <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={dateOfBirth} onChangeText={setDateOfBirth} placeholder="Date of Birth (YYYY-MM-DD)" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
-      <TouchableOpacity
-        style={styles.dropdown}
-        onPress={() => setShowGenderDropdown(!showGenderDropdown)}
-      >
-        <Text style={[styles.dropdownText, { color: isDarkMode ? '#fff' : '#000' }]}>{gender || 'Select Gender'}</Text>
-        <Icon name={showGenderDropdown ? 'chevron-up' : 'chevron-down'} size={20} color={isDarkMode ? '#fff' : '#333'} />
-      </TouchableOpacity>
-      {showGenderDropdown && renderGenderDropdown()}
-      <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={address || ''} onChangeText={setAddress} placeholder="Address" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
-      <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={city || ''} onChangeText={setCity} placeholder="City" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
-      <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={state || ''} onChangeText={setState} placeholder="State" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
-
+      <ScrollView>
+        <View>
+          <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={firstName} onChangeText={setFirstName} placeholder="First Name" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
+          <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={lastName} onChangeText={setLastName} placeholder="Last Name" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
+          <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={emailId || ''} onChangeText={setEmailId} placeholder="Email ID" keyboardType="email-address" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
+          <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={phoneNumber} onChangeText={setPhoneNumber} placeholder="Phone Number" keyboardType="phone-pad" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
+          <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={dateOfBirth} onChangeText={setDateOfBirth} placeholder="Date of Birth (YYYY-MM-DD)" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
+          <TouchableOpacity
+            style={styles.dropdown}
+            onPress={() => setShowGenderDropdown(!showGenderDropdown)}
+          >
+            <Text style={[styles.dropdownText, { color: isDarkMode ? '#fff' : '#000' }]}>{gender || 'Select Gender'}</Text>
+            <Icon name={showGenderDropdown ? 'chevron-up' : 'chevron-down'} size={20} color={isDarkMode ? '#fff' : '#333'} />
+          </TouchableOpacity>
+          {showGenderDropdown && renderGenderDropdown()}
+          <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={address || ''} onChangeText={setAddress} placeholder="Address" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
+          <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={city || ''} onChangeText={setCity} placeholder="City" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
+          <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={state || ''} onChangeText={setState} placeholder="State" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
+        </View>
+      </ScrollView>
       <TouchableOpacity onPress={handleSaveChanges} style={styles.button}>
         <Text style={styles.btntext}>Update</Text>
       </TouchableOpacity>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -173,10 +175,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-},
-dropdownText: {
+  },
+  dropdownText: {
     fontSize: 13,
-},
+  },
   dropdownList: {
     borderColor: 'black',
     borderWidth: 1,

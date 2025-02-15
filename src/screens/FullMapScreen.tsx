@@ -10,6 +10,7 @@ type RootStackParamList = {
     longitude: number;
     title: string;
     location: string;
+    city: string;
   };
 };
 
@@ -18,7 +19,7 @@ type FullMapScreenRouteProp = RouteProp<RootStackParamList, 'FullMapScreen'>;
 const FullMapScreen: React.FC = () => {
   const route = useRoute<FullMapScreenRouteProp>();
   const navigation = useNavigation();
-  const { latitude, longitude, title, location } = route.params;
+  const { latitude, longitude, title, location, city } = route.params;
 
   // Navigation back function
   const handleBackPress = () => {
@@ -32,7 +33,7 @@ const FullMapScreen: React.FC = () => {
           <Ionicons name="arrow-back" size={30} color="white" />
         </TouchableOpacity>
         <View style={styles.overlay}>
-          <Text style={styles.overlayText}>{location}</Text>
+          <Text style={styles.overlayText}>{location},{city}</Text>
         </View>
       </View>
       <MapView

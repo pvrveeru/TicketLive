@@ -309,7 +309,8 @@ const styles = StyleSheet.create({
   eventDate: {
     color: '#808080',
     fontSize: 16,
-    marginTop: 4
+    marginTop: 4,
+    width: '70%',
   },
   eventLocation: {
     color: COLORS.blue,

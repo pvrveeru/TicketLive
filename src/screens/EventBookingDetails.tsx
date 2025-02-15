@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import { useRoute } from '@react-navigation/native';
@@ -86,10 +86,24 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const genderOptions = ['Male', 'Female', 'Other'];
-    const [fields, setFields] = useState<FormField[]>([
-        { id: Date.now(), name: '', email: '', phone: '' },
-    ]);
+    const [fields, setFields] = useState<FormField[]>([]); // Initially empty array
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
+    useEffect(() => {
+        const keyboardDidShowListener = Keyboard.addListener(
+            'keyboardDidShow',
+            () => setKeyboardVisible(true)
+        );
+        const keyboardDidHideListener = Keyboard.addListener(
+            'keyboardDidHide',
+            () => setKeyboardVisible(false)
+        );
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        };
+    }, []);
     const addField = () => {
         if (fields.length < noOfTicketsLength) {
             setFields([...fields, { id: Date.now(), name: '', email: '', phone: '' }]);
@@ -189,31 +203,31 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                     <Text style={{ color: isDarkMode ? 'red' : 'red', fontSize: 12, marginTop: 10 }}>Please Give Me Valid Details</Text>
                 )}
                 <Text style={[styles.Contact, { color: isDarkMode ? '#fff' : '#000', textAlign: 'center' }]}>Contact Information</Text>
+                <View style={[styles.eventDetailsContainer, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#efefef' }]}>
+                    <TextInput
+                        style={[
+                            styles.input,
+                            { color: isDarkMode ? '#fff' : '#000' },
+                        ]}
+                        placeholder="First Name"
+                        value={formData.firstName}
+                        placeholderTextColor={isDarkMode ? '#bbb' : '#555'}
+                        onChangeText={(text) => handleInputChange('firstName', text)}
+                    />
+                    {errors.firstName ? <Text style={styles.errorText}>{errors.firstName}</Text> : null}
+                    <TextInput
+                        style={[
+                            styles.input,
+                            { color: isDarkMode ? '#fff' : '#000' },
+                        ]}
+                        placeholder="Last Name"
+                        value={formData.lastName}
+                        placeholderTextColor={isDarkMode ? '#bbb' : '#555'}
+                        onChangeText={(text) => handleInputChange('lastName', text)}
+                    />
+                    {errors.lastName ? <Text style={styles.errorText}>{errors.lastName}</Text> : null}
 
-                <TextInput
-                    style={[
-                        styles.input,
-                        { color: isDarkMode ? '#fff' : '#000' },
-                    ]}
-                    placeholder="First Name"
-                    value={formData.firstName}
-                    placeholderTextColor={isDarkMode ? '#bbb' : '#555'}
-                    onChangeText={(text) => handleInputChange('firstName', text)}
-                />
-                {errors.firstName ? <Text style={styles.errorText}>{errors.firstName}</Text> : null}
-                <TextInput
-                    style={[
-                        styles.input,
-                        { color: isDarkMode ? '#fff' : '#000' },
-                    ]}
-                    placeholder="Last Name"
-                    value={formData.lastName}
-                    placeholderTextColor={isDarkMode ? '#bbb' : '#555'}
-                    onChangeText={(text) => handleInputChange('lastName', text)}
-                />
-                {errors.lastName ? <Text style={styles.errorText}>{errors.lastName}</Text> : null}
-
-                {/* <TouchableOpacity
+                    {/* <TouchableOpacity
                     style={styles.dropdown}
                     onPress={() => setShowDropdown(!showDropdown)}
                 >
@@ -222,7 +236,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                 </TouchableOpacity>
                 {showDropdown && renderGenderDropdown()} */}
 
-                {/* <TouchableOpacity style={
+                    {/* <TouchableOpacity style={
                     styles.input} onPress={() => setShowDatePicker(true)}>
                     <Text style={[styles.dobText, { color: isDarkMode ? '#fff' : '#000' }]}>
                         {formData.dob ? formData.dob.toDateString() : 'Select Date of Birth'}
@@ -230,7 +244,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                 </TouchableOpacity>
                 {errors.dob ? <Text style={styles.errorText}>{errors.dob}</Text> : null} */}
 
-                {/* <DatePicker
+                    {/* <DatePicker
                     modal
                     open={showDatePicker}
                     date={formData.dob || new Date()}
@@ -240,34 +254,34 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                     maximumDate={new Date()}
                 /> */}
 
-                <TextInput
-                    style={[
-                        styles.input,
-                        { color: isDarkMode ? '#fff' : '#000' },
-                    ]}
-                    placeholder="Email"
-                    value={formData.email}
-                    placeholderTextColor={isDarkMode ? '#bbb' : '#555'}
-                    onChangeText={(text) => handleInputChange('email', text)}
-                    keyboardType="email-address"
-                />
-                {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
+                    <TextInput
+                        style={[
+                            styles.input,
+                            { color: isDarkMode ? '#fff' : '#000' },
+                        ]}
+                        placeholder="Email"
+                        value={formData.email}
+                        placeholderTextColor={isDarkMode ? '#bbb' : '#555'}
+                        onChangeText={(text) => handleInputChange('email', text)}
+                        keyboardType="email-address"
+                    />
+                    {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
 
-                <TextInput
-                    style={[
-                        styles.input,
-                        { color: isDarkMode ? '#fff' : '#000' },
-                    ]}
-                    placeholder="Phone"
-                    value={formData.phone}
-                    placeholderTextColor={isDarkMode ? '#bbb' : '#555'}
-                    onChangeText={(text) => handleInputChange('phone', text)}
-                    keyboardType="phone-pad"
-                    editable={!phoneNumber}
-                />
-                {errors.phone ? <Text style={styles.errorText}>{errors.phone}</Text> : null}
+                    <TextInput
+                        style={[
+                            styles.input,
+                            { color: isDarkMode ? '#fff' : '#000' },
+                        ]}
+                        placeholder="Phone"
+                        value={formData.phone}
+                        placeholderTextColor={isDarkMode ? '#bbb' : '#555'}
+                        onChangeText={(text) => handleInputChange('phone', text)}
+                        keyboardType="phone-pad"
+                        editable={!phoneNumber}
+                    />
+                    {errors.phone ? <Text style={styles.errorText}>{errors.phone}</Text> : null}
 
-                {/* <TextInput
+                    {/* <TextInput
                     style={[
                         styles.input,
                         { color: isDarkMode ? '#fff' : '#000' },
@@ -302,7 +316,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                     onChangeText={(text) => handleInputChange('state', text)}
                 />
                 {errors.state ? <Text style={styles.errorText}>{errors.state}</Text> : null} */}
-
+                </View>
                 <View style={[styles.addusers, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
                     <Text style={{ color: isDarkMode ? '#fff' : '#000', fontSize: 18, paddingBottom: 10 }}>Booking Users</Text>
                     <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={addField}>
@@ -311,7 +325,10 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                     </TouchableOpacity>
                 </View>
                 {fields.map((field, index) => (
-                    <View key={field.id} style={{ marginBottom: 10 }}>
+                    <View key={field.id} style={[styles.card, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#efefef' }]}>
+                        <TouchableOpacity onPress={() => removeField(field.id)} style={styles.deleteIcon}>
+                            <MaterialIcons name="restore-from-trash" size={30} color="red" />
+                        </TouchableOpacity>
                         <TextInput
                             style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]}
                             placeholder="Name"
@@ -341,22 +358,14 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                             keyboardType="numeric"
                             placeholderTextColor={isDarkMode ? '#bbb' : '#555'}
                             maxLength={10}
-                            value={fields[index].phone}
+                            value={field.phone}
                             onChangeText={(text) => {
                                 const updatedFields = [...fields];
                                 updatedFields[index].phone = text;
                                 setFields(updatedFields);
-                                if (text.length === 10) {
-                                    Keyboard.dismiss();
-                                }
+                                if (text.length === 10) Keyboard.dismiss();
                             }}
                         />
-
-                        {fields.length > 1 && (
-                            <TouchableOpacity onPress={() => removeField(field.id)}>
-                                <Icon name="remove-circle-outline" size={30} color="red" />
-                            </TouchableOpacity>
-                        )}
                     </View>
                 ))}
 
@@ -370,37 +379,67 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                     </TouchableOpacity>
                     {errors.termsAccepted ? <Text style={styles.errorText}>{errors.termsAccepted}</Text> : null}
                 </View> */}
-                <View style={styles.checkboxContainer}>
-                    <TouchableOpacity
-                        onPress={() => setFormData({ ...formData, termsAccepted: !formData.termsAccepted })}
-                        style={styles.checkbox}
-                    >
-                        <FontAwesome
-                            name={formData.termsAccepted ? 'check-square' : 'square-o'}
-                            size={20}
-                            color={isDarkMode ? '#fff' : '#000'}
-                        />
-                    </TouchableOpacity>
-                    <Text style={[styles.checkboxText, { color: isDarkMode ? '#fff' : '#000' },]}>
-                        I accept the Terms of Service
-                    </Text>
-                    {errors.termsAccepted && <Text style={styles.errorText}>{errors.termsAccepted}</Text>}
-                </View>
             </ScrollView>
-            <View style={{ backgroundColor: isDarkMode ? '#000' : '#fff' }}>
-                <TouchableOpacity
-                    style={[styles.button, !formData.termsAccepted && styles.disabledButton]}
-                    onPress={handleSubmit}
-                    disabled={!formData.termsAccepted}
-                >
-                    <Text style={styles.buttonText}>Continue</Text>
-                </TouchableOpacity>
-            </View>
+            {!isKeyboardVisible && (
+                <>
+                    <View style={[styles.checkboxContainer, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>
+                        <TouchableOpacity
+                            onPress={() => setFormData({ ...formData, termsAccepted: !formData.termsAccepted })}
+                            style={styles.checkbox}
+                        >
+                            <FontAwesome
+                                name={formData.termsAccepted ? 'check-square' : 'square-o'}
+                                size={20}
+                                color={isDarkMode ? '#fff' : '#000'} />
+                        </TouchableOpacity>
+                        <Text style={[styles.checkboxText, { color: isDarkMode ? '#fff' : '#000' },]}>
+                            I accept the Terms of Service
+                        </Text>
+                        {errors.termsAccepted && <Text style={styles.errorText}>{errors.termsAccepted}</Text>}
+                    </View>
+                    <View style={{ backgroundColor: isDarkMode ? '#000' : '#fff' }}>
+                        <TouchableOpacity
+                            style={[styles.button, !formData.termsAccepted && styles.disabledButton]}
+                            onPress={handleSubmit}
+                            disabled={!formData.termsAccepted}
+                        >
+                            <Text style={styles.buttonText}>Continue</Text>
+                        </TouchableOpacity>
+                    </View>
+                </>
+            )}
         </KeyboardAvoidingView>
     );
 };
 
 const styles = StyleSheet.create({
+    card: {
+        padding: 15,
+        marginVertical: 10,
+        borderRadius: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    deleteIcon: {
+        position: 'absolute',
+        // top: 50,
+        right: 8,
+        // zIndex: 1,
+        bottom: 0,
+    },
+    eventDetailsContainer: {
+        marginBottom: 20,
+        columnGap: 10,
+        padding: 15,
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+    },
     addusers: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -485,6 +524,8 @@ const styles = StyleSheet.create({
     checkboxContainer: {
         flexDirection: 'row',
         alignItems: 'center',
+        paddingHorizontal: 16,
+        paddingVertical: 8,
     },
     checkbox: {
         marginRight: 8,

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
@@ -94,7 +95,21 @@ const ExploreScreen = () => {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   // const [skloading, setSkLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  // console.log('eventType', eventType);
+  // console.log('categories', categories);
+  const [placeholder, setPlaceholder] = useState('Search for events...');
+  const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
+
+  useEffect(() => {
+    if (!categories || categories.length === 0) {return;}
+
+    const interval = setInterval(() => {
+      setPlaceholder(`Search for ${categories[currentCategoryIndex]?.categoryName || 'events'} events...`);
+      setCurrentCategoryIndex((prevIndex) => (prevIndex + 1) % categories.length);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [currentCategoryIndex, categories]);
+
   useEffect(() => {
     const getUserId = async () => {
       try {
@@ -143,11 +158,11 @@ const ExploreScreen = () => {
         if (eventType === 'Featured') {
           console.log('Featured API is calling');
           data = await fetchFeaturedEvents(auserId, 10);
-          if (!data.result) {setNoEventsMessage('No featured events found');}
+          if (!data.result) { setNoEventsMessage('No featured events found'); }
         } else if (eventType === 'Popular') {
           console.log('Popular API is calling');
           data = await fetchPopularEvents(auserId, 10);
-          if (!data.result) {setNoEventsMessage('No popular events found');}
+          if (!data.result) { setNoEventsMessage('No popular events found'); }
         } else {
           console.log('All Events API is calling');
           data = await fetchEvents({
@@ -158,10 +173,17 @@ const ExploreScreen = () => {
             offset: 0,
             status: 'Published',
           });
-          if (!data.result) {setNoEventsMessage('No events found');}
+          if (!data.result) { setNoEventsMessage('No events found'); }
         }
       }
-      setEvents(data.result);
+      const currentDate = moment();
+      const filteredEvents = data.result.filter((event: any) => {
+        // console.log('event.eventDate', event.eventDate);
+        const eventDateTime = moment(`${event.eventDate}`, 'YYYY-MM-DD HH:mm');
+        return eventDateTime.isSameOrAfter(currentDate);
+      });
+      // console.log('filteredEvents', filteredEvents);
+      setEvents(filteredEvents);
     } catch (err: any) {
       console.log('Failed to load events', err.message);
       setNoEventsMessage('Error loading events');
@@ -242,18 +264,25 @@ const ExploreScreen = () => {
     }
   };
 
-  const handleNotificationPress = () => {
-    navigation.navigate('Notification');
-  };
+  // const handleNotificationPress = () => {
+  //   navigation.navigate('Notification');
+  // };
 
-  const handleProfilePress = () => {
-    navigation.navigate('BottomBar', { screen: 'Profile' });
-  };
+  // const handleProfilePress = () => {
+  //   navigation.navigate('BottomBar', { screen: 'Profile' });
+  // };
 
   const renderEventRow = ({ item }: { item: EventData[]; index: number }) => {
+    const currentDateTime = new Date();
+
+    const filteredEvents = item.filter((event) => {
+      const eventDateTime = moment(`${event.eventDate}`, 'YYYY-MM-DD HH:mm');
+      return eventDateTime.isSameOrAfter(currentDateTime);
+    });
+
     return (
       <View style={styles.eventRow}>
-        {item?.map((event, idx) => (
+        {filteredEvents.map((event, idx) => (
           <TouchableOpacity
             key={event.id || idx}
             style={[styles.eventCard, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#f9f9f9' }]}
@@ -264,9 +293,8 @@ const ExploreScreen = () => {
               <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.title}</Text>
               <Text style={styles.eventDate}>{formatDate(event?.eventDate || '')}</Text>
               <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.location}</Text>
-              <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000', marginTop: -10, }]}>{event?.city}</Text>
+              <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000', marginTop: -10 }]}>{event?.city}</Text>
 
-            
               <TouchableOpacity
                 onPress={() => {
                   if (event?.eventId !== undefined) {
@@ -283,13 +311,13 @@ const ExploreScreen = () => {
                   color={event?.isFavorite ? 'red' : '#000'}
                 />
               </TouchableOpacity>
-
             </View>
           </TouchableOpacity>
         ))}
       </View>
     );
   };
+
 
 
   const transformDataToRows = (data: EventData[]) => {
@@ -314,7 +342,6 @@ const ExploreScreen = () => {
       event?.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
       event?.location?.toLowerCase().includes(searchKeyword.toLowerCase())
     );
-
   return (
     <>
       <View style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>
@@ -323,7 +350,7 @@ const ExploreScreen = () => {
           <View style={styles.searchContainer}>
             <TextInput
               style={[styles.searchInput, { color: isDarkMode ? '#fff' : '#000' }]}
-              placeholder="Search for events..."
+              placeholder={placeholder}
               placeholderTextColor={isDarkMode ? '#fff' : '#000'}
               value={searchKeyword}
               onChangeText={setSearchKeyword} />
@@ -366,7 +393,7 @@ const ExploreScreen = () => {
           </ScrollView>
         </View>
         {noEventsMessage && <Text style={styles.noEventsMessage}>{noEventsMessage}</Text>}
-        <View style={{ marginBottom: '35%' }}>
+        <View style={{ flex: 1 }}>
           {loading ? (
             <ScrollView>
               {Array.from({ length: 5 }).map((_, index) => (

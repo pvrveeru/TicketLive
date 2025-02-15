@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
@@ -90,7 +91,12 @@ const FavoritiesScreen: React.FC = () => {
     try {
       if (userId) {
         const events = await getAllFavouriteEvents(userId);
-        setFavoriteEvents(events.favorites);
+        const currentDate = moment();
+        const filteredEvents = events.favorites.filter((event: any) => {
+          const eventDateTime = moment(`${event.event.eventDate}`, 'YYYY-MM-DD HH:mm');
+          return eventDateTime.isSameOrAfter(currentDate);
+        });
+        setFavoriteEvents(filteredEvents);
         setIsRefreshing(false);
       }
     } catch (error) {
@@ -136,10 +142,10 @@ const FavoritiesScreen: React.FC = () => {
             <Image source={require('../../assets/images/altimg.jpg')} style={styles.eventImage} />
           )}
           <View style={styles.eventDetails}>
-          <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.title}</Text>
-          <Text style={styles.eventDate}>{formatDate(eventDetails.eventDate)}</Text>
-          <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.location}</Text>
-          <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000', marginTop: -10, }]}>{eventDetails.city}</Text>
+            <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.title}</Text>
+            <Text style={styles.eventDate}>{formatDate(eventDetails.eventDate)}</Text>
+            <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.location}</Text>
+            <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000', marginTop: -10, }]}>{eventDetails.city}</Text>
           </View>
           <TouchableOpacity
             style={styles.favotites}
@@ -155,7 +161,7 @@ const FavoritiesScreen: React.FC = () => {
 
   return (
     <>
-      
+
       <View style={[styles.main, isDarkMode ? styles.darkBackground : styles.lightBackground]}>
         <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>My Favorities</Text>
         <ScrollView
@@ -235,7 +241,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     marginLeft: 5,
     marginRight: 5,
-    
+
   },
   eventDetails: {
     padding: 0,

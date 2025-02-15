@@ -15,6 +15,7 @@ import { COLORS } from '../styles/globalstyles';
 import HomeCarousel from './HomeCarousel';
 import { getUserData } from '../Redux/Actions';
 import Header from '../components/Header';
+import moment from 'moment';
 
 
 type EventData = {
@@ -173,7 +174,12 @@ const HomeScreen: React.FC = () => {
     try {
       const data = await fetchFunction(auserId, 10);
       const eventList = data.result || [];
-      setEvents(eventList);
+      const currentDate = moment();
+      const filteredEvents = eventList.filter((event: any) => {
+        const eventDateTime = moment(`${event.eventDate}`, 'YYYY-MM-DD HH:mm');
+        return eventDateTime.isSameOrAfter(currentDate);
+      });
+      setEvents(filteredEvents);
       const updatedFavorites: { [key: number]: boolean } = {};
       eventList.forEach((event: any) => {
         updatedFavorites[event.eventId] = event.isFavorite;
@@ -231,7 +237,7 @@ const HomeScreen: React.FC = () => {
   };
 
   const toggleFavorite = async (eventId: number) => {
-    if (!auserId) {return;}
+    if (!auserId) { return; }
     const isCurrentlyFavorite = favorites[eventId] || false;
     setFavorites((prevFavorites) => {
       return {
@@ -273,6 +279,7 @@ const HomeScreen: React.FC = () => {
             title={item.title}
             dateTime={item.eventDate}
             location={item.location}
+            city={item.city}
             isFavorite={favorites[item.eventId] || false}
             onFavoritePress={() => toggleFavorite(item.eventId)}
             onPress={() => handleEventPress(item.eventId)}
@@ -286,13 +293,13 @@ const HomeScreen: React.FC = () => {
 
   return (
     <>
-    <Header
+      <Header
         profileImage={require('../../assets/images/ticketliv_logo.png')}
         onNotificationPress={handleNotificationPress}
-        />
-    <ScrollView style={[styles.container, isDarkMode ? styles.darkBackground : styles.lightBackground]}
-      refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}>
-      {/* <View style={styles.header}>
+      />
+      <ScrollView style={[styles.container, isDarkMode ? styles.darkBackground : styles.lightBackground]}
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}>
+        {/* <View style={styles.header}>
         <TouchableOpacity onPress={handleProfilePress} style={styles.profile}>
           {profileImageUrl ? (
             <Image source={{ uri: profileImageUrl }} style={styles.profileImage} />
@@ -310,13 +317,13 @@ const HomeScreen: React.FC = () => {
           <MaterialCommunityIcons name="bell-badge-outline" style={[styles.socialIcon, isDarkMode ? styles.darkIcon : styles.lightIcon]} />
         </TouchableOpacity>
       </View> */}
-      <HomeCarousel />
-      <View style={{ marginBottom: 40 }}>
-        {renderEventSection('Featured Events', featuredEvents, 'Featured')}
-        {renderEventSection('Popular Events', popularEvents, 'Popular')}
-        {/* {renderEventSection('Manual Events', manualEvents, 'Manual')} */}
-      </View>
-    </ScrollView>
+        <HomeCarousel />
+        <View style={{ marginBottom: 40 }}>
+          {renderEventSection('Featured Events', featuredEvents, 'Featured')}
+          {renderEventSection('Popular Events', popularEvents, 'Popular')}
+          {/* {renderEventSection('Manual Events', manualEvents, 'Manual')} */}
+        </View>
+      </ScrollView>
     </>
   );
 };

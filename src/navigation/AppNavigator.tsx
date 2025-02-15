@@ -4,7 +4,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '../screens/LoginScreen';
 import BottomBar from '../components/BottomBar';
 import Notifications from '../screens/Notifications';
-import AllEventsScreen from '../screens/AllEventsScreen';
 import { ThemeProvider } from '../Theme/ThemeContext';
 import TicketDetails from '../screens/TicketDetails ';
 import BookEventScreen from '../screens/BookEventScreen';
@@ -84,7 +83,6 @@ const AppNavigator: React.FC = () => {
           <Stack.Screen name="BottomBar" component={BottomBar} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Notification" component={Notifications} />
-          <Stack.Screen name="AllEvents" component={AllEventsScreen} />
           <Stack.Screen name="TicketDetails" component={TicketDetails} />
           <Stack.Screen name="OtpVerification" component={OtpVerificationScreen} />
           <Stack.Screen name="BookEventScreen" component={BookEventScreen} />

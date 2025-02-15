@@ -9,7 +9,7 @@ import { COLORS } from '../styles/globalstyles';
 import { useTheme } from '../Theme/ThemeContext';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
-import Header from '../components/Header';
+// import Header from '../components/Header';
 import SkeletonLoader from '../components/SkeletonLoading';
 
 type RootStackParamList = {
@@ -80,9 +80,9 @@ const TicketsScreen = () => {
     return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
   };
 
-  const handleProfilePress = () => {
-    navigation.navigate('BottomBar', { screen: 'Profile' });
-  };
+  // const handleProfilePress = () => {
+  //   navigation.navigate('BottomBar', { screen: 'Profile' });
+  // };
 
   const fetchBookings = async () => {
     setIsLoading(true);
@@ -109,9 +109,9 @@ const TicketsScreen = () => {
   //   Alert.alert(`Cancel booking with ID: ${bookingId}`);
   // };
 
-  const handleNotificationPress = () => {
-    navigation.navigate('Notification');
-  };
+  // const handleNotificationPress = () => {
+  //   navigation.navigate('Notification');
+  // };
 
   // Function to categorize bookings
   const categorizeBookings = () => {
