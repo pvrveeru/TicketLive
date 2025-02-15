@@ -60,8 +60,7 @@ const BottomBar = () => {
                 tabBarInactiveTintColor: isDarkMode ? '#fff' : '#26276C',
                 tabBarStyle: {
                     backgroundColor: isDarkMode ? '#000' : '#FFF',
-                    //paddingTop: 5,
-                    //height: 40,
+                   
                    
                 },
                 headerShown: false,

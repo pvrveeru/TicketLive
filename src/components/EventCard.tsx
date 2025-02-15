@@ -12,6 +12,7 @@ type EventCardProps = {
   title?: string;
   dateTime?: string;
   location?: string;
+  city?: string;
   isFavorite: boolean;
   onPress?: () => void;
   onFavoritePress: () => void;
@@ -24,6 +25,7 @@ const EventCard: React.FC<EventCardProps> = ({
   title,
   dateTime,
   location,
+  city,
   isFavorite,
   onFavoritePress,
   loading,
@@ -66,8 +68,8 @@ const EventCard: React.FC<EventCardProps> = ({
             <Text style={[styles.dateTime, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{formatDate(dateTime || '')}</Text>
             <View style={styles.rowContainer}>
               <View style={styles.locationContainer}>
-                <Ionicons name="location-sharp" size={20} color="#555" />
-                <Text style={[styles.location, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{location}</Text>
+                {/* <Ionicons name="location-sharp" size={20} color="#555" /> */}
+                <Text style={[styles.location, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{location}, {city}</Text>
               </View>
               <TouchableOpacity onPress={onFavoritePress}>
                 <Ionicons
@@ -90,8 +92,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',  // Ensure shadow is not clipped
     backgroundColor: '#fff',
-    marginRight: 15,
-    marginBottom: 15,
+    marginRight: 20,
+    marginBottom:5,
     // borderWidth: 1, // Add border
     // borderColor: '#efefef', // Light gray border
 
@@ -115,13 +117,14 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   title: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 5,
+    textAlign: 'center'
   },
   dateTime: {
-    fontSize: 14,
+    fontSize: 16,
     color: COLORS.red,
     marginBottom: 5,
     fontWeight: 'bold',
@@ -137,11 +140,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   location: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#555',
     marginLeft: 5,
-    width: '80%',
+    width: '90%',
     flexWrap: 'wrap',
+     textAlign: 'center'
   },
 });
 

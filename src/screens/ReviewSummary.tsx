@@ -26,6 +26,7 @@ interface EventDetailsData {
   maxTicketAllowed?: number;
   ageLimit?: string;
   location?: string;
+  city?: string;
   artistName?: string;
   thumbUrl?: string;
   layoutImageUrl?: string;
@@ -152,6 +153,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
             <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails?.title}</Text>
             <Text style={[styles.eventDate, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{formatDate(eventDetails?.eventDate || '')}</Text>
             <Text style={[styles.eventLocation, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails?.location}</Text>
+            <Text style={[styles.eventLocation, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails?.city}</Text>
           </View>
         </View>
 
@@ -294,8 +296,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   eventImage: {
-    width: 100,
-    height: 100,
+    width: 110,
+    height: 120,
     borderRadius: 10,
   },
   eventTitle: {
@@ -306,11 +308,13 @@ const styles = StyleSheet.create({
   },
   eventDate: {
     color: '#808080',
+    fontSize: 16,
+    marginTop: 4
   },
   eventLocation: {
     color: COLORS.blue,
-    fontWeight: 'bold',
-    width: '80%',
+    fontSize: 16,
+    marginTop: 4
   },
   contactInfoContainer: {
     marginBottom: 20,
@@ -321,9 +325,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    color: 'black',
   },
   infoTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
     color: 'black',
@@ -336,9 +341,12 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: 'bold',
     color: 'black',
+    fontSize: 16,
   },
   value: {
     color: 'black',
+    fontSize: 16,
+    marginTop: 4,
   },
   ticketDetailsContainer: {
     marginBottom: 80,
@@ -357,19 +365,21 @@ const styles = StyleSheet.create({
   },
   bottomButtonContainer: {
     position: 'absolute',
-    bottom: 20,
-    left: 20,
-    right: 20,
+    bottom: 0,
+    left: 10,
+    right: 10,
   },
   continueButton: {
-    backgroundColor: COLORS.red,
-    padding: 15,
-    borderRadius: 20,
-    alignItems: 'center',
+    backgroundColor: '#EF412B',
+        padding: 16,
+        alignItems: 'center',
+        borderRadius: 10,
+        marginTop: 10,
+        marginHorizontal: 10,
   },
   continueText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
   },
 });

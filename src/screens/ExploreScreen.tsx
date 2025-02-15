@@ -263,10 +263,10 @@ const ExploreScreen = () => {
             <View style={styles.eventDetails}>
               <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.title}</Text>
               <Text style={styles.eventDate}>{formatDate(event?.eventDate || '')}</Text>
-              <View style={styles.locationContainer}>
-                              <Ionicons name="location-sharp" size={20} color="#555" />
-                              <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.location}, {event?.city}</Text>
-                              </View>
+              <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.location}</Text>
+              <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000', marginTop: -10, }]}>{event?.city}</Text>
+
+            
               <TouchableOpacity
                 onPress={() => {
                   if (event?.eventId !== undefined) {
@@ -317,12 +317,8 @@ const ExploreScreen = () => {
 
   return (
     <>
-      <Header
-        profileImage={require('../../assets/images/ticketliv_logo.png')}
-        onNotificationPress={handleNotificationPress}
-        />
       <View style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>
-        {/* <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Explore Events</Text> */}
+        <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Explore Events</Text>
         <View style={styles.header}>
           <View style={styles.searchContainer}>
             <TextInput
@@ -332,7 +328,7 @@ const ExploreScreen = () => {
               value={searchKeyword}
               onChangeText={setSearchKeyword} />
           </View>
-          <Text style={[styles.eventCount, { color: isDarkMode ? '#fff' : '#000' }]}>{eventType} Events found: {filteredEvents?.length ? filteredEvents?.length : events?.length}</Text>
+          <Text style={[styles.eventCount, { color: isDarkMode ? '#fff' : '#000' }]}>{eventType} Total Events Count: {filteredEvents?.length ? filteredEvents?.length : events?.length}</Text>
         </View>
         <View>
           <ScrollView contentContainerStyle={styles.buttonContainer} horizontal>
@@ -401,7 +397,7 @@ const ExploreScreen = () => {
 
 const styles = StyleSheet.create({
   headerText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 10,
@@ -442,7 +438,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#000',
-    fontSize: 12,
+    fontSize: 16,
   },
   darkbuttontext: {
     color: '#fff',
@@ -473,7 +469,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    height: 35,
+    height: 50,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 5,
@@ -482,9 +478,10 @@ const styles = StyleSheet.create({
   },
   eventCount: {
     marginLeft: 0,
-    fontSize: 14,
+    fontSize: 16,
     color: '#000',
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   eventRow: {
     flexDirection: 'row',
@@ -501,28 +498,30 @@ const styles = StyleSheet.create({
   },
   eventImage: {
     width: '100%',
-    height: 140,
+    height: 160,
     resizeMode: 'cover',
   },
   eventDetails: {
     padding: 8,
   },
   eventTitle: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   eventDescription: {
-    marginTop: 4,
-    fontSize: 14,
+    marginTop: 0,
+    fontSize: 18,
     color: '#777',
     marginBottom: 10,
-    width: '80%',
+    textAlign: 'center',
   },
   eventDate: {
-    marginTop: 4,
-    fontSize: 14,
+    marginTop: 0,
+    fontSize: 18,
     color: 'black',
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   noEventsMessage: {
     fontSize: 18,

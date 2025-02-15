@@ -60,6 +60,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         backgroundColor: "#fff",
         paddingLeft: 10,
+        height:60,
         marginTop: Platform.OS === 'ios' ? 50 : 0,
     },
     profile: {
@@ -69,7 +70,7 @@ const styles = StyleSheet.create({
     profileImage: {
         width: '55%',
         height: 50,
-        marginRight: 10,
+        marginLeft: 10,
      
     },
     light: {
@@ -77,8 +78,9 @@ const styles = StyleSheet.create({
         color: "#555",
     },
     name: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: "bold",
+        alignItems: "center",
     },
     darkText: {
         color: "#fff",

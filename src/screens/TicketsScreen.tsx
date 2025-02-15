@@ -153,10 +153,6 @@ const TicketsScreen = () => {
   // console.log('upcomingBookings', upcomingBookings);
   return (
     <>
-       <Header
-        profileImage={require('../../assets/images/ticketliv_logo.png')}
-        onNotificationPress={handleNotificationPress}
-        />
       <View style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>
         <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>My Tickets</Text>
         <View style={styles.tabBar}>
@@ -241,12 +237,12 @@ const styles = StyleSheet.create({
     borderColor: '#efefef', // Light gray border
   },
   title: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 8,
   },
   detail: {
-    fontSize: 14,
+    fontSize: 16,
     marginBottom: 4,
     color: '#555',
   },

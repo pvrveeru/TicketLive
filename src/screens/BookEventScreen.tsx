@@ -183,13 +183,12 @@ const BookEventScreen: React.FC = () => {
                             // onLoad={() => setSkLoading(false)}
                             // onError={() => setSkLoading(false)}
                             />
-                            <Text style={styles.layoutText}>Layout Of the Event</Text>
                             <TouchableOpacity onPress={handleBackPress} style={styles.backArrow}>
                                 <Icon name="arrow-back" size={30} color="white" />
                             </TouchableOpacity>
                         </View>
 
-                        <Text style={[styles.subTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Choose number of seats</Text>
+                        <Text style={[styles.subTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Choose Number of Seats</Text>
 
                         {limitExceeded && (
                             <Text style={styles.limitText}>⚠️ Your limit is exceeded! Maximum 5 tickets allowed.</Text>
@@ -266,14 +265,14 @@ const styles = StyleSheet.create({
     imageContainer: {
         position: 'relative',
         alignItems: 'center',
-        marginBottom: 20,
+        marginBottom: 10,
     },
     layoutImage: {
         width: '95%',
         height: 300,
         alignSelf: 'center',
         resizeMode: 'cover',
-        borderRadius: 20,
+        borderRadius: 0,
     },
     layoutText: {
         position: 'absolute',
@@ -311,7 +310,7 @@ const styles = StyleSheet.create({
         flex: 1,
         // padding: 16,
         backgroundColor: '#f9f9f9',
-        paddingTop: Platform.OS === 'ios' ? 50 : 5,
+        paddingTop: Platform.OS === 'ios' ? 50 : 8,
     },
     header: {
         flexDirection: 'row',
@@ -331,14 +330,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     subTitle: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: 'bold',
         marginLeft: 16,
-        paddingBottom: 10,
+        paddingBottom: 0,
+        marginBottom: 10,
+        textAlign: 'center',
         
     },
     zoneCard: {
-        padding: 16,
+        padding: 12,
         borderRadius: 8,
         marginBottom: 12,
         borderWidth: 1,
@@ -349,20 +350,20 @@ const styles = StyleSheet.create({
         
     },
     zoneName: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: 'bold',
         color: '#000',
     },
     zonePrice: {
-        fontSize: 14,
+        fontSize: 16,
         color: '#333',
-        marginTop: 4,
+        marginTop: 2,
         fontWeight: 'bold',
     },
     zoneCapacity: {
-        fontSize: 14,
+        fontSize: 16,
         color: '#666',
-        marginTop: 4,
+        marginTop: 2,
     },
     checkIcon: {
         position: 'absolute',
@@ -396,16 +397,15 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
     },
     continueButton: {
-        backgroundColor: COLORS.red,
+        backgroundColor: '#EF412B',
         padding: 16,
         alignItems: 'center',
-        borderRadius: 0,
-        marginVertical: 5,
-        width: '100%',
-        alignSelf: 'center',
+        borderRadius: 10,
+        marginTop: 10,
+        marginHorizontal: 10,
     },
     continueButtonText: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: 'bold',
         color: '#fff',
     },

@@ -63,7 +63,7 @@ const CustomCarousel: React.FC<CustomCarouselProps> = ({
               source={{ uri: imageUrl }}
               style={[
                 styles.image,
-                { width: screenWidth * 0.95, height: height, borderRadius: 20 },
+                { width: screenWidth * 0.95, height: height, borderRadius: 0 },
                 imageStyle
               ]}
             />
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   },
   image: {
     resizeMode: 'cover',
-    borderRadius: 20,
+    borderRadius: 0,
   },
   overlay: {
     position: 'absolute',

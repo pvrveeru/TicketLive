@@ -135,13 +135,11 @@ const FavoritiesScreen: React.FC = () => {
           ) : (
             <Image source={require('../../assets/images/altimg.jpg')} style={styles.eventImage} />
           )}
-          <View style={{padding: 8, backgroundColor: "#efefef"}}>
+          <View style={styles.eventDetails}>
           <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.title}</Text>
           <Text style={styles.eventDate}>{formatDate(eventDetails.eventDate)}</Text>
-          <View style={styles.locationContainer}>
-            <Ionicons name="location-sharp" size={20} color="#555" />
-            <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.location}, {eventDetails.city}</Text>
-          </View>
+          <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.location}</Text>
+          <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000', marginTop: -10, }]}>{eventDetails.city}</Text>
           </View>
           <TouchableOpacity
             style={styles.favotites}
@@ -157,11 +155,9 @@ const FavoritiesScreen: React.FC = () => {
 
   return (
     <>
-      <Header
-        profileImage={require('../../assets/images/ticketliv_logo.png')}
-        onNotificationPress={handleNotificationPress}
-        />
+      
       <View style={[styles.main, isDarkMode ? styles.darkBackground : styles.lightBackground]}>
+        <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>My Favorities</Text>
         <ScrollView
           contentContainerStyle={styles.container}
           showsVerticalScrollIndicator={false}
@@ -207,10 +203,10 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   headerText: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 0,
+    marginBottom: 10,
   },
   darkBackground: {
     backgroundColor: '#121212',
@@ -237,16 +233,21 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     elevation: 3,
     marginBottom: 15,
+    marginLeft: 5,
+    marginRight: 5,
+    
   },
   eventDetails: {
     padding: 0,
     borderRadius: 8,
+    alignItems: 'center',
+    borderBlockColor: '#efefef'
     // borderWidth: 1, // Add border
     // borderColor: '#efefef', // Light gray border
   },
   eventImage: {
     width: '100%',
-    height: 150,
+    height: 160,
     marginBottom: 0,
   },
   eventType: {
@@ -259,8 +260,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   eventTitle: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
+    alignItems: 'center',
+    marginTop: 10,
   },
   locationContainer: {
     flexDirection: 'row',
@@ -268,17 +271,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   eventDescription: {
-    marginTop: 4,
-    fontSize: 14,
+    marginTop: 0,
+    fontSize: 18,
     color: '#777',
-    width: '80%',
+    width: '100%',
     marginBottom: 10,
+    alignItems: 'center',
   },
   eventDate: {
-    marginTop: 4,
-    fontSize: 14,
+    marginTop: 0,
+    fontSize: 18,
     color: 'black',
     fontWeight: 'bold',
+    alignItems: 'center',
   },
   favoriteIconContainer: {
     padding: 5,

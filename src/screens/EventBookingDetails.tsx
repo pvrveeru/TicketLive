@@ -175,7 +175,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
 
     return (
         <KeyboardAvoidingView
-            style={{ flex: 1, backgroundColor: isDarkMode ? '#333' : '#fff', marginTop: Platform.OS === 'ios' ? 50 : 0 }}
+            style={{ flex: 1, backgroundColor: isDarkMode ? '#000' : '#fff', marginTop: Platform.OS === 'ios' ? 50 : 0 }}
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
             <ScrollView contentContainerStyle={{ padding: 16 }} showsVerticalScrollIndicator={false}>
@@ -188,7 +188,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                 {ismanual && (
                     <Text style={{ color: isDarkMode ? 'red' : 'red', fontSize: 12, marginTop: 10 }}>Please Give Me Valid Details</Text>
                 )}
-                <Text style={[styles.Contact, { color: isDarkMode ? '#fff' : '#000' }]}>Contact Information</Text>
+                <Text style={[styles.Contact, { color: isDarkMode ? '#fff' : '#000', textAlign: 'center' }]}>Contact Information</Text>
 
                 <TextInput
                     style={[
@@ -304,7 +304,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                 {errors.state ? <Text style={styles.errorText}>{errors.state}</Text> : null} */}
 
                 <View style={[styles.addusers, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
-                    <Text style={{ color: isDarkMode ? '#fff' : '#000', fontSize: 14, paddingBottom: 10 }}>Booking Users</Text>
+                    <Text style={{ color: isDarkMode ? '#fff' : '#000', fontSize: 18, paddingBottom: 10 }}>Booking Users</Text>
                     <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={addField}>
                         <MaterialIcons name="add-circle-outline" size={20} color="green" style={{ paddingBottom: 10 }} />
                         <Text style={{ fontSize: 14, paddingBottom: 10, marginLeft: 5, color: isDarkMode ? '#fff' : '#000' }}>Add</Text>
@@ -412,9 +412,10 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     Contact: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: 'bold',
         marginVertical: 10,
+        alignItems: 'center',
     },
     container: {
         flex: 1,
@@ -431,7 +432,7 @@ const styles = StyleSheet.create({
         marginLeft: 20,
     },
     input: {
-        height: 40,
+        height: 45,
         borderColor: '#ccc',
         borderWidth: 1,
         marginBottom: 15,
@@ -439,7 +440,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         justifyContent: 'center',
         color: 'black',
-        fontSize: 14,
+        fontSize: 16,
     },
     dobText: {
         fontSize: 16,
@@ -492,19 +493,19 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     button: {
-        backgroundColor: COLORS.red,
-        paddingVertical: 12,
-        borderRadius: 0,
+        backgroundColor: '#EF412B',
+        padding: 16,
         alignItems: 'center',
-        marginHorizontal: 0,
-        marginVertical: 5,
+        borderRadius: 10,
+        marginTop: 10,
+        marginHorizontal: 10,
     },
     disabledButton: {
         backgroundColor: '#ccc',
     },
     buttonText: {
         color: 'white',
-        fontSize: 16,
+        fontSize: 18,
     },
 });
 

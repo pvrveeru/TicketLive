@@ -288,9 +288,8 @@ console.log('eventDetails?.tnc', eventDetails?.tnc);
           <CustomCarousel
             images={eventDetails?.galleryImages}
             interval={3000}
-            height={300}
+            height={250}
             containerStyle={{ marginBottom: 20 }}
-            imageStyle={{ borderRadius: 20 }}
             artistName={eventDetails?.artistName}
             eventTitle={eventDetails?.title}
             onBackPress={handleBackPress}
@@ -318,12 +317,16 @@ console.log('eventDetails?.tnc', eventDetails?.tnc);
 
           <View style={styles.row}>
             <Ionicons name="location-outline" size={20} color="gray" />
-            <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000', flexWrap: 'wrap' }]}>{eventDetails?.location}, {eventDetails?.city}</Text>
+            <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000', flexWrap: 'wrap' }]}>{eventDetails?.location}</Text>
+          </View>
+          <View style={[styles.row, {marginTop: 10, marginLeft: 15}]}>
+            <Ionicons name="" size={20} color="gray" />
+            <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000', flexWrap: 'wrap' }]}>{eventDetails?.city}</Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
-            <View style={styles.row}>
+            <View style={[styles.row]}>
               <Ionicons name="language-outline" size={20} color="gray" />
-              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.language}</Text>
+              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000', }]}>{eventDetails?.language}</Text>
             </View>
             <View style={styles.row}>
               <FontAwesome name="clock-o" size={20} color="gray" />
@@ -458,13 +461,13 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   bookButton: {
-    backgroundColor: COLORS.red,
+    backgroundColor: '#EF412B',
     padding: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 0,
-    marginHorizontal: 0,
-    marginVertical: 5,
+    borderRadius: 10,
+    marginHorizontal: 10,
+    marginTop: 10,
   },
   bookButtonText: {
     color: 'white',
@@ -474,7 +477,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingTop: Platform.OS === 'ios' ? 50 : 5,
+    paddingTop: Platform.OS === 'ios' ? 50 : 8,
   },
   loader: {
     flex: 1,
@@ -513,7 +516,7 @@ const styles = StyleSheet.create({
   },
   text: {
     marginLeft: 10,
-    fontSize: 14,
+    fontSize: 16,
     color: 'gray',
   },
   actionButtons: {
@@ -538,13 +541,13 @@ const styles = StyleSheet.create({
     right: 0,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     marginHorizontal: 20,
     marginVertical: 10,
   },
   description: {
-    fontSize: 16,
+    fontSize: 18,
     color: 'gray',
     marginHorizontal: 20,
     lineHeight: 22,

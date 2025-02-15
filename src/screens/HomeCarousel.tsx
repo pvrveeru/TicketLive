@@ -58,11 +58,11 @@ const HomeCarousel: React.FC = () => {
 
 const styles = StyleSheet.create({
   carouselContainer: {
-    height: 180,
+    height: 220,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: -10,
+    marginTop: -15,
   },
   scrollViewContent: {
     alignItems: 'center',
@@ -73,10 +73,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    height: 180,
+    height: 220,
     width: '100%',
     borderRadius: 0,
-    resizeMode: 'cover',
+    //resizeMode: 'cover',
     alignSelf: 'center',
   },
 });

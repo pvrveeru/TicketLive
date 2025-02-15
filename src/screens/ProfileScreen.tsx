@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     backgroundColor: '#444',
     width: 150,
-    height: 150,
+    height: 120,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -382,10 +382,10 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: 10,
+    marginTop: 0,
   },
   accountSection: {
     marginBottom: 20,
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
   },
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 15,
-    borderBottomWidth: 0.3,
+    borderBottomWidth: 0.2,
     borderBottomColor: '#efefef',
   },
   optionIcon: {
@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 18,
   },
   notificationSwitch: {
     marginLeft: 'auto',
