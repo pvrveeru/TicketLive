@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
   },
   view: {
-    backgroundColor: '#FF5733',
+    backgroundColor: '#EF412B',
     borderRadius: 20,
   },
   modalContainer: {
