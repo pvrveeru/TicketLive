@@ -469,11 +469,11 @@ const styles = StyleSheet.create({
   },
   darkbuttontext: {
     color: '#fff',
-    fontSize: 12,
+    fontSize: 16,
   },
   selectedButtontxt: {
     color: '#fff',
-    fontSize: 12,
+    fontSize: 16,
   },
   favotites: {
     position: 'absolute',
