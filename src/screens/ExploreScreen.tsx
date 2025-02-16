@@ -292,8 +292,8 @@ const ExploreScreen = () => {
             <View style={styles.eventDetails}>
               <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.title}</Text>
               <Text style={styles.eventDate}>{formatDate(event?.eventDate || '')}</Text>
-              <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.location}</Text>
-              <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000', marginTop: -10 }]}>{event?.city}</Text>
+              <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.location}, {event?.city}</Text>
+              {/* <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000', marginTop: -10 }]}>{event?.city}</Text> */}
 
               <TouchableOpacity
                 onPress={() => {
@@ -478,8 +478,12 @@ const styles = StyleSheet.create({
   favotites: {
     position: 'absolute',
     // left: '85%',
-    bottom: 10,
+    bottom: 80,
     right: 10,
+    borderColor: '#fff',
+    backgroundColor: '#fff',
+    borderWidth: 2,    
+    borderRadius: 50,
   },
   container: {
     flex: 1,
@@ -532,20 +536,20 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   eventTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
   },
   eventDescription: {
     marginTop: 0,
-    fontSize: 18,
+    fontSize: 16,
     color: '#777',
     marginBottom: 10,
     textAlign: 'center',
   },
   eventDate: {
     marginTop: 0,
-    fontSize: 18,
+    fontSize: 16,
     color: 'black',
     fontWeight: 'bold',
     textAlign: 'center',

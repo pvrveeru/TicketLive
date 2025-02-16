@@ -11,6 +11,8 @@ import { useTheme } from '../Theme/ThemeContext'; // Import the useTheme hook
 
 const Tab = createBottomTabNavigator();
 
+
+
 // Function to map icons to tab names
 const getTabBarIcon = (routeName: string, focused: boolean, color: string, size: number) => {
     if (routeName === 'Tickets') {
@@ -46,6 +48,7 @@ const getTabBarIcon = (routeName: string, focused: boolean, color: string, size:
 
     return <Ionicons name={iconName} size={size} color={color} />;
 };
+
 
 const BottomBar = () => {
     const { isDarkMode } = useTheme(); // Get the current theme from context

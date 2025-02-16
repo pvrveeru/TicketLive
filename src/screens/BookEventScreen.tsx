@@ -403,6 +403,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginTop: 10,
         marginHorizontal: 10,
+        marginBottom: 8,
     },
     continueButtonText: {
         fontSize: 18,

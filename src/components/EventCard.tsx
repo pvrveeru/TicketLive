@@ -71,15 +71,18 @@ const EventCard: React.FC<EventCardProps> = ({
                 {/* <Ionicons name="location-sharp" size={20} color="#555" /> */}
                 <Text style={[styles.location, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{location}, {city}</Text>
               </View>
-              <TouchableOpacity onPress={onFavoritePress}>
+              
+            </View>
+            
+          </View>
+          <TouchableOpacity onPress={onFavoritePress} style={styles.favotites}>
                 <Ionicons
                   name={isFavorite ? "heart" : "heart-outline"}
                   size={30}
                   color={isFavorite ? "red" : "#888"}
+                  style={styles.favotborder}
                 />
               </TouchableOpacity>
-            </View>
-          </View>
         </>
       )}
     </TouchableOpacity>
@@ -113,6 +116,20 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
     resizeMode: 'cover',
   },
+  favotites: {
+    position: 'absolute',
+    // left: '85%',
+    bottom: 85,
+    right: 10,
+    borderColor: '#fff',
+    backgroundColor: '#fff',
+    borderWidth: 2,    
+    borderRadius: 50,
+  },
+  favotborder: {
+marginLeft:1,
+marginTop: 2,
+  },
   content: {
     padding: 10,
   },
@@ -143,7 +160,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#555',
     marginLeft: 5,
-    width: '90%',
+    width: '100%',
     flexWrap: 'wrap',
      textAlign: 'center'
   },

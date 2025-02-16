@@ -308,13 +308,13 @@ const styles = StyleSheet.create({
   },
   eventDate: {
     color: '#808080',
-    fontSize: 16,
+    fontSize: 15,
     marginTop: 4,
-    width: '70%',
+    width: '100%',
   },
   eventLocation: {
     color: COLORS.blue,
-    fontSize: 16,
+    fontSize: 15,
     marginTop: 4
   },
   contactInfoContainer: {
@@ -342,12 +342,12 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: 'bold',
     color: 'black',
-    fontSize: 16,
+    fontSize: 15,
   },
   value: {
     color: 'black',
-    fontSize: 16,
-    marginTop: 4,
+    fontSize: 15,
+    marginTop: 1,
   },
   ticketDetailsContainer: {
     marginBottom: 80,
@@ -376,7 +376,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 10,
         marginTop: 10,
-        marginHorizontal: 10,
+        marginHorizontal: 0,
+        marginBottom: 8,
   },
   continueText: {
     color: 'white',

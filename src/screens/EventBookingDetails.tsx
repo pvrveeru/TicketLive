@@ -540,6 +540,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginTop: 10,
         marginHorizontal: 10,
+        marginBottom: 8,
     },
     disabledButton: {
         backgroundColor: '#ccc',

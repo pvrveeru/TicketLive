@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
         width: 80,
         height: 80,
         borderRadius: 40,
-        backgroundColor: '#FF6B6B',
+        backgroundColor: '#EF412B',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     viewTicketButton: {
-        backgroundColor: '#FF6B6B', // Example color
+        backgroundColor: '#EF412B', // Example color
         paddingVertical: 10,
         paddingHorizontal: 20,
         borderRadius: 5,

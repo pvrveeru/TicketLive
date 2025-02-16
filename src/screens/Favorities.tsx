@@ -144,8 +144,8 @@ const FavoritiesScreen: React.FC = () => {
           <View style={styles.eventDetails}>
             <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.title}</Text>
             <Text style={styles.eventDate}>{formatDate(eventDetails.eventDate)}</Text>
-            <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.location}</Text>
-            <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000', marginTop: -10, }]}>{eventDetails.city}</Text>
+            <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.location}, {eventDetails.city}</Text>
+            {/* <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000', marginTop: -10, }]}>{eventDetails.city}</Text> */}
           </View>
           <TouchableOpacity
             style={styles.favotites}
@@ -223,8 +223,12 @@ const styles = StyleSheet.create({
   favotites: {
     position: 'absolute',
     // left: '85%',
-    bottom: 10,
-    right: 15,
+    bottom: 75,
+    right: 10,
+    borderColor: '#fff',
+    backgroundColor: '#fff',
+    borderWidth: 2,    
+    borderRadius: 50,
   },
   main: {
     flex: 1,
@@ -247,6 +251,7 @@ const styles = StyleSheet.create({
     padding: 0,
     borderRadius: 8,
     alignItems: 'center',
+    backgroundColor: '#efefef',
     borderBlockColor: '#efefef'
     // borderWidth: 1, // Add border
     // borderColor: '#efefef', // Light gray border
@@ -266,7 +271,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   eventTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     alignItems: 'center',
     marginTop: 10,
@@ -278,7 +283,7 @@ const styles = StyleSheet.create({
   },
   eventDescription: {
     marginTop: 0,
-    fontSize: 18,
+    fontSize: 16,
     color: '#777',
     width: '100%',
     marginBottom: 10,
@@ -286,7 +291,7 @@ const styles = StyleSheet.create({
   },
   eventDate: {
     marginTop: 0,
-    fontSize: 18,
+    fontSize: 16,
     color: 'black',
     fontWeight: 'bold',
     alignItems: 'center',
