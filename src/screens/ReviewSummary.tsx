@@ -263,7 +263,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 15,
     backgroundColor: '#F2F2F2',
   },
   headerContainer: {
