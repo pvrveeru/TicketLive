@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     profileImage: {
         width: '55%',
         height: 50,
-        marginLeft: 10,
+        marginLeft: 14,
      
     },
     light: {

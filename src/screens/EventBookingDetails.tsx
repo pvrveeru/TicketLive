@@ -133,10 +133,10 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
         if (!formData.lastName) { newErrors.lastName = 'Last name is required'; }
         if (!formData.email) { newErrors.email = 'Email is required'; }
         if (!formData.phone) { newErrors.phone = 'Phone number is required'; }
-        if (!formData.address) { newErrors.address = 'Address is required'; }
-        if (!formData.city) { newErrors.city = 'City is required'; }
-        if (!formData.state) { newErrors.state = 'State is required'; }
-        if (!formData.dob) { newErrors.dob = 'Date of birth is required'; }
+        // if (!formData.address) { newErrors.address = 'Address is required'; }
+        // if (!formData.city) { newErrors.city = 'City is required'; }
+        // if (!formData.state) { newErrors.state = 'State is required'; }
+        // if (!formData.dob) { newErrors.dob = 'Date of birth is required'; }
         if (!formData.termsAccepted) { newErrors.termsAccepted = 'You must accept the Terms of Service'; }
 
         setErrors(newErrors);
@@ -207,7 +207,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                     <TextInput
                         style={[
                             styles.input,
-                            { color: isDarkMode ? '#fff' : '#000' },
+                            { color: isDarkMode ? '#000' : '#000' },
                         ]}
                         placeholder="First Name"
                         value={formData.firstName}
@@ -218,7 +218,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                     <TextInput
                         style={[
                             styles.input,
-                            { color: isDarkMode ? '#fff' : '#000' },
+                            { color: isDarkMode ? '#00' : '#000' },
                         ]}
                         placeholder="Last Name"
                         value={formData.lastName}
@@ -257,7 +257,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                     <TextInput
                         style={[
                             styles.input,
-                            { color: isDarkMode ? '#fff' : '#000' },
+                            { color: isDarkMode ? '#000' : '#000' },
                         ]}
                         placeholder="Email"
                         value={formData.email}
@@ -270,7 +270,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                     <TextInput
                         style={[
                             styles.input,
-                            { color: isDarkMode ? '#fff' : '#000' },
+                            { color: isDarkMode ? '#000' : '#000' },
                         ]}
                         placeholder="Phone"
                         value={formData.phone}
@@ -318,7 +318,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                 {errors.state ? <Text style={styles.errorText}>{errors.state}</Text> : null} */}
                 </View>
                 <View style={[styles.addusers, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]}>
-                    <Text style={{ color: isDarkMode ? '#fff' : '#000', fontSize: 18, paddingBottom: 10 }}>Booking Users</Text>
+                    <Text style={{ color: isDarkMode ? '#fff' : '#000', fontSize: 18, paddingBottom: 10 }}>To Attend User Details</Text>
                     <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={addField}>
                         <MaterialIcons name="add-circle-outline" size={20} color="green" style={{ paddingBottom: 10 }} />
                         <Text style={{ fontSize: 14, paddingBottom: 10, marginLeft: 5, color: isDarkMode ? '#fff' : '#000' }}>Add</Text>
@@ -330,7 +330,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                             <MaterialIcons name="restore-from-trash" size={30} color="red" />
                         </TouchableOpacity>
                         <TextInput
-                            style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]}
+                            style={[styles.input, { color: isDarkMode ? '#000' : '#000' }]}
                             placeholder="Name"
                             value={field.name}
                             placeholderTextColor={isDarkMode ? '#bbb' : '#555'}
@@ -341,7 +341,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                             }}
                         />
                         <TextInput
-                            style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]}
+                            style={[styles.input, { color: isDarkMode ? '#000' : '#000' }]}
                             placeholder="Email"
                             value={field.email}
                             placeholderTextColor={isDarkMode ? '#bbb' : '#555'}
@@ -353,7 +353,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                             keyboardType="email-address"
                         />
                         <TextInput
-                            style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]}
+                            style={[styles.input, { color: isDarkMode ? '#000' : '#000' }]}
                             placeholder="Phone Number"
                             keyboardType="numeric"
                             placeholderTextColor={isDarkMode ? '#bbb' : '#555'}
@@ -426,9 +426,13 @@ const styles = StyleSheet.create({
     deleteIcon: {
         position: 'absolute',
         // top: 50,
-        right: 8,
+        right: -10,
         // zIndex: 1,
-        bottom: 0,
+        bottom: -10,
+        borderColor: '#fff',
+    backgroundColor: '#fff',
+    borderWidth: 2,    
+    borderRadius: 50,
     },
     eventDetailsContainer: {
         marginBottom: 20,

@@ -145,6 +145,8 @@ marginTop: 2,
     color: COLORS.red,
     marginBottom: 5,
     fontWeight: 'bold',
+    width: '100%',
+    textAlign: 'center'
   },
   rowContainer: {
     flexDirection: 'row',

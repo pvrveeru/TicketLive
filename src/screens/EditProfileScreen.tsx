@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   dropdownText: {
-    fontSize: 13,
+    fontSize: 16,
   },
   dropdownList: {
     borderColor: 'black',
@@ -217,13 +217,13 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   header: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
     color: 'black',
   },
   darkheader: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
     color: 'white',
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     marginBottom: 12,
-    fontSize: 13,
+    fontSize: 16,
   },
   loader: {
     flex: 1,

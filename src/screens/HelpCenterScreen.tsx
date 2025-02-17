@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   headerTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   container: {
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   subHeader: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
     marginTop: 10,
     marginBottom: 10,
@@ -82,12 +82,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   question: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: 'bold',
     marginTop: 10,
   },
   answer: {
-    fontSize: 11,
+    fontSize: 14,
     color: '#555',
     marginBottom: 10,
     marginTop: 5

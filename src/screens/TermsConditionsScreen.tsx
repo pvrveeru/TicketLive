@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 15,
     backgroundColor: '#f8f8f8',
-    elevation: 2,
+    elevation: 1,
   },
   backButton: {
     marginRight: 15,
@@ -97,18 +97,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   title: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 18,
     fontWeight: 'bold',
     marginTop: 15,
   },
   text: {
-    fontSize: 11,
+    fontSize: 14,
     marginTop: 5,
     lineHeight: 20,
     color: '#333',

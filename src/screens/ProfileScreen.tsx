@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 10,
   },
@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     flex: 1,
-    fontSize: 18,
+    fontSize: 16,
   },
   notificationSwitch: {
     marginLeft: 'auto',

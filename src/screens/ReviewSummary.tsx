@@ -308,13 +308,13 @@ const styles = StyleSheet.create({
   },
   eventDate: {
     color: '#808080',
-    fontSize: 15,
+    fontSize: 14,
     marginTop: 4,
     width: '100%',
   },
   eventLocation: {
     color: COLORS.blue,
-    fontSize: 15,
+    fontSize: 14,
     marginTop: 4
   },
   contactInfoContainer: {

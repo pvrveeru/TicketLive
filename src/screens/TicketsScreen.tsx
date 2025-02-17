@@ -237,12 +237,12 @@ const styles = StyleSheet.create({
     borderColor: '#efefef', // Light gray border
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 8,
   },
   detail: {
-    fontSize: 16,
+    fontSize: 15,
     marginBottom: 4,
     color: '#555',
   },
