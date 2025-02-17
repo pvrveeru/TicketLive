@@ -58,11 +58,21 @@ const EventCard: React.FC<EventCardProps> = ({
         </>
       ) : (
         <>
+        <View>
           {imageUrl ? (
             <Image source={{ uri: imageUrl }} style={styles.image} />
           ) : (
             <Image source={AltImg} style={styles.image} />
           )}
+          <TouchableOpacity onPress={onFavoritePress} style={styles.favotites}>
+                <Ionicons
+                  name={isFavorite ? "heart" : "heart-outline"}
+                  size={30}
+                  color={isFavorite ? "red" : "#888"}
+                  style={styles.favotborder}
+                />
+              </TouchableOpacity>
+              </View>
           <View style={[styles.content, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#fff' }]}>
             <Text style={[styles.title, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]} numberOfLines={1}>{title}</Text>
             <Text style={[styles.dateTime, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{formatDate(dateTime || '')}</Text>
@@ -75,14 +85,7 @@ const EventCard: React.FC<EventCardProps> = ({
             </View>
             
           </View>
-          <TouchableOpacity onPress={onFavoritePress} style={styles.favotites}>
-                <Ionicons
-                  name={isFavorite ? "heart" : "heart-outline"}
-                  size={30}
-                  color={isFavorite ? "red" : "#888"}
-                  style={styles.favotborder}
-                />
-              </TouchableOpacity>
+          
         </>
       )}
     </TouchableOpacity>
@@ -119,12 +122,13 @@ const styles = StyleSheet.create({
   favotites: {
     position: 'absolute',
     // left: '85%',
-    bottom: 85,
+    bottom: -20,
     right: 10,
     borderColor: '#fff',
     backgroundColor: '#fff',
     borderWidth: 2,    
     borderRadius: 50,
+    zIndex: 99999,
   },
   favotborder: {
 marginLeft:1,
