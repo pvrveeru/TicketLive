@@ -146,6 +146,7 @@ const [city, setCity] = useState<string | null>(null);
       </View>
       <ScrollView>
         <View>
+          <Text style={{ color: isDarkMode ? 'red' : 'red', fontSize: 12, marginBottom: 20 }}>Default Billing Address </Text>
           <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={firstName} onChangeText={setFirstName} placeholder="First Name" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
           <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={lastName} onChangeText={setLastName} placeholder="Last Name" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
           <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={emailId || ''} onChangeText={setEmailId} placeholder="Email ID" keyboardType="email-address" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
