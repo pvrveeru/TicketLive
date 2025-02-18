@@ -303,17 +303,14 @@ const ExploreScreen = () => {
             style={[styles.eventCard, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#f9f9f9' }]}
             onPress={() => handleEventPress(event?.eventId)}
           >
+            <View>
             {/* <Image source={{ uri: event?.thumbUrl }} style={styles.eventImage} /> */}
             {event?.thumbUrl ? (
               <Image source={{ uri: event?.thumbUrl }} style={styles.eventImage} />
             ) : (
               <Image source={AltImg} style={styles.eventImage} />
             )}
-            <View style={styles.eventDetails}>
-              {/* <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.title}</Text>
-              <Text style={styles.eventDate}>{formatDate(event?.startDate || '')}</Text>
-              <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.location}, {event?.city}</Text> */}
-              <TouchableOpacity
+            <TouchableOpacity
                 onPress={() => {
                   if (event?.eventId !== undefined) {
                     toggleFavorite(event.eventId);
@@ -329,6 +326,12 @@ const ExploreScreen = () => {
                   color={event?.isFavorite ? 'red' : '#000'}
                 />
               </TouchableOpacity>
+              </View>
+            <View style={styles.eventDetails}>
+              {/* <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.title}</Text>
+              <Text style={styles.eventDate}>{formatDate(event?.startDate || '')}</Text>
+              <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.location}, {event?.city}</Text> */}
+              
             </View>
             <View style={styles.eventDetails}>
               <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.title}</Text>

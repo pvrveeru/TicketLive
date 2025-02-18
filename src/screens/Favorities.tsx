@@ -23,6 +23,7 @@ interface Events {
   city: string;
   state: string;
   eventDate: string;
+  startDate?: string;
   thumbUrl: string | null;
   isPopular: boolean;
   location: string;

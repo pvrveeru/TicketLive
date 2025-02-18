@@ -200,7 +200,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
                     <Text style={[styles.headerText, { color: isDarkMode ? '#fff' : '#000' }]}>Book Event</Text>
                 </View>
                 {ismanual && (
-                    <Text style={{ color: isDarkMode ? 'red' : 'red', fontSize: 12, marginTop: 10 }}>Please Give Me Valid Details</Text>
+                    <Text style={{ color: isDarkMode ? 'red' : 'red', fontSize: 12, marginTop: 10 }}>Enter Valid Details</Text>
                 )}
                 <Text style={[styles.Contact, { color: isDarkMode ? '#fff' : '#000', textAlign: 'center' }]}>Contact Information</Text>
                 <View style={[styles.eventDetailsContainer, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#efefef' }]}>
