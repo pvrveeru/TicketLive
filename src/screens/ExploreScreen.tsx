@@ -93,14 +93,16 @@ const ExploreScreen = () => {
   const [noEventsMessage, setNoEventsMessage] = useState<string>('');
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  // const [skloading, setSkLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  // console.log('categories', categories);
   const [placeholder, setPlaceholder] = useState('Search for events...');
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
 
+  // Pagination state
+  const [page, setPage] = useState<number>(1);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+
   useEffect(() => {
-    if (!categories || categories.length === 0) {return;}
+    if (!categories || categories.length === 0) return;
 
     const interval = setInterval(() => {
       setPlaceholder(`Search for ${categories[currentCategoryIndex]?.categoryName || 'events'} events...`);
@@ -129,6 +131,7 @@ const ExploreScreen = () => {
   useEffect(() => {
     AllCatageories();
   }, []);
+
   useEffect(() => {
     if (type) {
       setEventType(type);
@@ -137,10 +140,13 @@ const ExploreScreen = () => {
     }
   }, [type]);
 
-  // console.log('auserId, type, eventType', auserId, type, eventType)
-  const loadByType = async () => {
+  const loadByType = async (pageNumber: number = 1, isRefreshing: boolean = false) => {
+    if (isRefreshing) {
+      setPage(1); // Reset page to 1 on refresh
+      setHasMore(true); // Reset hasMore on refresh
+    }
+
     setLoading(true);
-    // setSkLoading(true);
     setNoEventsMessage('');
     try {
       let data;
@@ -151,7 +157,7 @@ const ExploreScreen = () => {
           sortBy: 'createdAt',
           sortOrder: 'asc',
           limit: 10,
-          offset: 0,
+          offset: (pageNumber - 1) * 10, // Calculate offset based on page number
           status: 'Published',
         });
       } else {
@@ -170,52 +176,68 @@ const ExploreScreen = () => {
             sortBy: 'createdAt',
             sortOrder: 'asc',
             limit: 10,
-            offset: 0,
+            offset: (pageNumber - 1) * 10, // Calculate offset based on page number
             status: 'Published',
           });
           if (!data.result) { setNoEventsMessage('No events found'); }
         }
       }
+
       const currentDate = moment();
       const filteredEvents = data.result.filter((event: any) => {
-        // console.log('event.eventDate', event.eventDate);
         const eventDateTime = moment(`${event.eventDate}`, 'YYYY-MM-DD HH:mm');
         return eventDateTime.isSameOrAfter(currentDate);
       });
-      // console.log('filteredEvents', filteredEvents);
-      setEvents(filteredEvents);
+
+      if (isRefreshing || pageNumber === 1) {
+        setEvents(filteredEvents); // Replace events on refresh or first load
+      } else {
+        setEvents((prevEvents) => [...prevEvents, ...filteredEvents]); // Append new events
+      }
+
+      // Check if there are more events to load
+      if (filteredEvents.length < 10) {
+        setHasMore(false); // No more events to load
+      }
     } catch (err: any) {
       console.log('Failed to load events', err.message);
       setNoEventsMessage('Error loading events');
     } finally {
       setLoading(false);
-      // setSkLoading(false);
     }
   };
+
   const onRefresh = async () => {
     setRefreshing(true);
     setEventType(null);
-    await loadByType();
+    await loadByType(1, true); // Load first page on refresh
     setRefreshing(false);
   };
 
+  const loadMoreEvents = async () => {
+    if (!hasMore || loading) return; // Avoid multiple calls or loading when no more events
+    const nextPage = page + 1;
+    setPage(nextPage);
+    await loadByType(nextPage);
+  };
 
   useEffect(() => {
-    loadByType();
-  }, [searchKeyword, type, auserId, eventType]);
+    loadByType(page);
+  }, [searchKeyword, type, auserId, eventType, selectedCategory]);
 
   useFocusEffect(
     React.useCallback(() => {
       if (auserId !== null) {
-        loadByType();
+        loadByType(page);
       }
-    }, [searchKeyword, type, auserId, eventType])
+    }, [searchKeyword, type, auserId, eventType, selectedCategory])
   );
 
   const AllCatageories = async () => {
     const result = await getAllEventCategories();
     setCategories(result);
   };
+
   const handleEventPress = (eventId: number | undefined) => {
     if (eventId) {
       navigation.navigate('EventDetails', { eventId });
@@ -264,14 +286,6 @@ const ExploreScreen = () => {
     }
   };
 
-  // const handleNotificationPress = () => {
-  //   navigation.navigate('Notification');
-  // };
-
-  // const handleProfilePress = () => {
-  //   navigation.navigate('BottomBar', { screen: 'Profile' });
-  // };
-
   const renderEventRow = ({ item }: { item: EventData[]; index: number }) => {
     const currentDateTime = new Date();
 
@@ -293,8 +307,6 @@ const ExploreScreen = () => {
               <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.title}</Text>
               <Text style={styles.eventDate}>{formatDate(event?.eventDate || '')}</Text>
               <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.location}, {event?.city}</Text>
-              {/* <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000', marginTop: -10 }]}>{event?.city}</Text> */}
-
               <TouchableOpacity
                 onPress={() => {
                   if (event?.eventId !== undefined) {
@@ -318,8 +330,6 @@ const ExploreScreen = () => {
     );
   };
 
-
-
   const transformDataToRows = (data: EventData[]) => {
     const rows: EventData[][] = [];
     for (let i = 0; i < data?.length; i += 1) {
@@ -330,18 +340,21 @@ const ExploreScreen = () => {
 
   const handleCategoryClick = (categoryId: number | null) => {
     setSelectedCategory(categoryId);
+    setPage(1); // Reset page when category changes
+    setHasMore(true); // Reset hasMore when category changes
   };
 
   const filteredEvents = selectedCategory
     ? events?.filter(event =>
       event.categoryId?.categoryId === selectedCategory &&
       (event?.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-        event?.location?.toLowerCase().includes(searchKeyword.toLowerCase()))
-    )
+      event?.location?.toLowerCase().includes(searchKeyword.toLowerCase())
+    ))
     : events?.filter(event =>
       event?.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
       event?.location?.toLowerCase().includes(searchKeyword.toLowerCase())
     );
+
   return (
     <>
       <View style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>
@@ -409,15 +422,18 @@ const ExploreScreen = () => {
               data={transformDataToRows(filteredEvents)}
               renderItem={renderEventRow}
               keyExtractor={(item, index) => index.toString()}
+              onEndReached={loadMoreEvents} // Load more events when reaching the end
+              onEndReachedThreshold={0.5} // Trigger loadMoreEvents when 50% of the list is reached
               refreshControl={
                 <RefreshControl
                   refreshing={refreshing}
                   onRefresh={onRefresh} // Call the onRefresh function
                 />
-              } />
+              }
+            />
           )}
         </View>
-      </View >
+      </View>
     </>
   );
 };

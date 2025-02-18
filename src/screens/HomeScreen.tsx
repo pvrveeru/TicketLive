@@ -110,7 +110,7 @@ const HomeScreen: React.FC = () => {
     const getUserId = async () => {
       try {
         const userData = await AsyncStorage.getItem('userData');
-        console.log('token', userData);
+        // console.log('token', userData);
         if (userData) {
           const parsedData = JSON.parse(userData);
           setUserId(parsedData.userId);

@@ -269,138 +269,147 @@ const EventDetails: React.FC = () => {
   //     Linking.openURL(url);
   //   }
   // };
-// console.log('eventDetails?.tnc', eventDetails);
+  console.log('eventDetails?.maxTicketAllowed', eventDetails?.maxTicketAllowed);
+  console.log('eventDetails?.noOfTicketsBookedByYou', eventDetails?.noOfTicketsBookedByYou);
+
   return (
     <>
-    <View style={[styles.container, isDarkMode ? styles.dark : styles.light]}>
-      <ScrollView>
-        {eventDetails?.galleryImages && eventDetails?.galleryImages.length > 0 ? (
-          <CustomCarousel
-            images={eventDetails?.galleryImages}
-            interval={3000}
-            height={250}
-            containerStyle={{ marginBottom: 20 }}
-            artistName={eventDetails?.artistName}
-            eventTitle={eventDetails?.title}
-            onBackPress={handleBackPress}
-          />
-        ) : (
-          <Image source={require('../../assets/images/altimg.jpg')} style={styles.eventImage} />
-        )}
-        <View style={styles.detailsContainer}>
-          <View style={[styles.row, styles.spaceBetween]}>
-          <View style={styles.row}>
-              <Ionicons name="calendar-outline" size={20} color="gray" />
-              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>
-                {moment(eventDetails?.eventDate).format('MMMM DD, YYYY')}
-              </Text>
+      <View style={[styles.container, isDarkMode ? styles.dark : styles.light]}>
+        <ScrollView>
+          {eventDetails?.galleryImages && eventDetails?.galleryImages.length > 0 ? (
+            <CustomCarousel
+              images={eventDetails?.galleryImages}
+              interval={3000}
+              height={250}
+              containerStyle={{ marginBottom: 20 }}
+              artistName={eventDetails?.artistName}
+              eventTitle={eventDetails?.title}
+              onBackPress={handleBackPress}
+            />
+          ) : (
+            <Image source={require('../../assets/images/altimg.jpg')} style={styles.eventImage} />
+          )}
+          <View style={styles.detailsContainer}>
+            <View style={[styles.row, styles.spaceBetween]}>
+              <View style={styles.row}>
+                <Ionicons name="calendar-outline" size={20} color="gray" />
+                <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>
+                  {moment(eventDetails?.eventDate).format('MMMM DD, YYYY')}
+                </Text>
+              </View>
+              <View style={styles.row}>
+                <FontAwesome name="clock-o" size={20} color="gray" />
+                <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>
+                  {moment(eventDetails?.eventDate).format('hh:mm A')}
+                </Text>
+              </View>
             </View>
-            <View style={styles.row}>
-              <FontAwesome name="clock-o" size={20} color="gray" />
-              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>
-                {moment(eventDetails?.eventDate).format('hh:mm A')}
-              </Text>
-            </View>
-          </View>
 
-          <View style={styles.row}>
-            <Ionicons name="location-outline" size={20} color="gray" />
-            <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000', flexWrap: 'wrap' }]}>{eventDetails?.location}, {eventDetails?.city}</Text>
-          </View>
-          {/* <View style={[styles.row, {marginTop: 10, marginLeft: 15}]}>
+            <View style={styles.row}>
+              <Ionicons name="location-outline" size={20} color="gray" />
+              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000', flexWrap: 'wrap' }]}>{eventDetails?.location}, {eventDetails?.city}</Text>
+            </View>
+            {/* <View style={[styles.row, {marginTop: 10, marginLeft: 15}]}>
             <Ionicons name="" size={20} color="gray" />
             <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000', flexWrap: 'wrap' }]}>{eventDetails?.city}</Text>
           </View> */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
-            <View style={[styles.row]}>
-              <Ionicons name="language-outline" size={20} color="gray" />
-              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.language}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
+              <View style={[styles.row]}>
+                <Ionicons name="language-outline" size={20} color="gray" />
+                <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.language}</Text>
+              </View>
+              <View style={styles.row}>
+                <FontAwesome name="clock-o" size={20} color="gray" />
+                <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.duration}</Text>
+              </View>
             </View>
+          </View>
+          <View style={styles.actionButtons}>
             <View style={styles.row}>
-              <FontAwesome name="clock-o" size={20} color="gray" />
-              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>{eventDetails?.duration}</Text>
+              <MaterialIcons name="group" size={20} color="gray" />
+              <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>
+                {eventDetails?.favoritesCount} Interested
+              </Text>
             </View>
-          </View>
-        </View>
-        <View style={styles.actionButtons}>
-          <View style={styles.row}>
-            <MaterialIcons name="group" size={20} color="gray" />
-            <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>
-              {eventDetails?.favoritesCount} Interested
-            </Text>
-          </View>
-          <View style={{ flexDirection: 'row', columnGap: 20 }}>
-            {/* <TouchableOpacity style={styles.iconButton} onPress={mobilecalling}>
+            <View style={{ flexDirection: 'row', columnGap: 20 }}>
+              {/* <TouchableOpacity style={styles.iconButton} onPress={mobilecalling}>
               <Ionicons name="call-outline" size={24} color="white" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.iconButton} onPress={navigateToEmail}>
               <Ionicons name="mail-outline" size={24} color="white" />
             </TouchableOpacity> */}
-            <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
-              <Ionicons name={isFavorite ? 'heart' : 'heart-outline'} size={30} color={isFavorite ? 'red' : '#888'} />
-            </TouchableOpacity>
+              <TouchableOpacity style={styles.heartButton} onPress={toggleFavorite}>
+                <Ionicons name={isFavorite ? 'heart' : 'heart-outline'} size={30} color={isFavorite ? 'red' : '#888'} />
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-        <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>About Event</Text>
-        <SeeMoreText text={eventDetails?.description ?? ''} maxLength={60} />
+          <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>About Event</Text>
+          <SeeMoreText text={eventDetails?.description ?? ''} maxLength={60} />
 
-        <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Location</Text>
-        <View>
-          <MapView
-            style={styles.map}
-            initialRegion={{
-              latitude: parseFloat(eventDetails?.latitude ?? '0'),
-              longitude: parseFloat(eventDetails?.longitude ?? '0'),
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            }}
-            scrollEnabled={false} // Disable scrolling
-            zoomEnabled={false} // Optional: Disable zooming
-            rotateEnabled={false} // Optional: Disable rotation
-          >
-            <Marker
-              coordinate={{
+          <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Location</Text>
+          <View>
+            <MapView
+              style={styles.map}
+              initialRegion={{
                 latitude: parseFloat(eventDetails?.latitude ?? '0'),
                 longitude: parseFloat(eventDetails?.longitude ?? '0'),
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
               }}
-              title={eventDetails?.title}
-              description={eventDetails?.location}
-            />
-          </MapView>
-          <TouchableOpacity
-            style={{
-              position: 'absolute',
-              bottom: 10,
-              right: 30,
-              backgroundColor: '#ff5722',
-              padding: 5,
-              borderRadius: 50,
-              elevation: 5,
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-            onPress={handleMarkerPress}
+              scrollEnabled={false} // Disable scrolling
+              zoomEnabled={false} // Optional: Disable zooming
+              rotateEnabled={false} // Optional: Disable rotation
+            >
+              <Marker
+                coordinate={{
+                  latitude: parseFloat(eventDetails?.latitude ?? '0'),
+                  longitude: parseFloat(eventDetails?.longitude ?? '0'),
+                }}
+                title={eventDetails?.title}
+                description={eventDetails?.location}
+              />
+            </MapView>
+            <TouchableOpacity
+              style={{
+                position: 'absolute',
+                bottom: 10,
+                right: 30,
+                backgroundColor: '#ff5722',
+                padding: 5,
+                borderRadius: 50,
+                elevation: 5,
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
+              onPress={handleMarkerPress}
             //onPress={handleViewDirections}
+            >
+              <Ionicons name="navigate-outline" size={24} color="white" />
+            </TouchableOpacity>
+          </View>
+          {/* <SeeMoreText text={eventDetails?.tnc ?? ''} maxLength={40} /> */}
+          <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Terms & Conditions</Text>
+          <SeeMoreText text={eventDetails?.tnc ?? ''} maxLength={60} />
+        </ScrollView>
+        <View style={{ backgroundColor: isDarkMode ? '#000' : '#fff' }}>
+          <TouchableOpacity
+            style={[
+              styles.bookButton,
+              (eventDetails?.noOfTicketsBookedByYou === eventDetails?.maxTicketAllowed ||
+                (eventDetails?.noOfTicketsBookedByYou === 0 && eventDetails?.maxTicketAllowed === 0) ||
+                eventDetails?.noOfTicketsBookedByYou === 0) && styles.disabledButton,
+            ]}
+            onPress={handleBookEvent}
+            disabled={
+              eventDetails?.noOfTicketsBookedByYou === eventDetails?.maxTicketAllowed ||
+              (eventDetails?.noOfTicketsBookedByYou === 0 && eventDetails?.maxTicketAllowed === 0) ||
+              eventDetails?.noOfTicketsBookedByYou === 0
+            }
           >
-            <Ionicons name="navigate-outline" size={24} color="white" />
+            <Text style={styles.bookButtonText}>Book Event</Text>
           </TouchableOpacity>
         </View>
-        {/* <SeeMoreText text={eventDetails?.tnc ?? ''} maxLength={40} /> */}
-        <Text style={[styles.sectionTitle, { color: isDarkMode ? '#fff' : '#000' }]}>Terms & Conditions</Text>
-        <SeeMoreText text={eventDetails?.tnc ?? ''} maxLength={60} />
-      </ScrollView>
-      <View style={{ backgroundColor: isDarkMode ? '#000' : '#fff' }}>
-        <TouchableOpacity
-          style={[
-            styles.bookButton,
-            eventDetails?.noOfTicketsBookedByYou === eventDetails?.maxTicketAllowed && styles.disabledButton,
-          ]}
-          onPress={handleBookEvent}
-          disabled={eventDetails?.noOfTicketsBookedByYou === eventDetails?.maxTicketAllowed}
-        >
-          <Text style={styles.bookButtonText}>Book Event</Text>
-        </TouchableOpacity>
-      </View>
+
       </View>
       <Dialog isVisible={locationLoading}>
         <ActivityIndicator

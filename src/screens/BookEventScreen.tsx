@@ -52,12 +52,12 @@ const BookEventScreen: React.FC = () => {
     const [limitExceeded, setLimitExceeded] = useState<boolean>(false);
     const [ismanual, setIsManual] = useState<boolean>(false);
     const [skloading, setSkLoading] = useState<boolean>(true);
-    // console.log('noOfTickets maxTickets', noOfTickets ,maxTickets);
+    console.log('noOfTickets maxTickets', noOfTickets ,maxTickets);
     useEffect(() => {
         const fetchSeatingOptions = async () => {
             try {
                 const options = await getSeatingOptionsByEventId(eventId);
-                // console.log('options', options);
+                console.log('options', options);
                 if (Array.isArray(options)) {
                     setSeatingOptions(options);
                     if (options.length > 0) {
