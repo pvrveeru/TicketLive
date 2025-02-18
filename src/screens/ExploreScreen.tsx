@@ -323,6 +323,14 @@ const ExploreScreen = () => {
                   color={event?.isFavorite ? 'red' : '#000'}
                 />
               </TouchableOpacity>
+              </View>
+            <View style={styles.eventDetails}>
+              <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.title}</Text>
+              <Text style={styles.eventDate}>{formatDate(event?.eventDate || '')}</Text>
+              <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.location}, {event?.city}</Text>
+              {/* <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000', marginTop: -10 }]}>{event?.city}</Text> */}
+
+              
             </View>
           </TouchableOpacity>
         ))}
@@ -494,7 +502,7 @@ const styles = StyleSheet.create({
   favotites: {
     position: 'absolute',
     // left: '85%',
-    bottom: 80,
+    bottom: -20,
     right: 10,
     borderColor: '#fff',
     backgroundColor: '#fff',

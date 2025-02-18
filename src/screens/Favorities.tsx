@@ -136,23 +136,26 @@ const FavoritiesScreen: React.FC = () => {
         onPress={() => handleEventPress(eventDetails.eventId)}
       >
         <View style={styles.eventDetails}>
+          
           {eventDetails.thumbUrl ? (
             <Image source={{ uri: eventDetails.thumbUrl }} style={styles.eventImage} />
           ) : (
             <Image source={require('../../assets/images/altimg.jpg')} style={styles.eventImage} />
           )}
+           <TouchableOpacity
+            style={styles.favotites}
+            onPress={() => handleRemoveFavorite(eventDetails.eventId)}
+          >
+            <Icon name={isFavorite ? 'heart' : 'heart-outline'} size={30} color={isFavorite ? 'red' : '#000'} />
+          </TouchableOpacity>
+          
           <View style={styles.eventDetails}>
             <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.title}</Text>
             <Text style={styles.eventDate}>{formatDate(eventDetails.eventDate)}</Text>
             <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.location}, {eventDetails.city}</Text>
             {/* <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000', marginTop: -10, }]}>{eventDetails.city}</Text> */}
           </View>
-          <TouchableOpacity
-            style={styles.favotites}
-            onPress={() => handleRemoveFavorite(eventDetails.eventId)}
-          >
-            <Icon name={isFavorite ? 'heart' : 'heart-outline'} size={30} color={isFavorite ? 'red' : '#000'} />
-          </TouchableOpacity>
+         
 
         </View>
       </TouchableOpacity>
@@ -223,7 +226,7 @@ const styles = StyleSheet.create({
   favotites: {
     position: 'absolute',
     // left: '85%',
-    bottom: 75,
+    top: 145,
     right: 10,
     borderColor: '#fff',
     backgroundColor: '#fff',
