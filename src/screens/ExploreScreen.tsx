@@ -14,6 +14,7 @@ import Header from '../components/Header';
 import { useSelector } from 'react-redux';
 import SkeletonLoader from '../components/SkeletonLoading';
 import { useTheme } from '../Theme/ThemeContext';
+import { formatDate } from '../utils/Time';
 
 type EventData = {
   id: any;
@@ -96,7 +97,7 @@ const ExploreScreen = () => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [placeholder, setPlaceholder] = useState('Search for events...');
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
-
+  const AltImg = require('../../assets/images/altimg.jpg');
   // Pagination state
   const [page, setPage] = useState<number>(1);
   const [hasMore, setHasMore] = useState<boolean>(true);
@@ -162,15 +163,15 @@ const ExploreScreen = () => {
         });
       } else {
         if (eventType === 'Featured') {
-          console.log('Featured API is calling');
+          // console.log('Featured API is calling');
           data = await fetchFeaturedEvents(auserId, 10);
           if (!data.result) { setNoEventsMessage('No featured events found'); }
         } else if (eventType === 'Popular') {
-          console.log('Popular API is calling');
+          // console.log('Popular API is calling');
           data = await fetchPopularEvents(auserId, 10);
           if (!data.result) { setNoEventsMessage('No popular events found'); }
         } else {
-          console.log('All Events API is calling');
+          // console.log('All Events API is calling');
           data = await fetchEvents({
             keyword: searchKeyword,
             sortBy: 'createdAt',
@@ -179,6 +180,7 @@ const ExploreScreen = () => {
             offset: (pageNumber - 1) * 10, // Calculate offset based on page number
             status: 'Published',
           });
+          // console.log('data.result', data.result);
           if (!data.result) { setNoEventsMessage('No events found'); }
         }
       }
@@ -246,9 +248,9 @@ const ExploreScreen = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
-  };
+  // const formatDate = (dateString: string) => {
+  //   return moment.utc(dateString).format('MMMM DD, YYYY hh:mm A');
+  // };
 
   const toggleFavorite = async (eventId: number) => {
     setEvents((prevEvents) =>
@@ -285,7 +287,6 @@ const ExploreScreen = () => {
       );
     }
   };
-
   const renderEventRow = ({ item }: { item: EventData[]; index: number }) => {
     const currentDateTime = new Date();
 
@@ -302,11 +303,16 @@ const ExploreScreen = () => {
             style={[styles.eventCard, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#f9f9f9' }]}
             onPress={() => handleEventPress(event?.eventId)}
           >
-            <Image source={{ uri: event?.thumbUrl }} style={styles.eventImage} />
+            {/* <Image source={{ uri: event?.thumbUrl }} style={styles.eventImage} /> */}
+            {event?.thumbUrl ? (
+              <Image source={{ uri: event?.thumbUrl }} style={styles.eventImage} />
+            ) : (
+              <Image source={AltImg} style={styles.eventImage} />
+            )}
             <View style={styles.eventDetails}>
-              <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.title}</Text>
-              <Text style={styles.eventDate}>{formatDate(event?.eventDate || '')}</Text>
-              <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.location}, {event?.city}</Text>
+              {/* <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.title}</Text>
+              <Text style={styles.eventDate}>{formatDate(event?.startDate || '')}</Text>
+              <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.location}, {event?.city}</Text> */}
               <TouchableOpacity
                 onPress={() => {
                   if (event?.eventId !== undefined) {
@@ -323,14 +329,14 @@ const ExploreScreen = () => {
                   color={event?.isFavorite ? 'red' : '#000'}
                 />
               </TouchableOpacity>
-              </View>
+            </View>
             <View style={styles.eventDetails}>
               <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.title}</Text>
-              <Text style={styles.eventDate}>{formatDate(event?.eventDate || '')}</Text>
+              <Text style={styles.eventDate}>{formatDate(event?.startDate || '')}</Text>
               <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{event?.location}, {event?.city}</Text>
               {/* <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000', marginTop: -10 }]}>{event?.city}</Text> */}
 
-              
+
             </View>
           </TouchableOpacity>
         ))}
@@ -356,8 +362,8 @@ const ExploreScreen = () => {
     ? events?.filter(event =>
       event.categoryId?.categoryId === selectedCategory &&
       (event?.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-      event?.location?.toLowerCase().includes(searchKeyword.toLowerCase())
-    ))
+        event?.location?.toLowerCase().includes(searchKeyword.toLowerCase())
+      ))
     : events?.filter(event =>
       event?.title?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
       event?.location?.toLowerCase().includes(searchKeyword.toLowerCase())
@@ -506,7 +512,7 @@ const styles = StyleSheet.create({
     right: 10,
     borderColor: '#fff',
     backgroundColor: '#fff',
-    borderWidth: 2,    
+    borderWidth: 2,
     borderRadius: 50,
   },
   container: {

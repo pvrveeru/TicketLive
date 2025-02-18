@@ -277,7 +277,7 @@ const HomeScreen: React.FC = () => {
           <EventCard
             imageUrl={item.thumbUrl}
             title={item.title}
-            dateTime={item.eventDate}
+            dateTime={item.startDate}
             location={item.location}
             city={item.city}
             isFavorite={favorites[item.eventId] || false}

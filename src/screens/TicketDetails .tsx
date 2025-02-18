@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator, TouchableOpacity, Image, Alert, Platform } from 'react-native';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
@@ -7,8 +8,9 @@ import RNFS from 'react-native-fs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../Theme/ThemeContext';
 import Share from 'react-native-share';
-import moment from 'moment';
+// import moment from 'moment';
 import { COLORS } from '../styles/globalstyles';
+import { formatDate } from '../utils/Time';
 
 type RootStackParamList = {
   TicketDetails: { bookingId: number };
@@ -48,15 +50,15 @@ const TicketDetails = () => {
   const [error, setError] = useState<string | null>(null);
   // const Logo = require('../../assets/images/ticketliv_logo.png');
 
-  const formatDate = (dateString: string) => {
-    const date = moment.utc(dateString);
+  // const formatDate = (dateString: string) => {
+  //   const date = moment.utc(dateString);
 
-    if (!date.isValid()) {
-      return 'Invalid Date';
-    }
+  //   if (!date.isValid()) {
+  //     return 'Invalid Date';
+  //   }
 
-    return date.local().format('MM-DD-YY : h:mm A');
-  };
+  //   return date.local().format('MM-DD-YY : h:mm A');
+  // };
 
   useEffect(() => {
     const fetchTickets = async () => {

@@ -61,7 +61,7 @@ const EventBookingDetails: React.FC = ({ navigation }: any) => {
     const phoneNumber = userData?.phoneNumber;
 
     const { eventBookingDetails, eventId, ismanual } = route.params as RouteParams;
-    // console.log('noofticketslength', eventBookingDetails?.noOfTickets);
+    console.log('ismanual', ismanual);
     const noOfTicketsLength = eventBookingDetails?.noOfTickets.reduce(
         (acc: number, curr: number) => acc + curr,
         0

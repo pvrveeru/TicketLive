@@ -269,8 +269,8 @@ const EventDetails: React.FC = () => {
   //     Linking.openURL(url);
   //   }
   // };
-  console.log('eventDetails?.maxTicketAllowed', eventDetails?.maxTicketAllowed);
-  console.log('eventDetails?.noOfTicketsBookedByYou', eventDetails?.noOfTicketsBookedByYou);
+  // console.log('eventDetails?.maxTicketAllowed', eventDetails?.maxTicketAllowed);
+  // console.log('eventDetails?.noOfTicketsBookedByYou', eventDetails?.noOfTicketsBookedByYou);
 
   return (
     <>
@@ -294,15 +294,17 @@ const EventDetails: React.FC = () => {
               <View style={styles.row}>
                 <Ionicons name="calendar-outline" size={20} color="gray" />
                 <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>
-                  {moment(eventDetails?.eventDate).format('MMMM DD, YYYY')}
+                  {moment.utc(eventDetails?.startDate).format('MMMM DD, YYYY')}
                 </Text>
               </View>
+
               <View style={styles.row}>
                 <FontAwesome name="clock-o" size={20} color="gray" />
                 <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>
-                  {moment(eventDetails?.eventDate).format('hh:mm A')}
+                  {moment.utc(eventDetails?.startDate).format('hh:mm A')}
                 </Text>
               </View>
+
             </View>
 
             <View style={styles.row}>
@@ -392,22 +394,16 @@ const EventDetails: React.FC = () => {
           <SeeMoreText text={eventDetails?.tnc ?? ''} maxLength={60} />
         </ScrollView>
         <View style={{ backgroundColor: isDarkMode ? '#000' : '#fff' }}>
-          <TouchableOpacity
-            style={[
-              styles.bookButton,
-              (eventDetails?.noOfTicketsBookedByYou === eventDetails?.maxTicketAllowed ||
-                (eventDetails?.noOfTicketsBookedByYou === 0 && eventDetails?.maxTicketAllowed === 0) ||
-                eventDetails?.noOfTicketsBookedByYou === 0) && styles.disabledButton,
-            ]}
-            onPress={handleBookEvent}
-            disabled={
-              eventDetails?.noOfTicketsBookedByYou === eventDetails?.maxTicketAllowed ||
-              (eventDetails?.noOfTicketsBookedByYou === 0 && eventDetails?.maxTicketAllowed === 0) ||
-              eventDetails?.noOfTicketsBookedByYou === 0
-            }
-          >
-            <Text style={styles.bookButtonText}>Book Event</Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            styles.bookButton,
+            eventDetails?.noOfTicketsBookedByYou === eventDetails?.maxTicketAllowed && styles.disabledButton,
+          ]}
+          onPress={handleBookEvent}
+          disabled={eventDetails?.noOfTicketsBookedByYou === eventDetails?.maxTicketAllowed}
+        >
+          <Text style={styles.bookButtonText}>Book Event</Text>
+        </TouchableOpacity>
         </View>
 
       </View>

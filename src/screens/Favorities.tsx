@@ -15,6 +15,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import SkeletonLoader from '../components/SkeletonLoading';
 import { COLORS } from '../styles/globalstyles';
 import moment from 'moment';
+import { formatDate } from '../utils/Time';
 interface Events {
   event: any;
   eventId: number;
@@ -118,9 +119,9 @@ const FavoritiesScreen: React.FC = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
-  };
+  // const formatDate = (dateString: string) => {
+  //   return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
+  // };
 
   const handleEventPress = (eventId: number) => {
     navigation.navigate('EventDetails', { eventId });
@@ -136,7 +137,7 @@ const FavoritiesScreen: React.FC = () => {
         onPress={() => handleEventPress(eventDetails.eventId)}
       >
         <View style={styles.eventDetails}>
-          
+
           {eventDetails.thumbUrl ? (
             <Image source={{ uri: eventDetails.thumbUrl }} style={styles.eventImage} />
           ) : (
@@ -148,14 +149,14 @@ const FavoritiesScreen: React.FC = () => {
           >
             <Icon name={isFavorite ? 'heart' : 'heart-outline'} size={30} color={isFavorite ? 'red' : '#000'} />
           </TouchableOpacity>
-          
+
           <View style={styles.eventDetails}>
             <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.title}</Text>
-            <Text style={styles.eventDate}>{formatDate(eventDetails.eventDate)}</Text>
+            <Text style={styles.eventDate}>{formatDate(eventDetails.startDate)}</Text>
             <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails.location}, {eventDetails.city}</Text>
             {/* <Text style={[styles.eventDescription, { color: isDarkMode ? COLORS.darkTextColor : '#000', marginTop: -10, }]}>{eventDetails.city}</Text> */}
           </View>
-         
+
 
         </View>
       </TouchableOpacity>
@@ -230,7 +231,7 @@ const styles = StyleSheet.create({
     right: 10,
     borderColor: '#fff',
     backgroundColor: '#fff',
-    borderWidth: 2,    
+    borderWidth: 2,
     borderRadius: 50,
   },
   main: {
@@ -255,7 +256,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     backgroundColor: '#efefef',
-    borderBlockColor: '#efefef'
+    borderBlockColor: '#efefef',
     // borderWidth: 1, // Add border
     // borderColor: '#efefef', // Light gray border
   },

@@ -8,6 +8,7 @@ import { getUserData } from '../Redux/Actions';
 import { useTheme } from '../Theme/ThemeContext';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '../styles/globalstyles';
+import CityList from '../components/CityList';
 
 interface UserData {
   userId: number;
@@ -15,7 +16,14 @@ interface UserData {
 interface RootState {
   userData: UserData;
 }
+// interface State {
+//   name: string;
+//   iso2: string;
+// }
 
+// interface City {
+//   name: string;
+// }
 const EditProfileScreen: React.FC = () => {
   const dispatch = useDispatch();
   const { isDarkMode } = useTheme();
@@ -30,9 +38,12 @@ const EditProfileScreen: React.FC = () => {
   const [dateOfBirth, setDateOfBirth] = useState<string>('');
   const [gender, setGender] = useState<string>('');
   const [address, setAddress] = useState<string | null>(null);
-  const [state, setState] = useState<string | null>(null);
-  const [city, setCity] = useState<string | null>(null);
+  // const [state, setState] = useState<string | null>(null);
+  // const [city, setCity] = useState<string | null>(null);
   const [showGenderDropdown, setShowGenderDropdown] = useState<boolean>(false);
+  const [state, setState] = useState<string | null>(null);
+const [city, setCity] = useState<string | null>(null);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,7 +61,7 @@ const EditProfileScreen: React.FC = () => {
         setGender(user.gender || '');
         setCity(user.city || null);
         setState(user.state || null);
-        setAddress(user.address || '')
+        setAddress(user.address || '');
       } catch (err: any) {
         console.error('Failed to fetch user data:', err.message || err);
       } finally {
@@ -78,7 +89,7 @@ const EditProfileScreen: React.FC = () => {
       state,
       city,
     };
-    // console.log("userDetails::", userDetails)
+    console.log('userDetails::', userDetails);
     try {
       setLoading(true);
       const response = await updateUserProfile(userData.userId, userDetails);
@@ -86,8 +97,8 @@ const EditProfileScreen: React.FC = () => {
       // console.log('response', response);
       Alert.alert('Profile updated successfully');
       navigation.goBack();
-    } catch (error) {
-      console.log('Error updating profile: ', error);
+    } catch (error: any) {
+      console.log('Error updating profile: ', error.message);
     } finally {
       setLoading(false);
     }
@@ -149,9 +160,10 @@ const EditProfileScreen: React.FC = () => {
           </TouchableOpacity>
           {showGenderDropdown && renderGenderDropdown()}
           <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={address || ''} onChangeText={setAddress} placeholder="Address" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
-          <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={city || ''} onChangeText={setCity} placeholder="City" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
-          <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={state || ''} onChangeText={setState} placeholder="State" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
+          {/* <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={city || ''} onChangeText={setCity} placeholder="City" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
+          <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={state || ''} onChangeText={setState} placeholder="State" placeholderTextColor={isDarkMode ? '#fff' : '#000'} /> */}
         </View>
+        <CityList setState={setState} setCity={setCity} state={state} city={city} />
       </ScrollView>
       <TouchableOpacity onPress={handleSaveChanges} style={styles.button}>
         <Text style={styles.btntext}>Update</Text>
@@ -161,6 +173,7 @@ const EditProfileScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  selectedText: { fontSize: 18, marginTop: 20 },
   container: {
     flex: 1,
     padding: 16,
@@ -249,7 +262,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '100%',
     borderRadius: 15,
-    marginTop: '20%',
+    marginTop: '5%',
   },
   btntext: {
     color: 'white',

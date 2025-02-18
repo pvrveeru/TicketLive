@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
@@ -11,6 +12,7 @@ import moment from 'moment';
 import { useSelector } from 'react-redux';
 // import Header from '../components/Header';
 import SkeletonLoader from '../components/SkeletonLoading';
+import { formatDate } from '../utils/Time';
 
 type RootStackParamList = {
   TicketDetails: { bookingId: number };
@@ -76,9 +78,9 @@ const TicketsScreen = () => {
   const userId = userData.userId;
   // const profileImage = require('../../assets/images/icon.png');
   // const profileImageUrl = userData?.profileImageUrl;
-  const formatDate = (dateString: string) => {
-    return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
-  };
+  // const formatDate = (dateString: string) => {
+  //   return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
+  // };
 
   // const handleProfilePress = () => {
   //   navigation.navigate('BottomBar', { screen: 'Profile' });

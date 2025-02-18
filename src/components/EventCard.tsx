@@ -2,9 +2,9 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '../styles/globalstyles';
-import moment from 'moment';
 import SkeletonLoader from './SkeletonLoading';
 import { useTheme } from '../Theme/ThemeContext';
+import { formatDate } from '../utils/Time';
 // import SkeletonLoading from './SkeletonLoading';
 
 type EventCardProps = {
@@ -32,10 +32,6 @@ const EventCard: React.FC<EventCardProps> = ({
 }) => {
   const { isDarkMode } = useTheme();
   const AltImg = require('../../assets/images/altimg.jpg');
-
-  const formatDate = (dateString: string) => {
-    return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
-  };
 
   return (
     <TouchableOpacity style={styles.cardContainer} onPress={onPress}>

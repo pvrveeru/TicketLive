@@ -81,7 +81,7 @@ const BookEventScreen: React.FC = () => {
         return Object.values(quantity).reduce((total, num) => total + num, 0);
     };
     const MAX_TOTAL_QUANTITY = maxTickets - noOfTickets;
-    // console.log('MAX_TOTAL_QUANTITY', MAX_TOTAL_QUANTITY);
+    console.log('noOfTickets', noOfTickets);
     const toggleZoneSelection = (zone: SeatingZone) => {
         if (zone.seatsAvailable === 0) return;
         if (selectedZones.some((selectedZone) => selectedZone.seatingId === zone.seatingId)) {

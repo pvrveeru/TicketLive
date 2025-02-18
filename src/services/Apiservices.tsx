@@ -77,8 +77,8 @@ export const createBooking = async (bookingData: any) => {
     const response = await api.post('/bookings', bookingData);
     return response.data;
   } catch (error: any) {
-    console.log('error create bookings', error.message)
-    throw error.message;
+    console.log('error create bookings', error);
+    throw error;
   }
 };
 
@@ -110,7 +110,7 @@ export const fetchEvents = async (params = {}) => {
 
     return response.data.data;
   } catch (error: any) {
-    console.log("Error fetching events:", error.message);
+    console.log('Error fetching events:', error.message);
     throw error.message;
   }
 };
@@ -121,10 +121,10 @@ export const fetchFeaturedEvents = async (userId: number, limit: number = 10, of
       params: {
         userId,
         isFeatured: true,
-        status: "Published",
+        status: 'Published',
         limit,
-        offset
-      }
+        offset,
+      },
     });
     return response.data.data;
   } catch (error: any) {
@@ -139,10 +139,10 @@ export const fetchPopularEvents = async (userId: number, limit: number = 10, off
       params: {
         userId,
         isPopular: true,
-        status: "Published",
+        status: 'Published',
         limit,
-        offset
-      }
+        offset,
+      },
     });
     return response.data.data;
   } catch (error: any) {
@@ -158,8 +158,8 @@ export const fetchManualEvents = async (userId: number, limit: number = 10, offs
         userId,
         isManual: true,
         limit,
-        offset
-      }
+        offset,
+      },
     });
     return response.data.data;
   } catch (error: any) {
@@ -305,7 +305,7 @@ export const updateUserProfile = async (userId: any, userDetails: any) => {
     return response.data.data;
   } catch (error: any) {
     console.log('Error updating userdetails:', error.message);
-    throw error.message;
+    throw error;
   }
 };
 export const uploadUserProfile = async (userId: number, body: FormData) => {

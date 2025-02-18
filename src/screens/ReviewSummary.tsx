@@ -49,7 +49,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
   const userData = useSelector((state: RootState) => state.userData);
   const userId = userData.userId;
   const { formData, eventBookingDetails, eventId } = route.params;
-  const dob = formData.dob ? new Date(formData.dob) : null;
+  // const dob = formData.dob ? new Date(formData.dob) : null;
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [charges, setCharges] = useState<ChargesData | null>(null);
@@ -114,10 +114,10 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
       contactPersonGender: formData.gender,
       contactPersonEmail: formData.email,
       contactPersonPhone: formData.phone,
-      contactPersonCountry: formData.state,
-      contactPersonCity: formData.city,
-      contactPersonAddress: formData.address,
-      contactPersonDOB: dob?.toISOString(),
+      // contactPersonCountry: formData.state,
+      // contactPersonCity: formData.city,
+      // contactPersonAddress: formData.address,
+      // contactPersonDOB: dob?.toISOString(),
       bookingDate: new Date().toISOString(),
     };
     console.log('Booking result payload:', payload);
@@ -127,8 +127,10 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
       setLoading(false);
       setModalVisible(true);
     } catch (error: any) {
-      console.error('Error during booking:', error.message);
+      console.log('Error during booking:', error);
       Alert.alert('Failed to create booking. Please try again.');
+      setLoading(false);
+      // setModalVisible(true);
     }
   };
 
