@@ -49,7 +49,8 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
   const { isDarkMode } = useTheme();
   const userData = useSelector((state: RootState) => state.userData);
   const userId = userData.userId;
-  const { formData, eventBookingDetails, eventId } = route.params;
+  const { formData, eventBookingDetails, eventId, bookingUsers } = route.params;
+  // console.log('bookingUsers', bookingUsers);
   // const dob = formData.dob ? new Date(formData.dob) : null;
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -120,8 +121,9 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
       // contactPersonAddress: formData.address,
       // contactPersonDOB: dob?.toISOString(),
       bookingDate: new Date().toISOString(),
+      bookingUsers: bookingUsers,
     };
-    console.log('Booking result payload:', payload);
+    // console.log('Booking result payload:', payload);
     try {
       const result = await createBooking(payload);
       console.log('Booking result:', result);

@@ -36,7 +36,7 @@ const EditProfileScreen: React.FC = () => {
   const [lastName, setLastName] = useState<string>('');
   const [emailId, setEmailId] = useState<string | null>(null);
   const [phoneNumber, setPhoneNumber] = useState<string>('');
-  const [dateOfBirth, setDateOfBirth] = useState<string>('');
+  const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
   const [gender, setGender] = useState<string>('');
   const [address, setAddress] = useState<string | null>(null);
   // const [state, setState] = useState<string | null>(null);
@@ -52,7 +52,7 @@ const [city, setCity] = useState<string | null>(null);
         setLoading(true);
         const response = await fetchUserById(userData.userId);
         dispatch(getUserData(response));
-        console.log('response', response);
+        // console.log('response', response);
         const user = response;
         setFirstName(user.firstName || '');
         setLastName(user.lastName || '');
@@ -152,8 +152,8 @@ const [city, setCity] = useState<string | null>(null);
           <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={lastName} onChangeText={setLastName} placeholder="Last Name" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
           <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={emailId || ''} onChangeText={setEmailId} placeholder="Email ID" keyboardType="email-address" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
           <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={phoneNumber} onChangeText={setPhoneNumber} placeholder="Phone Number" keyboardType="phone-pad" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
-          <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={dateOfBirth} onChangeText={setDateOfBirth} placeholder="Date of Birth (YYYY-MM-DD)" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
-          {/* <CustomDatePicker date={dateOfBirth} setDate={setDateOfBirth} /> */}
+          {/* <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={dateOfBirth} onChangeText={setDateOfBirth} placeholder="Date of Birth (YYYY-MM-DD)" placeholderTextColor={isDarkMode ? '#fff' : '#000'} /> */}
+          <CustomDatePicker date={dateOfBirth ?? null} setDate={setDateOfBirth} />
           <TouchableOpacity
             style={styles.dropdown}
             onPress={() => setShowGenderDropdown(!showGenderDropdown)}

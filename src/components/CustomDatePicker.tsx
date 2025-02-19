@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import DatePicker from 'react-native-date-picker';
+import { useTheme } from '../Theme/ThemeContext';
 
 interface CustomDatePickerProps {
   label?: string;
@@ -9,7 +10,13 @@ interface CustomDatePickerProps {
   isDarkMode?: boolean;
 }
 
-const CustomDatePicker: React.FC<CustomDatePickerProps> = ({ label = "Select Date", date, setDate, isDarkMode = false }) => {
+const formatDate = (date: Date | null) => {
+  if (!date) return '';
+  return date instanceof Date ? date.toISOString().split('T')[0] : date; // Safely format the date
+};
+
+const CustomDatePicker: React.FC<CustomDatePickerProps> = ({ label = "Select Date", date, setDate }) => {
+  const { isDarkMode } = useTheme();
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleConfirm = (selectedDate: Date) => {
@@ -21,24 +28,22 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({ label = "Select Dat
     <View>
       <TouchableOpacity style={styles.input} onPress={() => setShowDatePicker(true)}>
         <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>
-          {date ? date.toDateString() : label}
+          {date ? formatDate(date) : label}
         </Text>
       </TouchableOpacity>
 
       <Modal transparent={true} visible={showDatePicker} animationType="fade">
         <View style={styles.modalBackground}>
-          <View style={styles.modalContainer}>
             <DatePicker
               modal
               open={showDatePicker}
-              date={date || new Date()}
+              date={date instanceof Date ? date : new Date()} // Ensure date is always a Date object
               mode="date"
               onConfirm={handleConfirm}
               onCancel={() => setShowDatePicker(false)}
               maximumDate={new Date()}
             />
           </View>
-        </View>
       </Modal>
     </View>
   );
@@ -61,11 +66,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  modalContainer: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-  },
+  // modalContainer: {
+  //   backgroundColor: 'white',
+  //   padding: 20,
+  //   borderRadius: 10,
+  // },
 });
 
 export default CustomDatePicker;

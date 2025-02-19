@@ -10,6 +10,7 @@ import {
     Pressable,
 } from 'react-native';
 import { useTheme } from '../Theme/ThemeContext';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Define types for API responses
 interface State {
@@ -28,6 +29,8 @@ interface CityListProps {
     city: string | null;
 }
 
+const API_KEY = 'a1JiQml0MEtyRUx5dnhyV1BPdVAzY0dqYVVud3poa3F3SHBSSmJFYQ==';
+
 const CityList: React.FC<CityListProps> = ({ setState, setCity, state, city }) => {
     const { isDarkMode } = useTheme();
     const [states, setStates] = useState<State[]>([]);
@@ -36,21 +39,16 @@ const CityList: React.FC<CityListProps> = ({ setState, setCity, state, city }) =
     const [stateModalVisible, setStateModalVisible] = useState(false);
     const [cityModalVisible, setCityModalVisible] = useState(false);
 
-    const API_KEY = 'a1JiQml0MEtyRUx5dnhyV1BPdVAzY0dqYVVud3poa3F3SHBSSmJFYQ=='; // Replace with your actual API key
-
     useEffect(() => {
         fetchStates();
     }, []);
 
-    const fetchStates = async (): Promise<void> => {
+    const fetchStates = async () => {
         try {
-            const response = await fetch(
-                'https://api.countrystatecity.in/v1/countries/IN/states',
-                {
-                    method: 'GET',
-                    headers: { 'X-CSCAPI-KEY': API_KEY },
-                }
-            );
+            const response = await fetch('https://api.countrystatecity.in/v1/countries/IN/states', {
+                method: 'GET',
+                headers: { 'X-CSCAPI-KEY': API_KEY },
+            });
             const data: State[] = await response.json();
             setStates(data);
         } catch (error) {
@@ -58,7 +56,7 @@ const CityList: React.FC<CityListProps> = ({ setState, setCity, state, city }) =
         }
     };
 
-    const fetchCities = async (stateCode: string): Promise<void> => {
+    const fetchCities = async (stateCode: string) => {
         try {
             const response = await fetch(
                 `https://api.countrystatecity.in/v1/countries/IN/states/${stateCode}/cities`,
@@ -74,33 +72,21 @@ const CityList: React.FC<CityListProps> = ({ setState, setCity, state, city }) =
         }
     };
 
-    const filteredStates = states.filter(state =>
-        state.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    const filteredCities = cities.filter(city =>
-        city.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredStates = states.filter((s) => s.name.toLowerCase().includes(searchQuery.toLowerCase()));
+    const filteredCities = cities.filter((c) => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
     return (
         <View style={styles.container}>
             {/* State Selection */}
-            <TouchableOpacity
-                style={styles.dropdown}
-                onPress={() => setStateModalVisible(true)}
-            >
+            <TouchableOpacity style={styles.dropdown} onPress={() => setStateModalVisible(true)}>
                 <Text style={[styles.dropdownText, { color: isDarkMode ? '#fff' : '#000' }]}>
                     {state ? state : 'Select State'}
                 </Text>
+                <Ionicons name={stateModalVisible ? 'chevron-up' : 'chevron-down'} size={20} color={isDarkMode? '#fff':"#666"} />
             </TouchableOpacity>
 
             {/* Modal for State Selection */}
-            <Modal
-                visible={stateModalVisible}
-                transparent
-                animationType="slide"
-                onRequestClose={() => setStateModalVisible(false)}
-            >
+            <Modal visible={stateModalVisible} transparent animationType="slide" onRequestClose={() => setStateModalVisible(false)}>
                 <Pressable style={styles.modalOverlay} onPress={() => setStateModalVisible(false)}>
                     <View style={styles.modalContent}>
                         <TextInput
@@ -140,15 +126,11 @@ const CityList: React.FC<CityListProps> = ({ setState, setCity, state, city }) =
                 <Text style={[styles.dropdownText, cities.length === 0 && { color: '#999' }, { color: isDarkMode ? '#fff' : '#000' }]}>
                     {city ? city : 'Select City'}
                 </Text>
+                <Ionicons name={cityModalVisible ? 'chevron-up' : 'chevron-down'} size={20} color={cities.length > 0 ? '#666' : '#999'} />
             </TouchableOpacity>
 
             {/* Modal for City Selection */}
-            <Modal
-                visible={cityModalVisible}
-                transparent
-                animationType="slide"
-                onRequestClose={() => setCityModalVisible(false)}
-            >
+            <Modal visible={cityModalVisible} transparent animationType="slide" onRequestClose={() => setCityModalVisible(false)}>
                 <Pressable style={styles.modalOverlay} onPress={() => setCityModalVisible(false)}>
                     <View style={styles.modalContent}>
                         <TextInput
@@ -183,13 +165,15 @@ const CityList: React.FC<CityListProps> = ({ setState, setCity, state, city }) =
 const styles = StyleSheet.create({
     container: { flex: 1, justifyContent: 'center' },
     dropdown: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 8,
         padding: 10,
         marginBottom: 12,
         fontSize: 16,
-        alignItems: 'flex-start',
     },
     dropdownText: { fontSize: 16, color: '#333' },
     modalOverlay: {

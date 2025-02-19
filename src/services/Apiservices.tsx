@@ -40,8 +40,6 @@ api.interceptors.request.use(
   },
 );
 
-// Example API methods
-
 export const createUser = async (phoneNumber: string) => {
   console.log(phoneNumber);
   try {
@@ -77,8 +75,27 @@ export const createBooking = async (bookingData: any) => {
     const response = await api.post('/bookings', bookingData);
     return response.data;
   } catch (error: any) {
-    console.log('error create bookings', error);
-    throw error;
+    if (error.response) {
+      const { status, data } = error.response;
+
+      console.error(`Error ${status}:`, data);
+
+      if (status === 400) {
+        throw new Error(`Bad Request: ${data.message || 'Invalid request data.'}`);
+      } else if (status === 500) {
+        throw new Error(`Server Error: ${data.message || 'Something went wrong on the server.'}`);
+      } else {
+        throw new Error(`Unexpected Error ${status}: ${data.message || 'An unknown error occurred.'}`);
+      }
+    } else if (error.request) {
+      console.error('No response received:', error.request);
+      throw new Error('No response from server. Please check your network connection.');
+    } else {
+      console.error('Unexpected Error:', error.message);
+      throw new Error('Something went wrong while creating the booking.');
+    }
+    // console.log('error create bookings', error);
+    // throw error;
   }
 };
 

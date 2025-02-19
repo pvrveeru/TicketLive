@@ -44,6 +44,8 @@ type Booking = {
   user: User;
   userId: number;
   zoneName: string | null;
+  startDate: string;
+  endDate: string;
 };
 
 type Event = {
@@ -91,7 +93,7 @@ const TicketsScreen = () => {
     try {
       const data = await getBookingsByUserId(userId);
       setBookings(data.bookings);
-      // console.log('all bookings', data.bookings);
+      console.log('all bookings', data.bookings);
     } catch (error) {
       console.error('error fetching bookings', error);
     } finally {

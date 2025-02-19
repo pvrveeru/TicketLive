@@ -28,6 +28,7 @@ interface RouteParams {
     eventBookingDetails: any;
     eventId: number;
     ismanual: boolean;
+    bookingUsers: any;
 }
 interface UserData {
     phoneNumber: string;
@@ -430,9 +431,9 @@ const styles = StyleSheet.create({
         // zIndex: 1,
         bottom: -10,
         borderColor: '#fff',
-    backgroundColor: '#fff',
-    borderWidth: 2,    
-    borderRadius: 50,
+        backgroundColor: '#fff',
+        borderWidth: 2,
+        borderRadius: 50,
     },
     eventDetailsContainer: {
         marginBottom: 20,
