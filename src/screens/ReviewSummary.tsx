@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../Theme/ThemeContext';
 import { useSelector } from 'react-redux';
 import { Dialog } from '@rneui/themed';
-import moment from 'moment';
+import { formatDate } from '../utils/Time';
 
 interface ReviewSummaryProps {
   route: any;
@@ -30,6 +30,7 @@ interface EventDetailsData {
   artistName?: string;
   thumbUrl?: string;
   layoutImageUrl?: string;
+  startDate: string;
 }
 
 interface UserData {
@@ -54,9 +55,9 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
   const [loading, setLoading] = useState(true);
   const [charges, setCharges] = useState<ChargesData | null>(null);
   const [eventDetails, setEventDetails] = useState<EventDetailsData | null>(null);
-  const formatDate = (dateString: string) => {
-    return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
-  };
+  // const formatDate = (dateString: string) => {
+  //   return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
+  // };
 
   useEffect(() => {
     const fetchEventDetails = async () => {
@@ -153,7 +154,7 @@ const ReviewSummary: React.FC<ReviewSummaryProps> = ({ route, navigation }) => {
           <Image source={{ uri: eventDetails?.thumbUrl }} style={styles.eventImage} />
           <View>
             <Text style={[styles.eventTitle, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails?.title}</Text>
-            <Text style={[styles.eventDate, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{formatDate(eventDetails?.eventDate || '')}</Text>
+            <Text style={[styles.eventDate, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{formatDate(eventDetails?.startDate || '')}</Text>
             <Text style={[styles.eventLocation, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails?.location}</Text>
             <Text style={[styles.eventLocation, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{eventDetails?.city}</Text>
           </View>

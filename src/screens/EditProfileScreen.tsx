@@ -9,6 +9,7 @@ import { useTheme } from '../Theme/ThemeContext';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { COLORS } from '../styles/globalstyles';
 import CityList from '../components/CityList';
+import CustomDatePicker from '../components/CustomDatePicker';
 
 interface UserData {
   userId: number;
@@ -152,6 +153,7 @@ const [city, setCity] = useState<string | null>(null);
           <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={emailId || ''} onChangeText={setEmailId} placeholder="Email ID" keyboardType="email-address" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
           <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={phoneNumber} onChangeText={setPhoneNumber} placeholder="Phone Number" keyboardType="phone-pad" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
           <TextInput style={[styles.input, { color: isDarkMode ? '#fff' : '#000' }]} value={dateOfBirth} onChangeText={setDateOfBirth} placeholder="Date of Birth (YYYY-MM-DD)" placeholderTextColor={isDarkMode ? '#fff' : '#000'} />
+          {/* <CustomDatePicker date={dateOfBirth} setDate={setDateOfBirth} /> */}
           <TouchableOpacity
             style={styles.dropdown}
             onPress={() => setShowGenderDropdown(!showGenderDropdown)}

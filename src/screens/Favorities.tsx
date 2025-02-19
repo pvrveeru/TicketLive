@@ -51,7 +51,7 @@ const FavoritiesScreen: React.FC = () => {
   const [userId, setUserId] = useState<number | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
-
+console.log('favoriteEvents', favoriteEvents);
   const handleProfilePress = () => {
     navigation.navigate('BottomBar', { screen: 'Profile' });
   };
