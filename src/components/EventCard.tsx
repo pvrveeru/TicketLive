@@ -43,7 +43,6 @@ const EventCard: React.FC<EventCardProps> = ({
             <SkeletonLoader width="60%" height={15} borderRadius={4} style={{ marginVertical: 5 }} />
             <View style={styles.rowContainer}>
               <View style={styles.locationContainer}>
-                <Ionicons name="location-sharp" size={25} color="#555" />
                 <SkeletonLoader width="50%" height={15} borderRadius={4} />
               </View>
               <TouchableOpacity>

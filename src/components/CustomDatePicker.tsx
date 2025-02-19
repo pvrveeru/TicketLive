@@ -15,7 +15,7 @@ const formatDate = (date: Date | null) => {
   return date instanceof Date ? date.toISOString().split('T')[0] : date; // Safely format the date
 };
 
-const CustomDatePicker: React.FC<CustomDatePickerProps> = ({ label = "Select Date", date, setDate }) => {
+const CustomDatePicker: React.FC<CustomDatePickerProps> = ({ label = "Enter DOB", date, setDate }) => {
   const { isDarkMode } = useTheme();
   const [showDatePicker, setShowDatePicker] = useState(false);
 
