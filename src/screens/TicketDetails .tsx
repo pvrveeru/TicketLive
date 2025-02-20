@@ -50,17 +50,8 @@ const TicketDetails = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  // const Logo = require('../../assets/images/ticketliv_logo.png');
+  const Logo = require('../../assets/images/ticketliv_logo.png');
 
-  // const formatDate = (dateString: string) => {
-  //   const date = moment.utc(dateString);
-
-  //   if (!date.isValid()) {
-  //     return 'Invalid Date';
-  //   }
-
-  //   return date.local().format('MM-DD-YY : h:mm A');
-  // };
 
   useEffect(() => {
     const fetchTickets = async () => {
@@ -80,108 +71,6 @@ const TicketDetails = () => {
     fetchTickets();
   }, [bookingId]);
 
-  // const handleDownloadTicket = async (ticket: Ticket) => {
-  //   const basePrice = parseFloat(ticket?.price);
-  //   const convenienceFee = basePrice * (ticket?.conveniencefee / 100);
-  //   const gst = basePrice * (ticket?.gstpercentage / 100);
-  //   const totalPrice = basePrice + convenienceFee + gst;
-
-  //   try {
-  //     let ticketHtml = `
-  //       <h1>Ticket Details</h1>
-  //       <img src="${Logo}" style="width:150px;"/>
-  //       <h2>Ticket ID: ${ticket.ticketid}</h2>
-  //       <p><strong>Event:</strong> ${ticket.title}</p>
-  //       <p><strong>Date and Hour:</strong> ${ticket.eventdate}</p>
-  //       <p><strong>Location:</strong> ${ticket.eventlocation}</p>
-  //     `;
-  //     if (ticket?.price) {
-  //       ticketHtml += `<p><strong>Base Price:</strong> ${basePrice.toFixed(2)}</p>`;
-  //     }
-
-  //     if (ticket?.conveniencefee) {
-  //       ticketHtml += `<p><strong>Convenience Fee:</strong> ${convenienceFee.toFixed(2)}</p>`;
-  //     }
-
-  //     if (ticket?.gstpercentage) {
-  //       ticketHtml += `<p><strong>GST:</strong> ${gst.toFixed(2)}</p>`;
-  //     }
-
-  //     if (ticket?.price && ticket?.conveniencefee && ticket?.gstpercentage) {
-  //       ticketHtml += `<p><strong>Total Price:</strong> ${totalPrice.toFixed(2)}</p>`;
-  //     }
-
-  //     ticketHtml += ticket.qrcode
-  //       ? `<img src="${ticket.qrcode}" style="width:100px; height:100px;"/>`
-  //       : '<p>No QR Code available</p>';
-
-  //     const options = {
-  //       html: ticketHtml,
-  //       fileName: `TicketLiv_Tickets`,
-  //       directory: 'Documents',
-  //     };
-
-  //     const file = await RNHTMLtoPDF.convert(options);
-
-  //     let downloadsDir;
-  //     if (Platform.OS === 'ios') {
-  //       downloadsDir = `${RNFS.DocumentDirectoryPath}/Ticketliv_Tickets.pdf`;
-  //     } else {
-  //       downloadsDir = `${RNFS.DownloadDirectoryPath}/Ticketliv_Tickets.pdf`;
-  //     }
-
-  //     await RNFS.moveFile(file.filePath, downloadsDir);
-
-  //     Alert.alert('All tickets downloaded successfully!', `The PDF has been saved to:\n${downloadsDir}`);
-  //     return downloadsDir;
-  //   } catch (error) {
-  //     console.error('Error downloading tickets:', error);
-  //     Alert.alert('Failed to download tickets. Please try again.');
-  //   }
-  // };
-
-
-  // const shareTicketPDF = async (ticket: Ticket) => {
-  //   try {
-  //     const basePrice = parseFloat(ticket?.price);
-  //     const convenienceFee = basePrice * (ticket?.conveniencefee / 100);
-  //     const gst = basePrice * (ticket?.gstpercentage / 100);
-  //     const totalPrice = basePrice + convenienceFee + gst;
-
-  //     let ticketHtml = `
-  //       <h1>Ticket Details</h1>
-  //       <img src="${Logo}" style="width:150px;"/>
-  //       <h2>Ticket ID: ${ticket.ticketid}</h2>
-  //       <p><strong>Event:</strong> ${ticket.title}</p>
-  //       <p><strong>Date and Hour:</strong> ${ticket.eventdate}</p>
-  //       <p><strong>Location:</strong> ${ticket.eventlocation}</p>
-  //       <p><strong>Base Price:</strong> ${basePrice.toFixed(2)}</p>
-  //       <p><strong>Convenience Fee:</strong> ${convenienceFee.toFixed(2)}</p>
-  //       <p><strong>GST:</strong> ${gst.toFixed(2)}</p>
-  //       <p><strong>Total Price:</strong> ${totalPrice.toFixed(2)}</p>
-  //     `;
-  //     ticketHtml += ticket.qrcode
-  //       ? `<img src="${ticket.qrcode}" style="width: 120px; height: 120px; background-color: #e0e0e0; display: flex; justify-content: center; align-items: center; border-radius: 8px; border: 1px solid #ddd;"/>`
-  //       : '<p>No QR Code available</p>';
-
-
-  //     const options = {
-  //       html: ticketHtml,
-  //       fileName: `Ticket_${ticket.ticketid}`,
-  //       directory: 'Documents',
-  //     };
-
-  //     const file = await RNHTMLtoPDF.convert(options);
-  //     await Share.open({
-  //       title: 'Share Ticket',
-  //       url: `file://${file.filePath}`,
-  //       type: 'application/pdf',
-  //     });
-  //   } catch (error) {
-  //     console.log('Error sharing ticket:', error);
-  //     Alert.alert('Failed to share ticket. Please try again.');
-  //   }
-  // };
   const handleDownloadTicket = async (ticket: Ticket) => {
     const basePrice = parseFloat(ticket?.price);
     const convenienceFee = basePrice * (ticket?.conveniencefee / 100);
@@ -200,6 +89,9 @@ const TicketDetails = () => {
           text-align: left;
           box-sizing: border-box;
         ">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <img src="https://admin.ticketliv.com/static/media/logo.f154181323fd2ec75c2d.png" alt="Logo" />
+          </div>
           <div style="text-align: center; margin-bottom: 20px;">
             <div style="
               width: 120px;
@@ -231,7 +123,7 @@ const TicketDetails = () => {
               border-bottom: 1px solid #f0f0f0;
             ">
               <p style="font-weight: bold; font-size: 14px; color: #555; flex: 1;">Date & Time</p>
-              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">${ticket.startdate}</p>
+              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">${formatDate(ticket.startdate)}</p>
             </div>
             <div style="
               display: flex; 
@@ -314,7 +206,7 @@ const TicketDetails = () => {
       return downloadsDir;
     } catch (error) {
       console.error('Error downloading ticket:', error);
-      Alert.alert('Failed to download ticket. Please try again.');
+      //Alert.alert('Failed to download ticket. Please try again.');
     }
   };
 
@@ -442,7 +334,7 @@ const TicketDetails = () => {
       });
     } catch (error) {
       console.log('Error sharing ticket:', error);
-      Alert.alert('Failed to share ticket. Please try again.');
+      //Alert.alert('Failed to share ticket. Please try again.');
     }
   };
 
