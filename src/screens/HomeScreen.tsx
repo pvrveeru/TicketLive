@@ -176,7 +176,7 @@ const HomeScreen: React.FC = () => {
       const eventList = data.result || [];
       const currentDate = moment();
       const filteredEvents = eventList.filter((event: any) => {
-        const eventDateTime = moment(`${event.eventDate}`, 'YYYY-MM-DD HH:mm');
+        const eventDateTime = moment(`${event.endDate}`, 'YYYY-MM-DD HH:mm');
         return eventDateTime.isSameOrAfter(currentDate);
       });
       setEvents(filteredEvents);

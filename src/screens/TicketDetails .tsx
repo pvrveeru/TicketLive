@@ -38,6 +38,8 @@ interface Ticket {
   type: string;
   userid: number;
   zonename: string;
+  startdate: string;
+  endDate: string;
 }
 
 const TicketDetails = () => {
@@ -65,7 +67,7 @@ const TicketDetails = () => {
       try {
         setIsLoading(true);
         const result = await getTicketsByBookingId(bookingId);
-        console.log('Fetched Tickets:', result.tickets);
+        // console.log('Fetched Tickets:', result.tickets);
         setTickets(result.tickets);
       } catch (err) {
         setError('Failed to fetch tickets. Please try again.');
@@ -229,7 +231,7 @@ const TicketDetails = () => {
               border-bottom: 1px solid #f0f0f0;
             ">
               <p style="font-weight: bold; font-size: 14px; color: #555; flex: 1;">Date & Time</p>
-              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">${ticket.eventdate}</p>
+              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">${ticket.startdate}</p>
             </div>
             <div style="
               display: flex; 
@@ -365,7 +367,7 @@ const TicketDetails = () => {
               border-bottom: 1px solid #f0f0f0;
             ">
               <p style="font-weight: bold; font-size: 14px; color: #555; flex: 1;">Date & Time</p>
-              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">${formatDate(ticket.eventdate)}</p>
+              <p style="font-size: 16px; color: #333; flex: 2; text-align: right;">${formatDate(ticket.startdate)}</p>
             </div>
             <div style="
               display: flex; 
@@ -514,7 +516,7 @@ const TicketDetails = () => {
               </View>
               <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor : '#efefef'}]}>
                 <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Date & Time</Text>
-                <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{formatDate(ticket.eventdate || '')}</Text>
+                <Text style={[styles.tableCell, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>{formatDate(ticket.startdate || '')}</Text>
               </View>
               <View style={[styles.tableRow, {borderBottomColor: isDarkMode ? COLORS.darkTextColor : '#efefef'}]}>
                 <Text style={[styles.tableHeader, { color: isDarkMode ? COLORS.darkTextColor : '#000' }]}>Location</Text>

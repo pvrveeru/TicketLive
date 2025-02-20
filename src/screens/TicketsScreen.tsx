@@ -5,12 +5,10 @@ import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet, ScrollView }
 import { useNavigation } from '@react-navigation/native';
 import { getBookingsByUserId } from '../services/Apiservices';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-// import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { COLORS } from '../styles/globalstyles';
 import { useTheme } from '../Theme/ThemeContext';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
-// import Header from '../components/Header';
 import SkeletonLoader from '../components/SkeletonLoading';
 import { formatDate } from '../utils/Time';
 
@@ -53,6 +51,8 @@ type Event = {
   event_id: number;
   title: string;
   thumbUrl: string;
+  startDate: string;
+  endDate: string;
 };
 
 type User = {
@@ -78,22 +78,12 @@ const TicketsScreen = () => {
   const [selectedTab, setSelectedTab] = useState<string>('Upcoming');
   const userData = useSelector((state: RootState) => state.userData);
   const userId = userData.userId;
-  // const profileImage = require('../../assets/images/icon.png');
-  // const profileImageUrl = userData?.profileImageUrl;
-  // const formatDate = (dateString: string) => {
-  //   return moment.utc(dateString).local().format('MMMM DD, YYYY hh:mm A');
-  // };
-
-  // const handleProfilePress = () => {
-  //   navigation.navigate('BottomBar', { screen: 'Profile' });
-  // };
 
   const fetchBookings = async () => {
     setIsLoading(true);
     try {
       const data = await getBookingsByUserId(userId);
       setBookings(data.bookings);
-      console.log('all bookings', data.bookings);
     } catch (error) {
       console.error('error fetching bookings', error);
     } finally {
@@ -109,26 +99,17 @@ const TicketsScreen = () => {
     navigation.navigate('TicketDetails', { bookingId });
   };
 
-  // const handleCancelBooking = (bookingId: number) => {
-  //   Alert.alert(`Cancel booking with ID: ${bookingId}`);
-  // };
-
-  // const handleNotificationPress = () => {
-  //   navigation.navigate('Notification');
-  // };
-
-  // Function to categorize bookings
   const categorizeBookings = () => {
     const today = moment();
-    const upcomingBookings = bookings.filter((item) => moment(item.event.eventDate).isAfter(today));
-    const completedBookings = bookings.filter((item) => moment(item.event.eventDate).isBefore(today));
+    const upcomingBookings = bookings.filter((item) => moment(item.event.endDate).isAfter(today));
+    const completedBookings = bookings.filter((item) => moment(item.event.endDate).isBefore(today));
     return { upcomingBookings, completedBookings };
   };
 
   const renderBookingItem = ({ item }: { item: Booking }) => {
     const { event, paymentStatus } = item;
     const eventTitle = event?.title || 'No Title';
-    const eventDate = event?.eventDate || 'No Date';
+    const eventDate = event?.startDate || 'No Date';
     return (
       <>
         <View style={[styles.bookingItem, { backgroundColor: isDarkMode ? COLORS.darkCardColor : '#fff' }]}>

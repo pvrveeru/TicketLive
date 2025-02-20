@@ -51,7 +51,7 @@ const FavoritiesScreen: React.FC = () => {
   const [userId, setUserId] = useState<number | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
-console.log('favoriteEvents', favoriteEvents);
+// console.log('favoriteEvents', favoriteEvents);
   const handleProfilePress = () => {
     navigation.navigate('BottomBar', { screen: 'Profile' });
   };
@@ -95,7 +95,7 @@ console.log('favoriteEvents', favoriteEvents);
         const events = await getAllFavouriteEvents(userId);
         const currentDate = moment();
         const filteredEvents = events.favorites.filter((event: any) => {
-          const eventDateTime = moment(`${event.event.eventDate}`, 'YYYY-MM-DD HH:mm');
+          const eventDateTime = moment(`${event.event.endDate}`, 'YYYY-MM-DD HH:mm');
           return eventDateTime.isSameOrAfter(currentDate);
         });
         setFavoriteEvents(filteredEvents);
@@ -290,9 +290,8 @@ const styles = StyleSheet.create({
     marginTop: 0,
     fontSize: 16,
     color: '#777',
-    width: '100%',
     marginBottom: 10,
-    alignItems: 'center',
+    textAlign: 'center',
   },
   eventDate: {
     marginTop: 0,

@@ -287,7 +287,19 @@ const EventDetails: React.FC = () => {
               onBackPress={handleBackPress}
             />
           ) : (
-            <Image source={require('../../assets/images/altimg.jpg')} style={styles.eventImage} />
+            <View style={[styles.imageContainer, { width: '100%', height: 250 }]}>
+              <Image
+                source={require('../../assets/images/altimg.jpg')}
+                style={styles.eventImage}
+              />
+               <View style={styles.overlay}>
+                            <Text style={styles.artistText}>{`By ${eventDetails?.artistName}`}</Text>
+                            <Text style={styles.eventText}>{eventDetails?.title}</Text>
+                          </View>
+              <TouchableOpacity onPress={handleBackPress} style={styles.backArrow}>
+                <Icon name="arrow-back" size={30} color="white" />
+              </TouchableOpacity>
+            </View>
           )}
           <View style={styles.detailsContainer}>
             <View style={[styles.row, styles.spaceBetween]}>
@@ -394,16 +406,16 @@ const EventDetails: React.FC = () => {
           <SeeMoreText text={eventDetails?.tnc ?? ''} maxLength={60} />
         </ScrollView>
         <View style={{ backgroundColor: isDarkMode ? '#000' : '#fff' }}>
-        <TouchableOpacity
-          style={[
-            styles.bookButton,
-            eventDetails?.noOfTicketsBookedByYou === eventDetails?.maxTicketAllowed && styles.disabledButton,
-          ]}
-          onPress={handleBookEvent}
-          disabled={eventDetails?.noOfTicketsBookedByYou === eventDetails?.maxTicketAllowed}
-        >
-          <Text style={styles.bookButtonText}>Book Event</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.bookButton,
+              eventDetails?.noOfTicketsBookedByYou === eventDetails?.maxTicketAllowed && styles.disabledButton,
+            ]}
+            onPress={handleBookEvent}
+            disabled={eventDetails?.noOfTicketsBookedByYou === eventDetails?.maxTicketAllowed}
+          >
+            <Text style={styles.bookButtonText}>Book Event</Text>
+          </TouchableOpacity>
         </View>
 
       </View>
@@ -422,6 +434,38 @@ const styles = StyleSheet.create({
   disabledButton: {
     backgroundColor: 'gray',
     opacity: 0.6,
+  },
+  imageContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  overlay: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 10,
+    borderRadius: 10,
+    width: '50%',
+  },
+  artistText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  eventText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  backArrow: {
+    position: 'absolute',
+    top: 10,
+    left: 20,
+    padding: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 50,
   },
   map: {
     height: 150,

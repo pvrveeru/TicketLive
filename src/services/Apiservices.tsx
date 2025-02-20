@@ -340,3 +340,19 @@ export const uploadUserProfile = async (userId: number, body: FormData) => {
   }
 };
 
+export const deleteUser = async (id: number)  => {
+  try {
+    const response = await api.delete(`/users/${id}`);
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        throw new Error(error.response.data?.message || 'An error occurred');
+      } else if (error.request) {
+        throw new Error('No response from server');
+      }
+    }
+    throw new Error(error.message || 'Something went wrong');
+  }
+};
+

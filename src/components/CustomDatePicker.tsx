@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import { useTheme } from '../Theme/ThemeContext';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 interface CustomDatePickerProps {
   label?: string;
@@ -26,11 +27,14 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({ label = "Select Dat
 
   return (
     <View>
-      <TouchableOpacity style={styles.input} onPress={() => setShowDatePicker(true)}>
+     <TouchableOpacity style={styles.input} onPress={() => setShowDatePicker(true)}>
+      <View style={styles.row}>
         <Text style={[styles.text, { color: isDarkMode ? '#fff' : '#000' }]}>
           {date ? formatDate(date) : label}
         </Text>
-      </TouchableOpacity>
+        <Icon name="calendar" size={20} color={isDarkMode ? '#fff' : '#000'} style={styles.icon} />
+      </View>
+    </TouchableOpacity>
 
       <Modal transparent={true} visible={showDatePicker} animationType="fade">
         <View style={styles.modalBackground}>
@@ -57,8 +61,17 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginVertical: 10,
   },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between', // Ensures text and icon are on opposite ends
+    width: '100%',
+  },
   text: {
     fontSize: 16,
+  },
+  icon: {
+    marginLeft: 10, // Add spacing between text and icon
   },
   modalBackground: {
     flex: 1,

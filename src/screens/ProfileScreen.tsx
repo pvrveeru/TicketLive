@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-shadow */
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Modal, ScrollView, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -6,7 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { fetchUserById, updateUserNotifications, uploadUserProfile } from '../services/Apiservices';
+import { deleteUser, fetchUserById, updateUserNotifications, uploadUserProfile } from '../services/Apiservices';
 import { getUserData } from '../Redux/Actions';
 import { requestCameraPermission } from '../components/requestCameraPermission ';
 import CustomSwitch from '../components/CustomSwitch';
@@ -49,6 +50,7 @@ const ProfileScreen = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [imageSource, setImageSource] = useState<string | null>(profileImageUrl);
   const [previousNotificationState, setPreviousNotificationState] = useState(notificationState);
+  // const [loading, setLoading] = useState<boolean>(false);
 
   const profileOptions: ProfileOption[] = [
     { title: 'Edit Profile', icon: 'person-outline' },
@@ -58,6 +60,7 @@ const ProfileScreen = () => {
     { title: 'Terms & Conditions', icon: 'document-text-outline' },
     { title: 'Help Center', icon: 'help-circle-outline' },
     { title: 'LogOut', icon: 'log-out-outline' },
+    { title: 'Delete Account', icon: 'trash-outline' },
   ];
 
   const handleLogout = async () => {
@@ -128,7 +131,6 @@ const ProfileScreen = () => {
       console.error("Error uploading profile image:", error.message);
     }
   };
-
 
   const handleCameraSelection = async () => {
     const hasPermission = await requestCameraPermission();
@@ -209,6 +211,53 @@ const ProfileScreen = () => {
     }
   };
 
+  const confirmDeleteAccount = () => {
+    Alert.alert(
+      'Confirm Delete',
+      'Are you sure you want to delete your account? This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', style: 'destructive', onPress: handleDeleteAccount },
+      ],
+    );
+  };
+
+  // Function to handle the actual deletion logic
+  const handleDeleteAccount = async () => {
+    // console.log('Account deleted');
+    try {
+      const response = await deleteUser(userId);
+      console.log('Response:', response);
+      Alert.alert(
+        'Success',
+        'User deleted successfully',
+        [
+          {
+            text: 'OK',
+            onPress: async () => {
+              navigation.navigate('Login');
+              // try {
+              //   await AsyncStorage.setItem('isLoggedIn', 'false');
+              //   await AsyncStorage.removeItem('jwtToken');
+              //   await AsyncStorage.removeItem('userData');
+              //   dispatch(getUserData([]));
+              //   Alert.alert('Logged out', 'You have been logged out successfully.');
+              //   navigation.navigate('Login');
+              // } catch (error) {
+              //   console.error('Logout failed:', error);
+              //   Alert.alert('Error', 'An error occurred while logging out.');
+              // }
+            },
+          },
+        ],
+        { cancelable: false }
+      );
+    } catch (error: any) {
+      console.log('Error:', error.message);
+      Alert.alert('Error', error.message); // Show error in an alert
+    }
+  };
+
   // const handleCancelModal = () => {
   //   setIsNModalVisible(false);
   // };
@@ -232,6 +281,8 @@ const ProfileScreen = () => {
           navigation.navigate('HelpCenter');
         } else if (index === 6) {
           handleLogout();
+        } else if (index === 7) {
+          confirmDeleteAccount();
         }
       }}
     >
@@ -354,7 +405,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     // paddingTop: 5,
     paddingTop: Platform.OS === 'ios' ? 50 : 10,
-    
+
   },
   profileTop: {
     alignItems: 'center',

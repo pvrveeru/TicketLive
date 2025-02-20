@@ -187,7 +187,7 @@ const ExploreScreen = () => {
 
       const currentDate = moment();
       const filteredEvents = data.result.filter((event: any) => {
-        const eventDateTime = moment(`${event.eventDate}`, 'YYYY-MM-DD HH:mm');
+        const eventDateTime = moment(`${event.endDate}`, 'YYYY-MM-DD HH:mm');
         return eventDateTime.isSameOrAfter(currentDate);
       });
 
