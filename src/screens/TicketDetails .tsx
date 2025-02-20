@@ -67,7 +67,7 @@ const TicketDetails = () => {
       try {
         setIsLoading(true);
         const result = await getTicketsByBookingId(bookingId);
-        // console.log('Fetched Tickets:', result.tickets);
+        console.log('Fetched Tickets:', result.tickets);
         setTickets(result.tickets);
       } catch (err) {
         setError('Failed to fetch tickets. Please try again.');
